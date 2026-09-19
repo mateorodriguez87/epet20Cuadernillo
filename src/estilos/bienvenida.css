@@ -1,0 +1,247 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.pagina {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  /* Fondo tipo papel */
+  background:
+    radial-gradient(
+      rgba(0, 0, 0, 0.04) 1px,
+      transparent 1px
+    );
+  background-size: 5px 5px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  height: 83px;
+  background-color: #7099c5;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 30px;
+
+  border-bottom: 1px solid #555;
+}
+
+.header-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Ícono de computadora */
+
+.icono-laptop {
+  width: 52px;
+  height: 52px;
+
+  border: 2px solid white;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 27px;
+}
+
+/* Título */
+
+.titulo-header h1 {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+
+  margin-bottom: 4px;
+}
+
+.titulo-header p {
+  color: #a9c0da;
+  font-size: 13px;
+}
+
+/* Ayuda */
+
+.ayuda {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: white;
+  font-size: 14px;
+}
+
+.signo {
+  width: 18px;
+  height: 18px;
+
+  border: 1.5px solid white;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+
+.contenido {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 24px 30px;
+}
+
+.tarjeta {
+  width: 100%;
+  max-width: 910px;
+  height: 380px;
+
+  border: 1px solid #999;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 15px 110px 15px 50px;
+}
+
+/* Texto principal */
+
+.texto h2 {
+  font-size: 80px;
+  line-height: 1.08;
+
+  font-weight: 500;
+  color: #000;
+
+  margin-bottom: 28px;
+}
+
+.texto p {
+  font-size: 25px;
+  line-height: 1.1;
+
+  letter-spacing: 7px;
+
+  color: #10143b;
+}
+
+/* Escudo */
+
+.escudo {
+  width: 215px;
+  height: 310px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.escudo img {
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #666;
+
+  font-size: 12px;
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+  .header {
+    padding: 0 15px;
+  }
+
+  .titulo-header p {
+    display: none;
+  }
+
+  .ayuda {
+    font-size: 12px;
+  }
+
+  .contenido {
+    padding: 20px;
+  }
+
+  .tarjeta {
+    height: auto;
+    min-height: 500px;
+
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 30px;
+
+    padding: 35px 20px;
+  }
+
+  .texto {
+    text-align: center;
+  }
+
+  .texto h2 {
+    font-size: 55px;
+  }
+
+  .texto p {
+    font-size: 18px;
+    letter-spacing: 4px;
+  }
+
+  .escudo {
+    width: 180px;
+    height: 230px;
+  }
+
+  footer {
+    padding: 10px;
+    height: auto;
+  }
+}
