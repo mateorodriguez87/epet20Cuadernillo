@@ -1,6 +1,6 @@
-import "./App.css";
+import "../estilos/bienvenida.css";
 
-function App() {
+function Bienvenida() {
   return (
     <div className="pagina">
 
@@ -57,4 +57,4 @@ function App() {
   );
 }
 
-export default App;
+export default Bienvenida;
