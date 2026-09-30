@@ -35,8 +35,7 @@ function Bienvenida() {
             </h2>
 
             <p>
-              CLICK PARA<br />
-              CONTINUAR
+             <script src="src\paginas\inicarSesion.jsx">CLICK PARA CONTINUAR</script>
             </p>
           </div>
 
