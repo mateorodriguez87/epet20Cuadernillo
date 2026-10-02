@@ -255,10 +255,15 @@ footer {
   }
 
   .escudo {
-    width: 180px;
-    height: 230px;
-  }
+  width: 260px;
+  height: 350px;
+}
 
+.escudo img {
+  width: 250px;
+  height: auto;
+  object-fit: contain;
+}
   footer {
     padding: 10px;
     height: auto;
