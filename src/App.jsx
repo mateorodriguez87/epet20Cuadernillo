@@ -20,6 +20,10 @@ function App() {
       element={<Bienvenida />}
       />
 
+      <Route
+      path="/login"
+      element={<Login />}
+      />
 
       </Routes>
 
