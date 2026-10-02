@@ -35,7 +35,7 @@ function Bienvenida() {
             </h2>
 
             <p>
-             <script src="src\paginas\inicarSesion.jsx">CLICK PARA CONTINUAR</script>
+          <a href = 'src/paginas/inicarSesion' > CLICK PARA CONTINUAR</a>
             </p>
           </div>
 
