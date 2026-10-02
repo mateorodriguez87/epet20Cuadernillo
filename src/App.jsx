@@ -5,17 +5,26 @@ import viteLogo from './assets/vite.svg';
 import './App.css';
 import Login from './paginas/inicarSesion.jsx';
 import Bienvenida from './paginas/bienvenida.jsx';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import Login from "./components/Login";
+
 
 function App() {
   return (
-    <Bienvenida />
-  );
-}
+      <BrowserRouter>
 
-function App(){
-  return ( 
-  <Login/>
+      <Routes>
+
+      <Route
+      path="/bienvenida"
+      element={<Bienvenida />}
+      />
+
+
+      </Routes>
+
+
+      </BrowserRouter>
   );
 }
 
