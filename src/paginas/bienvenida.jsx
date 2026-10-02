@@ -40,7 +40,7 @@ function Bienvenida() {
           </div>
 
           <div className="escudo">
-            <img src="/escudo-epet20.png" alt="Escudo E.P.E.T N°20" />
+            <img src="src/imagenes/epet20logo.webp" alt="Escudo E.P.E.T N°20" />
           </div>
 
         </div>
