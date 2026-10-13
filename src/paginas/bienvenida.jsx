@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import "../estilos/bienvenida.css";
 
 function Bienvenida() {
@@ -35,7 +36,7 @@ function Bienvenida() {
             </h2>
 
             <p>
-          <a href = 'src/paginas/inicarSesion' > CLICK PARA CONTINUAR</a>
+              <Link to="/login">CLICK PARA CONTINUAR</Link>
             </p>
           </div>
 
