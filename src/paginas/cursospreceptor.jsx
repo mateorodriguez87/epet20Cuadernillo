@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../estilos/cursospreceptor.css';
 import {
   GraduationCap,
   Calendar,
