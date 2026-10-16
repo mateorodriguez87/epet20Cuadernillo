@@ -1,57 +1,70 @@
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "../estilos/notificacionpreceptor.css";
 
 function NotificacionPreceptor() {
-
   const datos = {
-    nombre: "",
-    rol: "",
-    iniciales: "",
-    fecha: "",
-    dia: "",
-    alumnos: []
+    alumnos: [],
   };
 
-  /* Estado del formulario */
+  const [fecha, setFecha] = useState(new Date());
   const [alumnoId, setAlumnoId] = useState("");
   const [asunto, setAsunto] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [fechaEnvio, setFechaEnvio] = useState("");
   const [prioridad, setPrioridad] = useState("normal");
 
-  /* Alumno elegido y estado del resumen */
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setFecha(new Date());
+    }, 60000);
+
+    return () => clearInterval(intervalo);
+  }, []);
+
+  const fechaFormateada = fecha.toLocaleDateString("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   const alumnoSeleccionado = datos.alumnos.find(
     (alumno) => String(alumno.id) === String(alumnoId)
   );
 
   const listoParaEnviar =
-    alumnoSeleccionado && asunto.trim() !== "" && mensaje.trim() !== "";
+    alumnoSeleccionado &&
+    asunto.trim() !== "" &&
+    mensaje.trim() !== "";
 
-  const limpiarFormulario = () => {
+  function limpiarFormulario() {
     setAlumnoId("");
     setAsunto("");
     setMensaje("");
     setFechaEnvio("");
     setPrioridad("normal");
-  };
+  }
 
-  const enviar = (e) => {
+  function enviar(e) {
     e.preventDefault();
+
     if (!listoParaEnviar) return;
 
-    // Acá se conecta con la base de datos
-    // const notificacion = { alumnoId, asunto, mensaje, fecha: fechaEnvio, prioridad };
-  };
+    // Acá se conecta con la base de datos.
+    // La notificación todavía no se guarda ni se envía.
+  }
+
+  function iniciarSesion() {
+    alert("Próximamente podrás iniciar sesión.");
+  }
 
   return (
     <div className="panel">
 
-      {/* =========================
-          BARRA LATERAL
-      ========================= */}
-
+      {/* PANEL LATERAL */}
       <aside className="sidebar">
-
         <div className="logo">
           <h2>CUADERNO DE</h2>
           <h2>COMUNICACIONES</h2>
@@ -59,93 +72,81 @@ function NotificacionPreceptor() {
         </div>
 
         <nav className="menu">
-
-          <a href="#" className="menu-item">
+          <Link to="/preceptor" className="menu-item">
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
-            <span className="menu-icon">♙</span>
+          <Link to="/cursospreceptor" className="menu-item">
+            <span className="menu-icon">▤</span>
             <span>Cursos</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
+          <Link to="/alumnospreeceptor" className="menu-item">
             <span className="menu-icon">♙</span>
             <span>Alumnos</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item activo">
+          <Link
+            to="/notificacionpreceptor"
+            className="menu-item activo"
+          >
             <span className="menu-icon">♧</span>
             <span>Notificaciones</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
+          <Link to="/historialpreceptor" className="menu-item">
             <span className="menu-icon">▤</span>
             <span>Historial</span>
-          </a>
-
+          </Link>
         </nav>
 
-        <a href="#" className="cerrar-sesion">
+        <button
+          type="button"
+          className="cerrar-sesion"
+          onClick={iniciarSesion}
+        >
           <span className="logout-icon">⇥</span>
-          <span>Cerrar sesión</span>
-        </a>
-
+          <span>Iniciar sesión</span>
+        </button>
       </aside>
 
-
-      {/* =========================
-          CONTENIDO
-      ========================= */}
-
+      {/* CONTENIDO PRINCIPAL */}
       <main className="contenido">
 
         {/* ENCABEZADO */}
-
         <header className="encabezado encabezado-alumnos">
-
           <div>
             <h1>Notificaciones</h1>
-            <p>Inicio &gt; Notificaciones &gt; Nueva notificación</p>
+            <p>
+              Inicio &gt; Notificaciones &gt; Nueva notificación
+            </p>
           </div>
 
           <div className="encabezado-derecha">
-
             <div className="fecha">
-              <strong>{datos.fecha || ""}</strong>
-              <span>{datos.dia || ""}</span>
+              <span>{fechaFormateada}</span>
             </div>
 
-            <div className="usuario">
-              <span className="usuario-avatar">{datos.iniciales}</span>
-              <div>
-                <strong>{datos.nombre}</strong>
-                <span>{datos.rol}</span>
-              </div>
-            </div>
-
+            <button
+              type="button"
+              className="boton-login"
+              onClick={iniciarSesion}
+            >
+              Iniciar sesión <span>↗</span>
+            </button>
           </div>
-
         </header>
 
         <p className="subtitulo">
           Crear y enviar comunicaciones a padres y tutores.
         </p>
 
-
-        {/* =========================
-            ZONA CENTRAL
-        ========================= */}
-
+        {/* FORMULARIO Y RESUMEN */}
         <section className="zona-formulario">
 
-
           {/* FORMULARIO */}
-
           <form className="tarjeta formulario" onSubmit={enviar}>
-
-            {/* ALUMNO */}
 
             <div className="campo">
               <label htmlFor="alumno">Alumno</label>
@@ -155,18 +156,26 @@ function NotificacionPreceptor() {
                 className="entrada"
                 value={alumnoId}
                 onChange={(e) => setAlumnoId(e.target.value)}
+                required
               >
                 <option value="">Seleccionar alumno</option>
+
                 {datos.alumnos.map((alumno, index) => (
-                  <option key={alumno.id || index} value={alumno.id}>
+                  <option
+                    key={alumno.id || index}
+                    value={alumno.id}
+                  >
                     {alumno.nombre}
                   </option>
                 ))}
               </select>
+
+              {datos.alumnos.length === 0 && (
+                <small className="campo-ayuda">
+                  No hay alumnos disponibles para seleccionar.
+                </small>
+              )}
             </div>
-
-
-            {/* ASUNTO */}
 
             <div className="campo">
               <label htmlFor="asunto">Asunto</label>
@@ -177,11 +186,9 @@ function NotificacionPreceptor() {
                 className="entrada"
                 value={asunto}
                 onChange={(e) => setAsunto(e.target.value)}
+                required
               />
             </div>
-
-
-            {/* MENSAJE */}
 
             <div className="campo">
               <label htmlFor="mensaje">Mensaje</label>
@@ -192,11 +199,9 @@ function NotificacionPreceptor() {
                 rows={4}
                 value={mensaje}
                 onChange={(e) => setMensaje(e.target.value)}
+                required
               />
             </div>
-
-
-            {/* FECHA */}
 
             <div className="campo campo-fecha">
               <label htmlFor="fecha-envio">Fecha</label>
@@ -209,9 +214,6 @@ function NotificacionPreceptor() {
                 onChange={(e) => setFechaEnvio(e.target.value)}
               />
             </div>
-
-
-            {/* PRIORIDAD */}
 
             <div className="campo">
               <label>Prioridad</label>
@@ -239,11 +241,8 @@ function NotificacionPreceptor() {
               </label>
             </div>
 
-
             {/* BOTONES */}
-
             <div className="botones">
-
               <button
                 type="button"
                 className="boton-secundario"
@@ -259,86 +258,68 @@ function NotificacionPreceptor() {
               >
                 ➤ Enviar
               </button>
-
             </div>
-
           </form>
 
-
           {/* RESUMEN */}
-
           <aside className="tarjeta resumen">
-
             <div className="titulo-seccion">
               <h2>Resumen</h2>
             </div>
 
-
             <div className="resumen-item">
-
-              <div className="icono-card azul">
-                ♙
-              </div>
+              <div className="icono-card azul">♙</div>
 
               <div>
                 <span>Alumno seleccionado:</span>
                 <strong>
-                  {alumnoSeleccionado ? alumnoSeleccionado.nombre : "—"}
+                  {alumnoSeleccionado
+                    ? alumnoSeleccionado.nombre
+                    : "—"}
                 </strong>
               </div>
-
             </div>
 
-
             <div className="resumen-item">
-
-              <div className="icono-card azul">
-                👥
-              </div>
+              <div className="icono-card azul">♟</div>
 
               <div>
                 <span>Tutor:</span>
                 <strong>
-                  {alumnoSeleccionado && alumnoSeleccionado.tutor
-                    ? alumnoSeleccionado.tutor
-                    : "—"}
+                  {alumnoSeleccionado?.tutor || "—"}
                 </strong>
               </div>
-
             </div>
 
-
             <div className="resumen-item">
-
-              <div className="icono-card azul">
-                ✉
-              </div>
+              <div className="icono-card azul">✉</div>
 
               <div>
                 <span>Estado:</span>
 
-                <span className={`estado-etiqueta ${listoParaEnviar ? "listo" : "incompleto"}`}>
-                  {listoParaEnviar ? "Listo para enviar" : "Faltan datos"}
+                <span
+                  className={`estado-etiqueta ${
+                    listoParaEnviar ? "listo" : "incompleto"
+                  }`}
+                >
+                  {listoParaEnviar
+                    ? "Listo para enviar"
+                    : "Faltan datos"}
                 </span>
               </div>
-
             </div>
-
 
             <div className="aviso">
               <span className="aviso-icono">i</span>
               <p>
-                Al enviar, la notificación será registrada y enviada
-                automáticamente al tutor.
+                Al enviar, la notificación podrá registrarse
+                y enviarse al tutor cuando se conecte el sistema.
               </p>
             </div>
-
           </aside>
-
         </section>
 
       </main>
-
     </div>
   );
 }
