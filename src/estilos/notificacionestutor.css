@@ -1,0 +1,405 @@
+
+/* ===== ESTILOS GENERALES ===== */
+
+.recibidas-pagina {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7fc;
+  color: #202b43;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.recibidas-pagina * {
+  box-sizing: border-box;
+}
+
+/* ===== PANEL LATERAL ===== */
+
+.recibidas-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 220px;
+  min-width: 220px;
+  min-height: 100vh;
+  padding: 25px 12px 18px;
+  background: #303d91;
+  color: white;
+}
+
+.recibidas-logo {
+  padding: 0 10px;
+}
+
+.recibidas-logo h2 {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.recibidas-logo span {
+  display: block;
+  margin-top: 3px;
+  color: #8db4e4;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== MENÚ LATERAL ===== */
+
+.recibidas-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.recibidas-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 43px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  color: #f4f5ff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.recibidas-menu-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.recibidas-menu-item.activo {
+  background: #7099cc;
+  color: white;
+}
+
+.recibidas-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  min-width: 23px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.recibidas-cerrar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  text-align: left;
+}
+
+.recibidas-cerrar:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+
+.recibidas-contenido {
+  flex: 1;
+  min-width: 0;
+  padding: 0 20px 20px;
+}
+
+/* ===== ENCABEZADO Y FECHA ===== */
+
+.recibidas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 80px;
+  padding: 15px 5px;
+  border-bottom: 1px solid #e2e6ef;
+  background: white;
+}
+
+.recibidas-titulo h1 {
+  margin: 0;
+  color: #303d91;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.recibidas-titulo p {
+  margin: 7px 0 0;
+  color: #5078b8;
+  font-size: 12px;
+}
+
+.recibidas-fecha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #535d71;
+}
+
+.recibidas-fecha > span {
+  font-size: 21px;
+}
+
+.recibidas-fecha p {
+  margin: 0;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+/* ===== INTRODUCCIÓN Y CONTADOR ===== */
+
+.recibidas-introduccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 22px 0 18px;
+}
+
+.recibidas-introduccion h2 {
+  margin: 0 0 6px;
+  color: #25314a;
+  font-size: 18px;
+}
+
+.recibidas-introduccion p {
+  margin: 0;
+  color: #7b8496;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.recibidas-contador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  border: 1px solid #e1e7f3;
+  border-radius: 9px;
+  background: white;
+}
+
+.recibidas-contador > span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #edf2ff;
+  color: #304795;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.recibidas-contador p {
+  color: #535d71;
+  font-size: 12px;
+}
+
+/* ===== TARJETA VACÍA ===== */
+
+.recibidas-lista {
+  overflow: hidden;
+  border: 1px solid #e5e9f1;
+  border-radius: 11px;
+  background: white;
+  box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
+}
+
+.recibidas-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+  padding: 35px 20px;
+  text-align: center;
+}
+
+.recibidas-vacio-icono {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: #edf2ff;
+  color: #304795;
+  font-size: 32px;
+}
+
+.recibidas-vacio h2 {
+  margin: 0 0 10px;
+  color: #25314a;
+  font-size: 20px;
+}
+
+.recibidas-vacio p {
+  max-width: 420px;
+  margin: 0;
+  color: #7b8496;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ===== AVISO INFERIOR ===== */
+
+.recibidas-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0 12px 12px;
+  padding: 12px 13px;
+  border-radius: 7px;
+  background: #edf3ff;
+  color: #244a9c;
+}
+
+.recibidas-aviso > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #2864d4;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.recibidas-aviso p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ===== PIE DE PÁGINA ===== */
+
+.recibidas-footer {
+  padding: 20px 5px 0;
+  color: #8b93a3;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* ===== TABLETS ===== */
+
+@media (max-width: 760px) {
+  .recibidas-sidebar {
+    width: 165px;
+    min-width: 165px;
+    padding: 20px 8px;
+    gap: 24px;
+  }
+
+  .recibidas-logo {
+    padding: 0 7px;
+  }
+
+  .recibidas-logo h2 {
+    font-size: 12px;
+  }
+
+  .recibidas-logo span {
+    font-size: 12px;
+  }
+
+  .recibidas-menu-item {
+    gap: 7px;
+    padding: 9px 7px;
+    font-size: 12px;
+  }
+
+  .recibidas-icono {
+    width: 20px;
+    min-width: 20px;
+    font-size: 19px;
+  }
+
+  .recibidas-cerrar {
+    gap: 7px;
+    padding: 9px 7px;
+    font-size: 12px;
+  }
+
+  .recibidas-contenido {
+    padding: 0 12px 15px;
+  }
+
+  .recibidas-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .recibidas-titulo h1 {
+    font-size: 20px;
+  }
+
+  .recibidas-introduccion {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .recibidas-vacio {
+    min-height: 280px;
+  }
+}
+
+/* ===== CELULARES PEQUEÑOS ===== */
+
+@media (max-width: 420px) {
+  .recibidas-sidebar {
+    width: 64px;
+    min-width: 64px;
+    padding: 15px 6px;
+  }
+
+  .recibidas-logo h2,
+  .recibidas-logo span,
+  .recibidas-menu-item > span:last-child,
+  .recibidas-cerrar > span:last-child {
+    display: none;
+  }
+
+  .recibidas-menu-item {
+    justify-content: center;
+    padding: 11px 4px;
+  }
+
+  .recibidas-cerrar {
+    justify-content: center;
+    padding: 10px 4px;
+  }
+
+  .recibidas-titulo h1 {
+    font-size: 18px;
+  }
+
+  .recibidas-contador {
+    width: 100%;
+  }
+
+  .recibidas-vacio h2 {
+    font-size: 17px;
+  }
+
+  .recibidas-vacio p {
+    font-size: 13px;
+  }
+}
