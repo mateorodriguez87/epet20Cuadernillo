@@ -8,6 +8,7 @@ import Bienvenida from './paginas/bienvenida.jsx';
 import InicioPreceptor from './paginas/inicioPreceptor.jsx';
 import CuadernoComunicaciones from './paginas/cursospreceptor.jsx';
 import AlumnosPreceptor from './paginas/alumnospreceptor.jsx';
+import NotificacionPreceptor from './paginas/notificacionpreceptor.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/preceptor" element={<InicioPreceptor />} />
         <Route path="/cursospreceptor" element={<CuadernoComunicaciones />} />
         <Route path="/alumnospreceptor" element={<AlumnosPreceptor />} />
+        <Route path="/notificacionpreceptor" element={<NotificacionPreceptor />} />
       </Routes>
     </BrowserRouter>
   );
