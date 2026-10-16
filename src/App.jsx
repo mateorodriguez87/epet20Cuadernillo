@@ -10,7 +10,7 @@ import CursosPreceptor from './paginas/cursospreceptor.jsx';
 import AlumnosPreceptor from './paginas/alumnospreceptor.jsx';
 import NotificacionPreceptor from './paginas/notificacionpreceptor.jsx';
 import HistorialPreceptor from "./paginas/historialpreceptor.jsx";
-
+import InicioTutor from './paginas/iniciotutor.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -27,7 +27,8 @@ function App() {
         <Route path="/cursospreceptor" element={<CursosPreceptor />} />
         <Route path="/alumnospreceptor" element={<AlumnosPreceptor />} />
         <Route path="/notificacionpreceptor" element={<NotificacionPreceptor />} />
-        <Route path="/historialpreceptor"element={<HistorialPreceptor />}
+        <Route path="/historialpreceptor"element={<HistorialPreceptor />}/>
+        <Route path="/iniciotutor"element={<InicioTutor />}
 />
       </Routes>
     </BrowserRouter>
