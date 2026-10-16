@@ -1,28 +1,471 @@
-@import "tailwindcss";
 
-@layer base {
-  body {
-    background-color: #f8fafc;
-    color: #1e293b;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* ===== ESTILOS GENERALES ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+.cursos-pagina {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7fc;
+  color: #202b43;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== PANEL LATERAL ===== */
+
+.cursos-sidebar {
+  width: 220px;
+  min-width: 220px;
+  min-height: 100vh;
+  padding: 25px 12px 18px;
+  background: #303d91;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.cursos-logo {
+  padding: 0 10px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.cursos-logo h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cursos-logo span {
+  display: block;
+  margin-top: 3px;
+  color: #8db4e4;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== MENÚ LATERAL ===== */
+
+.cursos-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cursos-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 43px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  color: #f4f5ff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.cursos-menu-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cursos-menu-item.activo {
+  background: #7099cc;
+  color: white;
+}
+
+.cursos-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  min-width: 23px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.cursos-cerrar-sesion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cursos-cerrar-sesion:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+
+.cursos-contenido {
+  flex: 1;
+  min-width: 0;
+  padding: 0 20px 20px;
+}
+
+/* ===== ENCABEZADO ===== */
+
+.cursos-header {
+  min-height: 83px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px 5px;
+  border-bottom: 1px solid #e2e6ef;
+  background: white;
+}
+
+.cursos-titulo h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #202b43;
+  font-size: 22px;
+}
+
+.titulo-icono {
+  color: #304795;
+  font-size: 24px;
+}
+
+.cursos-titulo p {
+  margin: 7px 0 0;
+  color: #7c8496;
+  font-size: 12px;
+}
+
+.cursos-header-derecha {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cursos-fecha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #535d71;
+}
+
+.cursos-fecha > span {
+  font-size: 21px;
+}
+
+.cursos-fecha p {
+  max-width: 190px;
+  margin: 0;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.cursos-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #dfe5f0;
+  border-radius: 8px;
+  background: white;
+  color: #304795;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cursos-login:hover {
+  background: #f0f4ff;
+}
+
+/* ===== BUSCADOR Y BOTÓN AGREGAR ===== */
+
+.cursos-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 20px 0;
+}
+
+.cursos-buscador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 340px;
+  max-width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dfe4ee;
+  border-radius: 8px;
+  background: white;
+  color: #7b8498;
+}
+
+.cursos-buscador > span {
+  font-size: 22px;
+}
+
+.cursos-buscador input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #26334d;
+  font-size: 13px;
+}
+
+.cursos-buscador input::placeholder {
+  color: #8c94a5;
+}
+
+.cursos-agregar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 39px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1558cb;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cursos-agregar:hover {
+  background: #1047a6;
+}
+
+.cursos-agregar span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ===== PANEL DE CURSOS ===== */
+
+.cursos-panel {
+  min-height: 450px;
+  padding: 22px;
+  border: 1px solid #e5e9f1;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
+}
+
+.cursos-panel-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.cursos-panel-titulo h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cursos-contador {
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #eef2ff;
+  color: #4055a1;
+  font-size: 12px;
+}
+
+/* ===== MENSAJE SIN CURSOS ===== */
+
+.cursos-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+  padding: 30px 15px;
+  text-align: center;
+}
+
+.cursos-vacio-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: #edf2ff;
+  color: #3956a6;
+  font-size: 37px;
+}
+
+.cursos-vacio h2 {
+  margin: 0 0 10px;
+  color: #25314a;
+  font-size: 20px;
+}
+
+.cursos-vacio p {
+  max-width: 400px;
+  margin: 0 0 22px;
+  color: #7b8496;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.cursos-agregar-centro {
+  min-height: 42px;
+}
+
+/* ===== PIE DE PÁGINA ===== */
+
+.cursos-footer {
+  padding: 20px 5px 0;
+  color: #8b93a3;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* ===== TABLETS Y CELULARES ===== */
+
+@media (max-width: 760px) {
+  .cursos-sidebar {
+    width: 165px;
+    min-width: 165px;
+    padding: 20px 8px;
+  }
+
+  .cursos-logo {
+    padding: 0 7px;
+  }
+
+  .cursos-logo h2 {
+    font-size: 12px;
+  }
+
+  .cursos-logo span {
+    font-size: 12px;
+  }
+
+  .cursos-menu-item {
+    gap: 7px;
+    padding: 9px 7px;
+    font-size: 12px;
+  }
+
+  .cursos-icono {
+    width: 20px;
+    min-width: 20px;
+    font-size: 20px;
+  }
+
+  .cursos-contenido {
+    padding: 0 12px 15px;
+  }
+
+  .cursos-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cursos-header-derecha {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .cursos-fecha p {
+    max-width: 145px;
+    font-size: 11px;
+  }
+
+  .cursos-acciones {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .cursos-buscador {
+    width: 100%;
+  }
+
+  .cursos-agregar {
+    align-self: flex-start;
+  }
+
+  .cursos-panel {
+    padding: 15px;
+  }
+
+  .cursos-panel-titulo h2 {
+    font-size: 14px;
   }
 }
 
-/* Scrollbars sutiles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* ===== CELULARES PEQUEÑOS ===== */
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
+@media (max-width: 420px) {
+  .cursos-sidebar {
+    width: 64px;
+    min-width: 64px;
+    padding: 15px 6px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
+  .cursos-logo {
+    padding: 0;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  .cursos-logo h2,
+  .cursos-logo span,
+  .cursos-menu-item > span:last-child,
+  .cursos-cerrar-sesion > span:last-child {
+    display: none;
+  }
+
+  .cursos-menu-item {
+    justify-content: center;
+    padding: 11px 4px;
+  }
+
+  .cursos-cerrar-sesion {
+    justify-content: center;
+    padding: 10px 4px;
+  }
+
+  .cursos-header-derecha {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cursos-login {
+    padding: 8px 10px;
+  }
+
+  .cursos-vacio h2 {
+    font-size: 17px;
+  }
+
+  .cursos-vacio p {
+    font-size: 13px;
+  }
 }
