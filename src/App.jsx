@@ -13,6 +13,7 @@ import HistorialPreceptor from "./paginas/historialpreceptor.jsx";
 import InicioTutor from "./paginas/iniciotutor.jsx";
 import NotificacionesRecibidasTutor from "./paginas/notificacionestutor.jsx";
 import DatosAlumno from "./paginas/datosalumno.jsx";
+import Registro from "./paginas/registro.jsx";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -41,6 +42,7 @@ function App() {
           element={<NotificacionesRecibidasTutor />}
         />
         <Route path="/datosalumno" element={<DatosAlumno />} />
+        <Route path="/registro" element={<Registro />} />
       </Routes>
     </BrowserRouter>
   );
