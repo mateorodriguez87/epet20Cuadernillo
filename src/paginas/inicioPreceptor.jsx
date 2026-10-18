@@ -1,27 +1,44 @@
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "../estilos/inicioPreceptor.css";
 
 function InicioPreceptor() {
-
+  const [fechaActual, setFechaActual] = useState(new Date());
 
   const datos = {
     nombre: "",
-    fecha: "",
     cursos: [],
     alumnos: [],
     notificaciones: [],
-    comunicaciones: []
+    comunicaciones: [],
   };
+
+  useEffect(() => {
+    const actualizarFecha = () => {
+      setFechaActual(new Date());
+    };
+
+    const intervalo = setInterval(actualizarFecha, 60000);
+
+    return () => clearInterval(intervalo);
+  }, []);
+
+  const fechaFormateada = fechaActual.toLocaleDateString("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  function iniciarSesion() {
+    window.location.href = "/login";
+  }
 
   return (
     <div className="panel">
-
-      {/* =========================
-          BARRA LATERAL
-      ========================= */}
-
+      {/* PANEL LATERAL */}
       <aside className="sidebar">
-
         <div className="logo">
           <h2>CUADERNO DE</h2>
           <h2>COMUNICACIONES</h2>
@@ -29,389 +46,240 @@ function InicioPreceptor() {
         </div>
 
         <nav className="menu">
-
-          <a href="#" className="menu-item activo">
+          <Link to="/preceptor" className="menu-item activo">
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
-            <span className="menu-icon">♙</span>
+          <Link to="/cursospreceptor" className="menu-item">
+            <span className="menu-icon">▤</span>
             <span>Cursos</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
+          <Link to="/alumnospreeceptor" className="menu-item">
             <span className="menu-icon">♙</span>
             <span>Alumnos</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
+          <Link to="/notificacionpreceptor" className="menu-item">
             <span className="menu-icon">♧</span>
             <span>Notificaciones</span>
-          </a>
+          </Link>
 
-          <a href="#" className="menu-item">
+          <Link to="/historialpreceptor" className="menu-item">
             <span className="menu-icon">▤</span>
             <span>Historial</span>
-          </a>
-
+          </Link>
         </nav>
 
-        <a href="#" className="cerrar-sesion">
+        <button
+          type="button"
+          className="cerrar-sesion"
+          onClick={iniciarSesion}
+        >
           <span className="logout-icon">⇥</span>
-          <span>Cerrar sesión</span>
-        </a>
-
+          <span>Iniciar sesión</span>
+        </button>
       </aside>
 
-
-      {/* =========================
-          CONTENIDO
-      ========================= */}
-
+      {/* CONTENIDO PRINCIPAL */}
       <main className="contenido">
-
-        {/* ENCABEZADO */}
-
         <header className="encabezado">
+          <div>
+            <h1>
+              Bienvenido{datos.nombre ? `, ${datos.nombre}` : ""}
+            </h1>
+            <p className="fecha-actual">{fechaFormateada}</p>
+          </div>
 
-          <h1>
-            Bienvenido{datos.nombre ? `, ${datos.nombre}` : ""}
-          </h1>
-
-          <p>
-            {datos.fecha || ""}
-          </p>
-
+          <button
+            type="button"
+            className="boton-login"
+            onClick={iniciarSesion}
+          >
+            Iniciar sesión <span>↗</span>
+          </button>
         </header>
 
-
-        {/* =========================
-            TARJETAS SUPERIORES
-        ========================= */}
-
+        {/* TARJETAS DE ESTADÍSTICAS */}
         <section className="estadisticas">
-
-          {/* CURSOS */}
-
-          <div className="tarjeta estadistica">
-
-            <div className="icono-card azul">
-              🎓
-            </div>
+          <article className="tarjeta estadistica">
+            <div className="icono-card azul">🎓</div>
 
             <div className="info-card">
               <span>Cursos a cargo</span>
-
               <strong>
-                {datos.cursos.length > 0
-                  ? datos.cursos.length
-                  : "—"}
+                {datos.cursos.length || "—"}
               </strong>
             </div>
 
-            <a href="#">
-              Ver cursos
-              <span>›</span>
-            </a>
+            <Link to="/cursospreceptor" className="enlace-estadistica">
+              Ver cursos <span>›</span>
+            </Link>
+          </article>
 
-          </div>
-
-
-          {/* ALUMNOS */}
-
-          <div className="tarjeta estadistica">
-
-            <div className="icono-card verde">
-              👥
-            </div>
+          <article className="tarjeta estadistica">
+            <div className="icono-card verde">👥</div>
 
             <div className="info-card">
               <span>Alumnos a cargo</span>
-
               <strong>
-                {datos.alumnos.length > 0
-                  ? datos.alumnos.length
-                  : "—"}
+                {datos.alumnos.length || "—"}
               </strong>
             </div>
 
-            <a href="#">
-              Ver alumnos
-              <span>›</span>
-            </a>
+            <Link to="/alumnospreeceptor" className="enlace-estadistica">
+              Ver alumnos <span>›</span>
+            </Link>
+          </article>
 
-          </div>
-
-
-          {/* NOTIFICACIONES */}
-
-          <div className="tarjeta estadistica">
-
-            <div className="icono-card naranja">
-              ✉
-            </div>
+          <article className="tarjeta estadistica">
+            <div className="icono-card naranja">✉</div>
 
             <div className="info-card">
-              <span>
-                Notificaciones
-                <br />
-                pendientes
-              </span>
-
+              <span>Notificaciones pendientes</span>
               <strong className="numero-rojo">
-                {datos.notificaciones.length > 0
-                  ? datos.notificaciones.length
-                  : "—"}
+                {datos.notificaciones.length || "—"}
               </strong>
             </div>
 
-            <a href="#">
-              Ver pendientes
-              <span>›</span>
-            </a>
+            <Link
+              to="/notificacionpreceptor"
+              className="enlace-estadistica"
+            >
+              Ver pendientes <span>›</span>
+            </Link>
+          </article>
 
-          </div>
-
-
-          {/* COMUNICACIONES */}
-
-          <div className="tarjeta estadistica">
-
-            <div className="icono-card violeta">
-              ▤
-            </div>
+          <article className="tarjeta estadistica">
+            <div className="icono-card violeta">▤</div>
 
             <div className="info-card">
-              <span>
-                Comunicaciones
-                <br />
-                enviadas (este mes)
-              </span>
-
+              <span>Comunicaciones enviadas (este mes)</span>
               <strong>
-                {datos.comunicaciones.length > 0
-                  ? datos.comunicaciones.length
-                  : "—"}
+                {datos.comunicaciones.length || "—"}
               </strong>
             </div>
 
-            <a href="#">
-              Ver historial
-              <span>›</span>
-            </a>
-
-          </div>
-
+            <Link
+              to="/historialpreceptor"
+              className="enlace-estadistica"
+            >
+              Ver historial <span>›</span>
+            </Link>
+          </article>
         </section>
 
-
-        {/* =========================
-            ZONA CENTRAL
-        ========================= */}
-
+        {/* NOTIFICACIONES Y ACCIONES RÁPIDAS */}
         <section className="zona-central">
-
-
-          {/* NOTIFICACIONES */}
-
-          <div className="tarjeta notificaciones">
-
+          <article className="tarjeta notificaciones">
             <div className="titulo-seccion">
               <h2>Notificaciones pendientes</h2>
-
-              <a href="#">
-                Ver todas
-              </a>
+              <Link to="/notificacionpreceptor">Ver todas</Link>
             </div>
 
-
             {datos.notificaciones.length === 0 ? (
-
               <div className="sin-datos">
                 No hay notificaciones pendientes
               </div>
-
             ) : (
-
-              datos.notificaciones.map((notificacion, index) => (
-
-                <div className="notificacion" key={index}>
-
-                  <div className="notificacion-icon azul">
-                    !
-                  </div>
-
+              datos.notificaciones.map((notificacion) => (
+                <div className="notificacion" key={notificacion.id}>
+                  <div className="notificacion-icon azul">!</div>
                   <div className="notificacion-texto">
-                    <strong>
-                      {notificacion.titulo}
-                    </strong>
-
-                    <span>
-                      {notificacion.descripcion}
-                    </span>
+                    <strong>{notificacion.titulo}</strong>
+                    <span>{notificacion.descripcion}</span>
                   </div>
-
-                  <div className="notificacion-fecha">
+                  <span className="notificacion-fecha">
                     {notificacion.fecha}
-                  </div>
-
-                  <span className="flecha">
-                    ›
                   </span>
-
                 </div>
-
               ))
-
             )}
 
-            <a
-              href="#"
+            <Link
+              to="/notificacionpreceptor"
               className="ver-notificaciones"
             >
               Ir a notificaciones
-            </a>
+            </Link>
+          </article>
 
-          </div>
-
-
-          {/* ACCIONES RÁPIDAS */}
-
-          <div className="tarjeta acciones">
-
+          <article className="tarjeta acciones">
             <div className="titulo-seccion">
               <h2>Acciones rápidas</h2>
             </div>
 
-
-            <div className="accion">
-
-              <div className="accion-icon azul">
-                ➤
+            <Link
+              to="/notificacionpreceptor"
+              className="accion"
+            >
+              <div className="accion-icon azul">➤</div>
+              <div className="accion-texto">
+                <strong>Nueva comunicación</strong>
+                <span>Crear una nueva notificación</span>
               </div>
-
-              <div>
-                <strong>
-                  Nueva comunicación
-                </strong>
-
-                <span>
-                  Enviar una nueva notificación
-                </span>
-              </div>
-
               <b>›</b>
+            </Link>
 
-            </div>
-
-
-            <div className="accion">
-
-              <div className="accion-icon verde">
-                👥
+            <Link
+              to="/alumnospreeceptor"
+              className="accion"
+            >
+              <div className="accion-icon verde">👥</div>
+              <div className="accion-texto">
+                <strong>Gestionar alumnos</strong>
+                <span>Consultar los alumnos registrados</span>
               </div>
-
-              <div>
-                <strong>
-                  Gestionar alumnos
-                </strong>
-
-                <span>
-                  Agregar, editar o consultar alumnos.
-                </span>
-              </div>
-
               <b>›</b>
+            </Link>
 
-            </div>
-
-
-            <div className="accion">
-
-              <div className="accion-icon violeta">
-                ▢
+            <Link
+              to="/historialpreceptor"
+              className="accion"
+            >
+              <div className="accion-icon violeta">▤</div>
+              <div className="accion-texto">
+                <strong>Ver historial</strong>
+                <span>Consultar comunicaciones enviadas</span>
               </div>
-
-              <div>
-                <strong>
-                  Ver historial
-                </strong>
-
-                <span>
-                  Consultar comunicaciones enviadas.
-                </span>
-              </div>
-
               <b>›</b>
-
-            </div>
-
-          </div>
-
+            </Link>
+          </article>
         </section>
 
-
-        {/* =========================
-            MIS CURSOS
-        ========================= */}
-
+        {/* MIS CURSOS */}
         <section className="tarjeta cursos">
-
           <div className="titulo-seccion">
-
-            <h2>
-              Mis cursos
-            </h2>
-
-            <a href="#">
-              Ver todos
-            </a>
-
+            <h2>Mis cursos</h2>
+            <Link to="/cursospreceptor">Ver todos</Link>
           </div>
-
 
           {datos.cursos.length === 0 ? (
-
             <div className="sin-cursos">
-              No hay cursos cargados
+              <span className="sin-cursos-icono">🎓</span>
+              <strong>No hay cursos cargados</strong>
+              <p>
+                Cuando se asignen cursos al preceptor,
+                aparecerán en esta sección.
+              </p>
+              <Link to="/cursospreceptor" className="boton-agregar">
+                Consultar cursos
+              </Link>
             </div>
-
           ) : (
-
             <div className="lista-cursos">
-
-              {datos.cursos.map((curso, index) => (
-
-                <div
-                  className="curso"
-                  key={index}
-                >
-
-                  <strong>
-                    {curso.nombre}
-                  </strong>
-
-                  <span>
-                    {curso.alumnos} alumnos
-                  </span>
-
-                  <b>
-                    ♧
-                  </b>
-
+              {datos.cursos.map((curso) => (
+                <div className="curso" key={curso.id}>
+                  <strong>{curso.nombre}</strong>
+                  <span>{curso.alumnos} alumnos</span>
+                  <b>♧</b>
                 </div>
-
               ))}
-
             </div>
-
           )}
-
         </section>
-
       </main>
-
     </div>
   );
 }
