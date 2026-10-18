@@ -1,0 +1,430 @@
+
+/* ===== ESTILOS GENERALES ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+.datos-alumno-pagina {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7fc;
+  color: #202b43;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.datos-alumno-pagina button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ===== PANEL LATERAL ===== */
+
+.datos-alumno-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 30px;
+  width: 220px;
+  min-width: 220px;
+  min-height: 100vh;
+  padding: 25px 12px 18px;
+  background: #303d91;
+  color: white;
+}
+
+.datos-alumno-logo {
+  margin-bottom: 0;
+  padding: 0 10px;
+  line-height: 1.5;
+}
+
+.datos-alumno-logo h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.datos-alumno-logo span {
+  display: block;
+  margin-top: 3px;
+  color: #8db4e4;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== MENÚ LATERAL ===== */
+
+.datos-alumno-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.datos-alumno-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 43px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  color: #f4f5ff;
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.datos-alumno-menu-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.datos-alumno-menu-item.activo {
+  background: #7099cc;
+  color: white;
+}
+
+.datos-alumno-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 23px;
+  min-width: 23px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ===== CERRAR SESIÓN ===== */
+
+.datos-alumno-cerrar-sesion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  text-align: left;
+}
+
+.datos-alumno-cerrar-sesion:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+
+.datos-alumno-contenido {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 20px 20px;
+}
+
+/* ===== ENCABEZADO ===== */
+
+.datos-alumno-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  min-height: 83px;
+  padding: 15px 5px;
+  border-bottom: 1px solid #e2e6ef;
+  background: white;
+}
+
+.datos-alumno-header h1 {
+  margin: 0;
+  color: #303d91;
+  font-size: 24px;
+}
+
+.datos-alumno-header > div:first-child p {
+  margin: 7px 0 0;
+  color: #7c8496;
+  font-size: 12px;
+}
+
+.datos-alumno-fecha {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #535d71;
+}
+
+.datos-alumno-fecha > span {
+  font-size: 20px;
+}
+
+.datos-alumno-fecha p {
+  margin: 0;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.datos-alumno-login {
+  margin-left: 10px;
+  padding: 10px 12px;
+  border: 1px solid #dfe5f0;
+  border-radius: 8px;
+  background: white;
+  color: #304795;
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+.datos-alumno-login:hover {
+  background: #f0f4ff;
+}
+
+/* ===== TARJETA PRINCIPAL ===== */
+
+.datos-alumno-tarjeta {
+  display: flex;
+  flex: 1;
+  min-height: 480px;
+  margin-top: 22px;
+  border: 1px solid #e5e9f1;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
+}
+
+/* ===== ESTADO SIN ALUMNOS ===== */
+
+.datos-alumno-vacio {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 20px;
+  text-align: center;
+}
+
+.datos-alumno-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: #edf2ff;
+  color: #3956a6;
+  font-size: 40px;
+}
+
+.datos-alumno-vacio h2 {
+  margin: 0 0 12px;
+  color: #25314a;
+  font-size: 21px;
+}
+
+.datos-alumno-vacio p {
+  max-width: 450px;
+  margin: 0 0 24px;
+  color: #7b8496;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ===== BOTÓN AGREGAR ALUMNO ===== */
+
+.datos-alumno-agregar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #1558cb;
+  color: white;
+  font-size: 13px !important;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.datos-alumno-agregar:hover {
+  background: #1047a6;
+}
+
+.datos-alumno-agregar span {
+  font-size: 19px;
+}
+
+/* ===== AVISO INFORMATIVO ===== */
+
+.datos-alumno-aviso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 13px 15px;
+  border: 1px solid #dfe7fb;
+  border-radius: 8px;
+  background: #edf4ff;
+  color: #304795;
+}
+
+.datos-alumno-aviso > span {
+  flex-shrink: 0;
+  font-size: 17px;
+}
+
+.datos-alumno-aviso p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ===== PIE DE PÁGINA ===== */
+
+.datos-alumno-footer {
+  padding: 20px 5px 0;
+  color: #8b93a3;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* ===== TABLETS ===== */
+
+@media (max-width: 900px) {
+  .datos-alumno-sidebar {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  .datos-alumno-header {
+    align-items: flex-start;
+  }
+
+  .datos-alumno-fecha {
+    flex-wrap: wrap;
+  }
+}
+
+/* ===== CELULARES ===== */
+
+@media (max-width: 600px) {
+  .datos-alumno-sidebar {
+    width: 165px;
+    min-width: 165px;
+    padding: 20px 8px;
+    gap: 24px;
+  }
+
+  .datos-alumno-logo {
+    padding: 0 7px;
+  }
+
+  .datos-alumno-logo h2 {
+    font-size: 12px;
+  }
+
+  .datos-alumno-logo span {
+    font-size: 12px;
+  }
+
+  .datos-alumno-menu-item {
+    gap: 7px;
+    padding: 9px 7px;
+    font-size: 12px;
+  }
+
+  .datos-alumno-icono {
+    width: 20px;
+    min-width: 20px;
+    font-size: 19px;
+  }
+
+  .datos-alumno-contenido {
+    padding: 0 12px 15px;
+  }
+
+  .datos-alumno-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .datos-alumno-fecha {
+    gap: 7px;
+  }
+
+  .datos-alumno-login {
+    margin-left: 0;
+  }
+
+  .datos-alumno-tarjeta {
+    min-height: 400px;
+  }
+
+  .datos-alumno-vacio h2 {
+    font-size: 18px;
+  }
+
+  .datos-alumno-vacio p {
+    font-size: 13px;
+  }
+}
+
+/* ===== CELULARES PEQUEÑOS ===== */
+
+@media (max-width: 420px) {
+  .datos-alumno-sidebar {
+    width: 64px;
+    min-width: 64px;
+    padding: 15px 6px;
+  }
+
+  .datos-alumno-logo h2,
+  .datos-alumno-logo span,
+  .datos-alumno-menu-item > span:last-child,
+  .datos-alumno-cerrar-sesion > span:last-child {
+    display: none;
+  }
+
+  .datos-alumno-menu-item {
+    justify-content: center;
+    padding: 11px 4px;
+  }
+
+  .datos-alumno-cerrar-sesion {
+    justify-content: center;
+    padding: 10px 4px;
+  }
+
+  .datos-alumno-header h1 {
+    font-size: 20px;
+  }
+
+  .datos-alumno-fecha {
+    flex-wrap: wrap;
+  }
+
+  .datos-alumno-vacio {
+    padding: 25px 12px;
+  }
+
+  .datos-alumno-vacio h2 {
+    font-size: 16px;
+  }
+
+  .datos-alumno-vacio p {
+    font-size: 12px;
+  }
+}
