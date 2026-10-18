@@ -12,7 +12,10 @@ import NotificacionPreceptor from "./paginas/notificacionpreceptor.jsx";
 import HistorialPreceptor from "./paginas/historialpreceptor.jsx";
 import InicioTutor from "./paginas/iniciotutor.jsx";
 import NotificacionesRecibidasTutor from "./paginas/notificacionestutor.jsx";
+import DatosAlumno from "./paginas/datosalumno.jsx";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 
 function App() {
   return (
@@ -37,6 +40,7 @@ function App() {
           path="/notificacionesrecibidas"
           element={<NotificacionesRecibidasTutor />}
         />
+        <Route path="/datosalumno" element={<DatosAlumno />} />
       </Routes>
     </BrowserRouter>
   );
