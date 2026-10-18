@@ -1,3 +1,4 @@
+
 * {
   margin: 0;
   padding: 0;
@@ -15,7 +16,6 @@ body {
   justify-content: center;
   align-items: center;
 
- 
   background-image:
     linear-gradient(
       rgba(255, 255, 255, 0.75),
@@ -63,8 +63,7 @@ body {
   margin-bottom: 15px;
 }
 
-.campo label,
-.roles > label:first-child {
+.campo label {
   display: block;
   font-size: 12px;
   font-weight: 600;
@@ -100,45 +99,6 @@ body {
 
 .input-container input::placeholder {
   color: #c5c5c5;
-}
-
-/* ROLES */
-
-.roles {
-  margin-top: 10px;
-  margin-bottom: 18px;
-}
-
-.radio-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 6px;
-  cursor: pointer;
-}
-
-.radio-option input {
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #6e9bc5;
-  border-radius: 50%;
-  position: relative;
-  cursor: pointer;
-}
-
-.radio-option input:checked::after {
-  content: "";
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #6e9bc5;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 /* BOTON */
@@ -188,7 +148,7 @@ body {
   color: #999;
 }
 
-/* RECUPERAR */
+/* RECUPERAR CONTRASEÑA */
 
 .recuperar {
   display: block;
@@ -200,6 +160,25 @@ body {
 }
 
 .recuperar:hover {
+  text-decoration: underline;
+}
+
+/* REGISTRO */
+
+.registro {
+  margin-top: 18px;
+  text-align: center;
+  color: #555;
+  font-size: 12px;
+}
+
+.registro a {
+  color: #25206d;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.registro a:hover {
   text-decoration: underline;
 }
 
