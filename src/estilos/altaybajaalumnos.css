@@ -1,0 +1,141 @@
+:root {
+  --azul-sidebar: #2c3a96;
+  --azul-activo: #6f98c9;
+  --azul: #1b3fb3;
+  --fondo: #f5f6fa;
+  --borde: #e5e8f0;
+  --texto: #1f2430;
+  --suave: #6b7280;
+  --rojo: #d93a3a;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fondo); color: var(--texto); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { text-decoration: none; color: inherit; }
+
+/* ---------- Layout ---------- */
+.panel { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  background: var(--azul-sidebar); color: #fff;
+  padding: 36px 0 28px; display: flex; flex-direction: column; gap: 36px;
+}
+.logo { padding: 0 48px; }
+.logo h2 { margin: 0; font-size: 19px; line-height: 1.4; }
+.logo span { color: #9fb0e8; font-weight: 700; font-size: 19px; }
+
+.menu { display: flex; flex-direction: column; gap: 10px; }
+.menu-item { display: flex; align-items: center; gap: 14px; font-size: 24px; padding: 14px 24px; color: #fff; }
+.menu-icon { width: 30px; text-align: center; }
+.menu-item.activo { background: var(--azul-activo); border-radius: 0 40px 40px 0; margin-right: 20px; }
+.cerrar-sesion { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 0 24px; font-size: 24px; }
+
+/* ---------- Contenido ---------- */
+.contenido { padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+.encabezado-alumnos { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.encabezado h1 { margin: 0; font-size: 22px; }
+.encabezado p { margin: 2px 0 0; font-size: 11px; color: var(--suave); }
+.encabezado-derecha { display: flex; align-items: center; gap: 32px; }
+.fecha, .usuario div { display: flex; flex-direction: column; line-height: 1.3; }
+.fecha strong, .usuario strong { font-size: 12px; font-weight: 600; }
+.fecha span, .usuario span:not(.usuario-avatar) { font-size: 11px; color: var(--suave); }
+.usuario { display: flex; align-items: center; gap: 10px; }
+.usuario-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--azul); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.subtitulo { margin: 0; font-size: 12px; color: var(--suave); }
+
+/* ---------- Pestañas ---------- */
+.pestanas { display: flex; gap: 8px; }
+.pestana { height: 38px; padding: 0 20px; border-radius: 8px; background: #fff; border: 1px solid var(--borde); font-size: 13px; font-weight: 600; color: var(--suave); }
+.pestana.activa { background: var(--azul); border-color: var(--azul); color: #fff; }
+
+/* ---------- Tarjetas ---------- */
+.tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 10px; }
+.icono-card { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+.icono-card.azul { background: #eef2fb; color: var(--azul); }
+
+.titulo-seccion { border-bottom: 1px solid var(--borde); padding-bottom: 10px; }
+.titulo-seccion h2 { margin: 0; font-size: 15px; color: var(--azul); }
+.titulo-seccion.separado { margin-top: 6px; }
+
+/* ---------- Formulario ---------- */
+.zona-formulario { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+.formulario { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+.fila { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo > label { font-size: 12px; font-weight: 600; }
+.entrada { width: 100%; background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 0 12px; height: 40px; font-size: 13px; }
+.entrada:focus { outline: 2px solid #b9c8f0; border-color: var(--azul); }
+
+.botones { display: flex; justify-content: center; gap: 14px; padding-top: 4px; }
+.boton-primario, .boton-secundario, .boton-peligro { height: 38px; padding: 0 22px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.boton-primario { background: var(--azul); color: #fff; border: 0; }
+.boton-primario:hover:not(:disabled) { background: #15338f; }
+.boton-primario:disabled, .boton-peligro:disabled { opacity: 0.5; cursor: not-allowed; }
+.boton-secundario { background: #fff; border: 1px solid var(--borde); }
+.boton-secundario:hover { background: #f3f5fa; }
+.boton-peligro { background: var(--rojo); color: #fff; border: 0; }
+.boton-peligro:hover:not(:disabled) { background: #b92d2d; }
+
+/* ---------- Resumen ---------- */
+.resumen { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+.resumen-item { display: flex; align-items: center; gap: 12px; }
+.resumen-item div:not(.icono-card) { display: flex; flex-direction: column; gap: 3px; }
+.resumen-item span { font-size: 11px; }
+.resumen-item strong { font-size: 12px; }
+.estado-etiqueta { align-self: flex-start; font-size: 10px !important; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+.estado-etiqueta.listo { background: #dff5e7; color: #1b7a45; }
+.estado-etiqueta.incompleto { background: #fdeccf; color: #9a6208; }
+.aviso { display: flex; gap: 10px; background: #e8eefc; border-radius: 8px; padding: 14px; font-size: 11px; color: #1b2f7a; }
+.aviso p { margin: 0; line-height: 1.5; }
+.aviso-icono { width: 14px; height: 14px; border-radius: 50%; background: var(--azul); color: #fff; font-size: 9px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; margin-top: 2px; }
+
+/* ---------- Baja: tabla ---------- */
+.tabla-alumnos { padding: 14px; }
+.filtros { padding-bottom: 12px; }
+.buscador { width: 100%; max-width: 360px; height: 40px; background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 0 14px; font-size: 13px; }
+.tabla-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+thead th { background: #f3f5fa; font-size: 11px; font-weight: 500; color: var(--suave); text-align: left; padding: 12px 16px; }
+thead th:first-child { border-radius: 8px 0 0 8px; }
+thead th:last-child { border-radius: 0 8px 8px 0; }
+th.centrado { text-align: center; }
+tbody td { padding: 10px 16px; border-bottom: 1px solid var(--borde); font-size: 12px; }
+tbody tr:last-child td { border-bottom: 0; }
+td.sin-datos { text-align: center; color: var(--suave); padding: 28px 0; }
+
+.alumno { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #9aa7d1; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.etiqueta-curso { background: #e2ecfa; color: #2a4a8a; font-weight: 600; font-size: 11px; padding: 4px 12px; border-radius: 999px; }
+.acciones-fila { display: flex; justify-content: center; }
+.boton-baja { background: #fff; border: 1px solid #f0c4c4; color: var(--rojo); border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 600; }
+.boton-baja:hover { background: #fdecec; }
+
+/* ---------- Modal de baja ---------- */
+.fondo-modal { position: fixed; inset: 0; background: rgba(20, 25, 50, 0.45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.modal { background: #fff; border-radius: 12px; padding: 26px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 14px; text-align: center; }
+.modal h2 { margin: 0; font-size: 18px; }
+.modal p { margin: 0; font-size: 13px; color: var(--suave); line-height: 1.5; }
+.modal .campo { text-align: left; }
+.modal-icono { width: 46px; height: 46px; border-radius: 50%; background: #fbdcdc; color: var(--rojo); display: grid; place-items: center; font-weight: 700; font-size: 20px; margin: 0 auto; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .panel { grid-template-columns: 230px 1fr; }
+  .logo { padding: 0 24px; }
+  .menu-item, .cerrar-sesion { font-size: 19px; }
+  .zona-formulario { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .panel { grid-template-columns: 1fr; }
+  .sidebar { padding: 16px; gap: 14px; }
+  .menu { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .menu-item, .menu-item.activo { font-size: 15px; padding: 8px 12px; border-radius: 999px; margin-right: 0; }
+  .cerrar-sesion { margin-top: 0; padding: 0; font-size: 15px; }
+  .fila { grid-template-columns: 1fr; }
+}
