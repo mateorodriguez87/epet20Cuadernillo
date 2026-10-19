@@ -15,7 +15,7 @@ import NotificacionesRecibidasTutor from "./paginas/notificacionestutor.jsx";
 import DatosAlumno from "./paginas/datosalumno.jsx";
 import Registro from "./paginas/registro.jsx";
 import AltaBajaAlumnos from "./paginas/altaybajaalumnos.jsx";
-
+import AltaBajaPreceptores from "./paginas/altaybajapreceptores.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 
@@ -45,6 +45,7 @@ function App() {
         <Route path="/datosalumno" element={<DatosAlumno />} />
         <Route path="/registro" element={<Registro />} />
                 <Route path="/altabajaalumnos" element={<AltaBajaAlumnos />} />
+                 <Route path="/altabajapreceptores" element={<AltaBajaPreceptores />} />
 
       </Routes>
     </BrowserRouter>
