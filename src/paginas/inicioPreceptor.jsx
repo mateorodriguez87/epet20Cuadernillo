@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "../estilos/inicioPreceptor.css";
 
 function InicioPreceptor() {
@@ -46,30 +46,56 @@ function InicioPreceptor() {
         </div>
 
         <nav className="menu">
-          <Link to="/preceptor" className="menu-item activo">
+          <NavLink
+            to="/preceptor"
+            end
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/cursospreceptor" className="menu-item">
+          <NavLink
+            to="/cursospreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">▤</span>
             <span>Cursos</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/alumnospreeceptor" className="menu-item">
+          <NavLink
+            to="/alumnospreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">♙</span>
             <span>Alumnos</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/notificacionpreceptor" className="menu-item">
+          <NavLink
+            to="/notificacionpreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">♧</span>
             <span>Notificaciones</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/historialpreceptor" className="menu-item">
+          <NavLink
+            to="/historialpreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">▤</span>
             <span>Historial</span>
-          </Link>
+          </NavLink>
         </nav>
 
         <button
@@ -108,9 +134,7 @@ function InicioPreceptor() {
 
             <div className="info-card">
               <span>Cursos a cargo</span>
-              <strong>
-                {datos.cursos.length || "—"}
-              </strong>
+              <strong>{datos.cursos.length || "—"}</strong>
             </div>
 
             <Link to="/cursospreceptor" className="enlace-estadistica">
@@ -123,12 +147,10 @@ function InicioPreceptor() {
 
             <div className="info-card">
               <span>Alumnos a cargo</span>
-              <strong>
-                {datos.alumnos.length || "—"}
-              </strong>
+              <strong>{datos.alumnos.length || "—"}</strong>
             </div>
 
-            <Link to="/alumnospreeceptor" className="enlace-estadistica">
+            <Link to="/alumnospreceptor" className="enlace-estadistica">
               Ver alumnos <span>›</span>
             </Link>
           </article>
@@ -156,9 +178,7 @@ function InicioPreceptor() {
 
             <div className="info-card">
               <span>Comunicaciones enviadas (este mes)</span>
-              <strong>
-                {datos.comunicaciones.length || "—"}
-              </strong>
+              <strong>{datos.comunicaciones.length || "—"}</strong>
             </div>
 
             <Link
@@ -210,10 +230,7 @@ function InicioPreceptor() {
               <h2>Acciones rápidas</h2>
             </div>
 
-            <Link
-              to="/notificacionpreceptor"
-              className="accion"
-            >
+            <Link to="/notificacionpreceptor" className="accion">
               <div className="accion-icon azul">➤</div>
               <div className="accion-texto">
                 <strong>Nueva comunicación</strong>
@@ -222,10 +239,7 @@ function InicioPreceptor() {
               <b>›</b>
             </Link>
 
-            <Link
-              to="/alumnospreeceptor"
-              className="accion"
-            >
+            <Link to="/alumnospreceptor" className="accion">
               <div className="accion-icon verde">👥</div>
               <div className="accion-texto">
                 <strong>Gestionar alumnos</strong>
@@ -234,10 +248,7 @@ function InicioPreceptor() {
               <b>›</b>
             </Link>
 
-            <Link
-              to="/historialpreceptor"
-              className="accion"
-            >
+            <Link to="/historialpreceptor" className="accion">
               <div className="accion-icon violeta">▤</div>
               <div className="accion-texto">
                 <strong>Ver historial</strong>
@@ -263,7 +274,10 @@ function InicioPreceptor() {
                 Cuando se asignen cursos al preceptor,
                 aparecerán en esta sección.
               </p>
-              <Link to="/cursospreceptor" className="boton-agregar">
+              <Link
+                to="/cursospreceptor"
+                className="boton-agregar"
+              >
                 Consultar cursos
               </Link>
             </div>

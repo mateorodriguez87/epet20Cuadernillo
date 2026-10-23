@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import "../estilos/cursospreceptor.css";
 
 function CursosPreceptor() {
@@ -63,30 +64,57 @@ function CursosPreceptor() {
         </div>
 
         <nav className="cursos-menu">
-          <a href="/preceptor" className="cursos-menu-item">
+          <NavLink
+            to="/preceptor"
+            end
+            className={({ isActive }) =>
+              `cursos-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="cursos-icono">⌂</span>
             <span>Inicio</span>
-          </a>
+          </NavLink>
 
-          <a href="/cursospreceptor" className="cursos-menu-item activo">
+          <NavLink
+            to="/cursospreceptor"
+            end
+            className={({ isActive }) =>
+              `cursos-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="cursos-icono">▤</span>
             <span>Cursos</span>
-          </a>
+          </NavLink>
 
-          <a href="/alumnospreeceptor" className="cursos-menu-item">
+          <NavLink
+            to="/alumnospreceptor"
+            className={({ isActive }) =>
+              `cursos-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="cursos-icono">♙</span>
             <span>Alumnos</span>
-          </a>
+          </NavLink>
 
-          <a href="/notificacionpreceptor" className="cursos-menu-item">
+          <NavLink
+            to="/notificacionpreceptor"
+            className={({ isActive }) =>
+              `cursos-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="cursos-icono">♧</span>
             <span>Notificaciones</span>
-          </a>
+          </NavLink>
 
-          <a href="/historialpreceptor" className="cursos-menu-item">
+          <NavLink
+            to="/historialpreceptor"
+            className={({ isActive }) =>
+              `cursos-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="cursos-icono">▤</span>
             <span>Historial</span>
-          </a>
+          </NavLink>
         </nav>
 
         <button
