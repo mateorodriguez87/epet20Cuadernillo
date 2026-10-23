@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { NavLink, Link } from "react-router-dom";
 import "../estilos/datosalumno.css";
 
 function DatosAlumno() {
@@ -20,10 +21,6 @@ function DatosAlumno() {
     year: "numeric",
   });
 
-  function iniciarSesion() {
-    window.location.href = "/login";
-  }
-
   function agregarAlumno() {
     alert("Próximamente podrás cargar los datos del alumno.");
   }
@@ -39,36 +36,42 @@ function DatosAlumno() {
         </div>
 
         <nav className="datos-alumno-menu">
-          <a href="/bienvenida" className="datos-alumno-menu-item">
+          <NavLink
+            to="/iniciotutor"
+            end
+            className={({ isActive }) =>
+              `datos-alumno-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="datos-alumno-icono">⌂</span>
             <span>Inicio</span>
-          </a>
+          </NavLink>
 
-          <a
-            href="/notificacionesrecibidas"
-            className="datos-alumno-menu-item"
+          <NavLink
+            to="/notificacionesrecibidas"
+            className={({ isActive }) =>
+              `datos-alumno-menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="datos-alumno-icono">♧</span>
             <span>Notificaciones recibidas</span>
-          </a>
+          </NavLink>
 
-          <a
-            href="/datosalumno"
-            className="datos-alumno-menu-item activo"
+          <NavLink
+            to="/datosalumno"
+            className={({ isActive }) =>
+              `datos-alumno-menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="datos-alumno-icono">▤</span>
             <span>Datos del alumno</span>
-          </a>
+          </NavLink>
         </nav>
 
-        <button
-          type="button"
-          className="datos-alumno-cerrar-sesion"
-          onClick={iniciarSesion}
-        >
+        <Link to="/login" className="datos-alumno-cerrar-sesion">
           <span className="datos-alumno-icono">⇥</span>
           <span>Cerrar sesión</span>
-        </button>
+        </Link>
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
@@ -86,7 +89,9 @@ function DatosAlumno() {
             <button
               type="button"
               className="datos-alumno-login"
-              onClick={iniciarSesion}
+              onClick={() => {
+                window.location.href = "/login";
+              }}
             >
               Iniciar sesión ↗
             </button>

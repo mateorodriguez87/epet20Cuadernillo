@@ -1,8 +1,9 @@
+
 import { useState } from "react";
+import { NavLink, Link } from "react-router-dom";
 import "../estilos/iniciotutor.css";
 
 function InicioTutor() {
-
   const datos = {
     nombre: "",
     fecha: "",
@@ -24,19 +25,24 @@ function InicioTutor() {
     aviso: { icono: "♧", color: "verde" }
   };
 
-  const sinLeer = datos.notificaciones.filter((n) => !n.leida).length;
+  const sinLeer = datos.notificaciones.filter(
+    (n) => !n.leida
+  ).length;
+
   const ultimas = datos.notificaciones.slice(0, 4);
 
   const iniciales = (nombre = "") =>
-    nombre.split(" ").filter(Boolean).map((p) => p[0]).join("").slice(0, 2);
+    nombre
+      .split(" ")
+      .filter(Boolean)
+      .map((p) => p[0])
+      .join("")
+      .slice(0, 2);
 
   return (
     <div className="panel">
 
-      {/* =========================
-          BARRA LATERAL
-      ========================= */}
-
+      {/* BARRA LATERAL */}
       <aside className="sidebar">
 
         <div className="logo">
@@ -46,78 +52,81 @@ function InicioTutor() {
         </div>
 
         <nav className="menu">
-
-          <a href="#" className="menu-item activo">
+          <NavLink
+            to="/iniciotutor"
+            end
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
-          </a>
+          </NavLink>
 
-          <a href="#" className="menu-item">
+          <NavLink
+            to="/notificacionesrecibidas"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">♧</span>
             <span>Notificaciones recibidas</span>
-          </a>
+          </NavLink>
 
-          <a href="#" className="menu-item">
+          <NavLink
+            to="/datosalumno"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">▤</span>
             <span>Datos del alumno</span>
-          </a>
-
+          </NavLink>
         </nav>
 
-        <a href="#" className="cerrar-sesion">
+        <Link to="/login" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
           <span>Cerrar Sesion</span>
-        </a>
+        </Link>
 
       </aside>
 
-
-      {/* =========================
-          CONTENIDO
-      ========================= */}
-
+      {/* CONTENIDO */}
       <main className="contenido">
 
         {/* ENCABEZADO */}
-
         <header className="encabezado">
-
           <h1>
             Bienvenida{datos.nombre ? `, ${datos.nombre}` : ""}
           </h1>
 
-          <p>
-            {datos.fecha || ""}
-          </p>
-
+          <p>{datos.fecha || ""}</p>
         </header>
 
-
-        {/* =========================
-            TARJETA DEL ALUMNO
-        ========================= */}
-
+        {/* TARJETA DEL ALUMNO */}
         <section className="tarjeta-alumno">
 
           <div className="alumno-info">
 
             <div className="foto-alumno">
-              {datos.alumno.foto
-                ? <img src={datos.alumno.foto} alt={datos.alumno.nombre} />
-                : iniciales(datos.alumno.nombre)}
+              {datos.alumno.foto ? (
+                <img
+                  src={datos.alumno.foto}
+                  alt={datos.alumno.nombre}
+                />
+              ) : (
+                iniciales(datos.alumno.nombre)
+              )}
             </div>
 
             <div className="alumno-datos">
               <span>Alumno</span>
               <strong>{datos.alumno.nombre || "—"}</strong>
               <p>{datos.alumno.curso}</p>
-              <p>
-                Legajo: {datos.alumno.legajo || "—"}
-              </p>
+              <p>Legajo: {datos.alumno.legajo || "—"}</p>
             </div>
 
           </div>
-
 
           <div className="tarjeta sin-leer">
 
@@ -132,65 +141,52 @@ function InicioTutor() {
                 {datos.notificaciones.length > 0 ? sinLeer : "—"}
               </strong>
 
-              <a href="#">
+              <Link to="/notificacionesrecibidas">
                 ver todas
                 <span> ›</span>
-              </a>
+              </Link>
             </div>
 
           </div>
 
         </section>
 
-
-        {/* =========================
-            ZONA CENTRAL
-        ========================= */}
-
+        {/* ZONA CENTRAL */}
         <section className="zona-central">
 
-
           {/* ÚLTIMAS NOTIFICACIONES */}
-
           <div className="tarjeta notificaciones">
 
             <div className="titulo-seccion">
               <h2>Últimas notificaciones</h2>
 
-              <a href="#">
+              <Link to="/notificacionesrecibidas">
                 Ver todas
-              </a>
+              </Link>
             </div>
 
-
             {ultimas.length === 0 ? (
-
               <div className="sin-datos">
                 No hay notificaciones
               </div>
-
             ) : (
-
               ultimas.map((notificacion, index) => {
-
-                const tipo = tipos[notificacion.tipo] || tipos.aviso;
+                const tipo =
+                  tipos[notificacion.tipo] || tipos.aviso;
 
                 return (
-
-                  <div className="notificacion" key={notificacion.id || index}>
-
+                  <div
+                    className="notificacion"
+                    key={notificacion.id || index}
+                  >
                     <div className={`notificacion-icon ${tipo.color}`}>
                       {tipo.icono}
                     </div>
 
                     <div className="notificacion-texto">
-                      <strong>
-                        {notificacion.titulo}
-                      </strong>
+                      <strong>{notificacion.titulo}</strong>
 
-                      <span>
-                        {notificacion.descripcion}
-                      </span>
+                      <span>{notificacion.descripcion}</span>
                     </div>
 
                     <div className="notificacion-fecha">
@@ -204,33 +200,26 @@ function InicioTutor() {
                     <span className="flecha">
                       {!notificacion.leida ? "›" : ""}
                     </span>
-
                   </div>
-
                 );
-
               })
-
             )}
 
-            <a
-              href="#"
+            <Link
+              to="/notificacionesrecibidas"
               className="ver-notificaciones"
             >
               Ver todas las notificaciones
-            </a>
+            </Link>
 
           </div>
 
-
           {/* DATOS DEL ALUMNO */}
-
           <div className="tarjeta datos-alumno">
 
             <div className="titulo-seccion">
               <h2>Datos del alumno</h2>
             </div>
-
 
             <div className="dato">
 
@@ -245,7 +234,6 @@ function InicioTutor() {
 
             </div>
 
-
             <div className="dato">
 
               <div className="icono-card azul">
@@ -258,7 +246,6 @@ function InicioTutor() {
               </div>
 
             </div>
-
 
             <div className="dato">
 
@@ -273,7 +260,6 @@ function InicioTutor() {
 
             </div>
 
-
             <div className="dato">
 
               <div className="icono-card azul">
@@ -287,24 +273,16 @@ function InicioTutor() {
 
             </div>
 
-
-            <a
-              href="#"
-              className="ver-mas"
-            >
+            <Link to="/datosalumno" className="ver-mas">
               Ver más información
               <span>›</span>
-            </a>
+            </Link>
 
           </div>
 
         </section>
 
-
-        {/* =========================
-            MENSAJE FINAL
-        ========================= */}
-
+        {/* MENSAJE FINAL */}
         <section className="mensaje-final">
 
           <div className="check-verde">
@@ -329,7 +307,6 @@ function InicioTutor() {
         </section>
 
       </main>
-
     </div>
   );
 }

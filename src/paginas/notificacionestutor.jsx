@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import "../estilos/notificacionestutor.css";
 
 function NotificacionesRecibidasTutor() {
@@ -34,36 +34,42 @@ function NotificacionesRecibidasTutor() {
         </div>
 
         <nav className="recibidas-menu">
-          <Link to="/bienvenida" className="recibidas-menu-item">
+          <NavLink
+            to="/iniciotutor"
+            end
+            className={({ isActive }) =>
+              `recibidas-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="recibidas-icono">⌂</span>
             <span>Inicio</span>
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/notificacionesrecibidas"
-            className="recibidas-menu-item activo"
+            className={({ isActive }) =>
+              `recibidas-menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="recibidas-icono">♧</span>
             <span>Notificaciones recibidas</span>
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/datosalumno"
-            className="recibidas-menu-item"
+            className={({ isActive }) =>
+              `recibidas-menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="recibidas-icono">▤</span>
             <span>Datos del alumno</span>
-          </Link>
+          </NavLink>
         </nav>
 
-        <button
-          type="button"
-          className="recibidas-cerrar"
-          onClick={() => alert("Próximamente podrás cerrar sesión.")}
-        >
+        <Link to="/login" className="recibidas-cerrar">
           <span className="recibidas-icono">⇥</span>
           <span>Cerrar sesión</span>
-        </button>
+        </Link>
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
