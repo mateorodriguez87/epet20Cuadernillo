@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { NavLink, Link } from "react-router-dom";
 import "../estilos/historialpreceptor.css";
 
 function HistorialPreceptor() {
@@ -25,7 +26,7 @@ function HistorialPreceptor() {
   });
 
   function iniciarSesion() {
-    alert("Próximamente podrás iniciar sesión.");
+    window.location.href = "/login";
   }
 
   function filtrarHistorial() {
@@ -34,7 +35,7 @@ function HistorialPreceptor() {
 
   return (
     <div className="historial-pagina">
-      {/* Panel lateral */}
+      {/* PANEL LATERAL */}
       <aside className="historial-sidebar">
         <div className="historial-logo">
           <h2>CUADERNO DE</h2>
@@ -43,48 +44,69 @@ function HistorialPreceptor() {
         </div>
 
         <nav className="historial-menu">
-          <a href="/" className="historial-menu-item">
+          <NavLink
+            to="/preceptor"
+            end
+            className={({ isActive }) =>
+              `historial-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="historial-icono">⌂</span>
             <span>Inicio</span>
-          </a>
+          </NavLink>
 
-          <a href="/cursos" className="historial-menu-item">
+          <NavLink
+            to="/cursospreceptor"
+            className={({ isActive }) =>
+              `historial-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="historial-icono">▤</span>
             <span>Cursos</span>
-          </a>
+          </NavLink>
 
-          <a href="/alumnos" className="historial-menu-item">
+          <NavLink
+            to="/alumnospreceptor"
+            className={({ isActive }) =>
+              `historial-menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="historial-icono">♙</span>
             <span>Alumnos</span>
-          </a>
+          </NavLink>
 
-          <a
-            href="/notificaciones"
-            className="historial-menu-item"
+          <NavLink
+            to="/notificacionpreceptor"
+            className={({ isActive }) =>
+              `historial-menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="historial-icono">♧</span>
             <span>Notificaciones</span>
-          </a>
+          </NavLink>
 
-          <a
-            href="/historial"
-            className="historial-menu-item activo"
+          <NavLink
+            to="/historialpreceptor"
+            end
+            className={({ isActive }) =>
+              `historial-menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="historial-icono">▤</span>
             <span>Historial</span>
-          </a>
+          </NavLink>
         </nav>
 
-        <button
+        <Link
+          to="/login"
           className="historial-cerrar-sesion"
-          onClick={iniciarSesion}
         >
           <span className="historial-icono">⇥</span>
-          <span>Iniciar sesión</span>
-        </button>
+          <span>Cerrar sesión</span>
+        </Link>
       </aside>
 
-      {/* Contenido principal */}
+      {/* CONTENIDO PRINCIPAL */}
       <main className="historial-contenido">
         <header className="historial-header">
           <div className="historial-titulo">
@@ -103,6 +125,7 @@ function HistorialPreceptor() {
             </div>
 
             <button
+              type="button"
               className="historial-login"
               onClick={iniciarSesion}
             >
@@ -112,7 +135,7 @@ function HistorialPreceptor() {
           </div>
         </header>
 
-        {/* Título de sección */}
+        {/* TÍTULO DE SECCIÓN */}
         <section className="historial-introduccion">
           <h2>Historial de comunicaciones</h2>
           <p>
@@ -120,7 +143,7 @@ function HistorialPreceptor() {
           </p>
         </section>
 
-        {/* Filtros */}
+        {/* FILTROS */}
         <section className="historial-filtros">
           <div className="historial-campo">
             <label htmlFor="filtro-curso">Curso</label>
@@ -175,6 +198,7 @@ function HistorialPreceptor() {
           </div>
 
           <button
+            type="button"
             className="historial-filtrar"
             onClick={filtrarHistorial}
           >
@@ -183,7 +207,7 @@ function HistorialPreceptor() {
           </button>
         </section>
 
-        {/* Tabla de historial */}
+        {/* TABLA DE HISTORIAL */}
         <section className="historial-tabla-panel">
           <div className="historial-tabla-scroll">
             <table className="historial-tabla">
@@ -199,13 +223,15 @@ function HistorialPreceptor() {
 
               <tbody>
                 <tr>
-                  <td colSpan="5">
+                  <td colSpan={5}>
                     <div className="historial-vacio">
                       <div className="historial-vacio-icono">
                         ▤
                       </div>
 
-                      <h3>No hay comunicaciones registradas</h3>
+                      <h3>
+                        No hay comunicaciones registradas
+                      </h3>
 
                       <p>
                         Cuando se realicen comunicaciones,
@@ -223,11 +249,21 @@ function HistorialPreceptor() {
             <span>Mostrando 0 comunicaciones</span>
 
             <div className="historial-paginas">
-              <button disabled>← Anterior</button>
-              <button className="pagina-actual" disabled>
+              <button type="button" disabled>
+                ← Anterior
+              </button>
+
+              <button
+                type="button"
+                className="pagina-actual"
+                disabled
+              >
                 1
               </button>
-              <button disabled>Siguiente →</button>
+
+              <button type="button" disabled>
+                Siguiente →
+              </button>
             </div>
           </div>
         </section>

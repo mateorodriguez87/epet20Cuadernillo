@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import "../estilos/notificacionpreceptor.css";
 
 function NotificacionPreceptor() {
@@ -54,15 +54,15 @@ function NotificacionPreceptor() {
 
     // Acá se conecta con la base de datos.
     // La notificación todavía no se guarda ni se envía.
+    alert("Próximamente podrás enviar la notificación.");
   }
 
   function iniciarSesion() {
-    alert("Próximamente podrás iniciar sesión.");
+    window.location.href = "/login";
   }
 
   return (
     <div className="panel">
-
       {/* PANEL LATERAL */}
       <aside className="sidebar">
         <div className="logo">
@@ -72,55 +72,72 @@ function NotificacionPreceptor() {
         </div>
 
         <nav className="menu">
-          <Link to="/preceptor" className="menu-item">
+          <NavLink
+            to="/preceptor"
+            end
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/cursospreceptor" className="menu-item">
+          <NavLink
+            to="/cursospreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">▤</span>
             <span>Cursos</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/alumnospreeceptor" className="menu-item">
+          <NavLink
+            to="/alumnospreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">♙</span>
             <span>Alumnos</span>
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/notificacionpreceptor"
-            className="menu-item activo"
+            end
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
           >
             <span className="menu-icon">♧</span>
             <span>Notificaciones</span>
-          </Link>
+          </NavLink>
 
-          <Link to="/historialpreceptor" className="menu-item">
+          <NavLink
+            to="/historialpreceptor"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "activo" : ""}`
+            }
+          >
             <span className="menu-icon">▤</span>
             <span>Historial</span>
-          </Link>
+          </NavLink>
         </nav>
 
-        <button
-          type="button"
-          className="cerrar-sesion"
-          onClick={iniciarSesion}
-        >
+        <Link to="/login" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
-          <span>Iniciar sesión</span>
-        </button>
+          <span>Cerrar sesión</span>
+        </Link>
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="contenido">
-
         {/* ENCABEZADO */}
         <header className="encabezado encabezado-alumnos">
           <div>
             <h1>Notificaciones</h1>
-            <p>
-              Inicio &gt; Notificaciones &gt; Nueva notificación
-            </p>
+            <p>Inicio &gt; Notificaciones &gt; Nueva notificación</p>
           </div>
 
           <div className="encabezado-derecha">
@@ -144,10 +161,11 @@ function NotificacionPreceptor() {
 
         {/* FORMULARIO Y RESUMEN */}
         <section className="zona-formulario">
-
           {/* FORMULARIO */}
-          <form className="tarjeta formulario" onSubmit={enviar}>
-
+          <form
+            className="tarjeta formulario"
+            onSubmit={enviar}
+          >
             <div className="campo">
               <label htmlFor="alumno">Alumno</label>
 
@@ -318,7 +336,6 @@ function NotificacionPreceptor() {
             </div>
           </aside>
         </section>
-
       </main>
     </div>
   );
