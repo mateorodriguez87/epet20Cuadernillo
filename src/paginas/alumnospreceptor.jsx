@@ -3,18 +3,49 @@ import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import "../estilos/alumnospreceptor.css";
 
-function AlumnosPreceptor() {
+//function AlumnosPreceptor() {
+ // const datos = {
+   // nombre: "",
+    //rol: "",
+    //iniciales: "",
+    //fecha: "",
+    //dia: "",
+    //cursos: [],
+    //alumnos: [],
+    //notificaciones: [],
+    //comunicaciones: [],
+  //};
+
   const datos = {
-    nombre: "",
-    rol: "",
-    iniciales: "",
-    fecha: "",
-    dia: "",
-    cursos: [],
-    alumnos: [],
-    notificaciones: [],
-    comunicaciones: [],
-  };
+  nombre: "",
+  rol: "",
+  iniciales: "",
+  fecha: "",
+  dia: "",
+  cursos: [
+    { id: 1, nombre: "3.º A" },
+  ],
+  alumnos: [
+    {
+      id: 1,
+      nombre: "Martina González",
+      dni: "45123456",
+      curso: "3.º A",
+      estado: "ok",
+      detalle: "Todas las comunicaciones confirmadas",
+    },
+    {
+      id: 2,
+      nombre: "Thiago Fernández",
+      dni: "46234567",
+      curso: "3.º A",
+      estado: "pendiente",
+      detalle: "Tiene comunicaciones sin leer",
+    },
+  ],
+  notificaciones: [],
+  comunicaciones: [],
+};
 
   // Estado de la pantalla (filtros y paginación)
   const [busqueda, setBusqueda] = useState("");
