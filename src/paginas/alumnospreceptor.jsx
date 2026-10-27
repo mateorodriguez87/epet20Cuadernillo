@@ -3,7 +3,7 @@ import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import "../estilos/alumnospreceptor.css";
 
-//function AlumnosPreceptor() {
+function AlumnosPreceptor() {
  // const datos = {
    // nombre: "",
     //rol: "",
@@ -476,6 +476,6 @@ import "../estilos/alumnospreceptor.css";
       </main>
     </div>
   );
-
+}
 
 export default AlumnosPreceptor;
