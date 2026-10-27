@@ -476,6 +476,6 @@ import "../estilos/alumnospreceptor.css";
       </main>
     </div>
   );
-}
+
 
 export default AlumnosPreceptor;
