@@ -1,16 +1,50 @@
-
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "../firebase";
 import "../estilos/cursospreceptor.css";
 
 function CursosPreceptor() {
   const [fecha, setFecha] = useState(new Date());
+  const [cursos, setCursos] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
   const [mostrarModal, setMostrarModal] = useState(false);
   const [cursoSeleccionado, setCursoSeleccionado] = useState("");
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-  // Por ahora no hay cursos cargados.
-  const cursos = [];
+  // Obtener los cursos de Firebase en tiempo real.
+  useEffect(() => {
+    const cancelar = onSnapshot(
+      collection(db, "Cursos"),
+      (snapshot) => {
+        setCursos(
+          snapshot.docs.map((documento) => ({
+            id: documento.id,
+            ...documento.data(),
+          }))
+        );
+        setCargando(false);
+        setError("");
+      },
+      (error) => {
+        console.error("Error al obtener cursos:", error);
+        setError("No se pudieron cargar los cursos. Revisá las reglas de Firebase.");
+        setCargando(false);
+      }
+    );
 
+    return () => cancelar();
+  }, []);
+
+  // Actualizar la fecha.
   useEffect(() => {
     const intervalo = setInterval(() => {
       setFecha(new Date());
@@ -26,12 +60,86 @@ function CursosPreceptor() {
     year: "numeric",
   });
 
-  function iniciarSesion() {
-    window.location.href = "/login";
+  // Mostrar el nombre completo del curso.
+  function nombreCurso(curso) {
+    return `${curso.curso || ""} ${curso.division || ""}`.trim();
   }
 
-  function agregarCursos() {
-    alert("Próximamente podrás agregar cursos.");
+  // Agregar un curso a Firebase.
+  async function agregarCursos() {
+    const nombre = prompt(
+      "Ingresá el año del curso (ejemplo: primero):"
+    );
+
+    if (!nombre || !nombre.trim()) return;
+
+    const division = prompt(
+      "Ingresá la división (ejemplo: primera):"
+    );
+
+    if (!division || !division.trim()) return;
+
+    try {
+      await addDoc(collection(db, "Cursos"), {
+        curso: nombre.trim().toLowerCase(),
+        division: division.trim().toLowerCase(),
+      });
+
+      alert("¡Curso agregado correctamente!");
+    } catch (error) {
+      console.error("Error al agregar el curso:", error);
+      alert("No se pudo agregar el curso. Revisá las reglas de Firebase.");
+    }
+  }
+
+  // Editar un curso.
+  async function editarCurso(curso) {
+    const nombre = prompt(
+      "Modificá el año del curso:",
+      curso.curso || ""
+    );
+
+    if (!nombre || !nombre.trim()) return;
+
+    const division = prompt(
+      "Modificá la división:",
+      curso.division || ""
+    );
+
+    if (!division || !division.trim()) return;
+
+    try {
+      await updateDoc(doc(db, "Cursos", curso.id), {
+        curso: nombre.trim().toLowerCase(),
+        division: division.trim().toLowerCase(),
+      });
+
+      alert("¡Curso actualizado correctamente!");
+    } catch (error) {
+      console.error("Error al editar el curso:", error);
+      alert("No se pudo editar el curso.");
+    }
+  }
+
+  // Eliminar un curso.
+  async function eliminarCurso(curso) {
+    const confirmar = window.confirm(
+      `¿Seguro que querés eliminar el curso ${nombreCurso(curso)}?`
+    );
+
+    if (!confirmar) return;
+
+    try {
+      await deleteDoc(doc(db, "Cursos", curso.id));
+      alert("¡Curso eliminado correctamente!");
+    } catch (error) {
+      console.error("Error al eliminar el curso:", error);
+      alert("No se pudo eliminar el curso.");
+    }
+  }
+
+  function iniciarSesion() {
+    window.location.href = "/login";
   }
 
   function abrirNotificacion() {
@@ -49,9 +157,14 @@ function CursosPreceptor() {
 
     if (!cursoSeleccionado) return;
 
-    alert("Próximamente podrás crear una notificación para el curso.");
+    alert("Seleccionaste el curso. Próximamente conectaremos el envío de notificaciones.");
     cerrarModal();
   }
+
+  // Filtrar cursos mediante el buscador.
+  const cursosFiltrados = cursos.filter((curso) =>
+    nombreCurso(curso).toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   return (
     <div className="cursos-pagina">
@@ -135,7 +248,6 @@ function CursosPreceptor() {
               <span className="titulo-icono">▤</span>
               Cursos
             </h1>
-
             <p>Inicio &nbsp;›&nbsp; Cursos</p>
           </div>
 
@@ -159,11 +271,12 @@ function CursosPreceptor() {
         <section className="cursos-acciones">
           <div className="cursos-buscador">
             <span>⌕</span>
-
             <input
               type="search"
               placeholder="Buscar curso..."
               aria-label="Buscar curso"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
             />
           </div>
 
@@ -188,42 +301,70 @@ function CursosPreceptor() {
           </div>
         </section>
 
-        {/* PANEL DE CURSOS */}
+        {/* LISTA DE CURSOS */}
         <section className="cursos-panel">
           <div className="cursos-panel-titulo">
             <h2>Mis cursos asignados</h2>
-
             <span className="cursos-contador">
               {cursos.length} cursos
             </span>
           </div>
 
-          {cursos.length === 0 ? (
+          {cargando ? (
+            <p>Cargando cursos...</p>
+          ) : error ? (
+            <p role="alert">{error}</p>
+          ) : cursosFiltrados.length === 0 ? (
             <div className="cursos-vacio">
               <div className="cursos-vacio-icono">▤</div>
-
-              <h2>No hay cursos asignados</h2>
-
+              <h2>
+                {busqueda
+                  ? "No se encontraron cursos"
+                  : "No hay cursos asignados"}
+              </h2>
               <p>
-                Todavía no tenés cursos asignados.
-                Agregá un curso para comenzar a organizar
-                tus alumnos y sus comunicaciones.
+                {busqueda
+                  ? "Probá con otro nombre de curso."
+                  : "Agregá un curso para comenzar a organizar tus alumnos y sus comunicaciones."}
               </p>
 
-              <button
-                type="button"
-                className="cursos-agregar cursos-agregar-centro"
-                onClick={agregarCursos}
-              >
-                <span>＋</span>
-                Agregar cursos
-              </button>
+              {!busqueda && (
+                <button
+                  type="button"
+                  className="cursos-agregar cursos-agregar-centro"
+                  onClick={agregarCursos}
+                >
+                  <span>＋</span>
+                  Agregar cursos
+                </button>
+              )}
             </div>
           ) : (
             <div className="cursos-lista">
-              {cursos.map((curso) => (
+              {cursosFiltrados.map((curso) => (
                 <div className="cursos-elemento" key={curso.id}>
-                  {curso.nombre}
+                  <div>
+                    <h3>{nombreCurso(curso)}</h3>
+                    <p>Curso asignado</p>
+                  </div>
+
+                  <div className="cursos-acciones-crud">
+                    <button
+                      type="button"
+                      onClick={() => editarCurso(curso)}
+                      aria-label={`Editar ${nombreCurso(curso)}`}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => eliminarCurso(curso)}
+                      aria-label={`Eliminar ${nombreCurso(curso)}`}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -254,8 +395,7 @@ function CursosPreceptor() {
                   Notificar al curso
                 </h2>
                 <p>
-                  Seleccioná el curso al que querés enviar
-                  una comunicación.
+                  Seleccioná el curso al que querés enviar una comunicación.
                 </p>
               </div>
 
@@ -277,18 +417,14 @@ function CursosPreceptor() {
               <select
                 id="seleccionar-curso"
                 value={cursoSeleccionado}
-                onChange={(e) =>
-                  setCursoSeleccionado(e.target.value)
-                }
+                onChange={(e) => setCursoSeleccionado(e.target.value)}
                 disabled={cursos.length === 0}
               >
-                <option value="">
-                  Seleccionar curso
-                </option>
+                <option value="">Seleccionar curso</option>
 
                 {cursos.map((curso) => (
                   <option key={curso.id} value={curso.id}>
-                    {curso.nombre}
+                    {nombreCurso(curso)}
                   </option>
                 ))}
               </select>
@@ -296,12 +432,10 @@ function CursosPreceptor() {
               {cursos.length === 0 && (
                 <div className="cursos-modal-vacio">
                   <span>ⓘ</span>
-
                   <div>
                     <strong>No hay cursos disponibles</strong>
                     <p>
-                      Primero necesitás tener un curso cargado
-                      para poder enviarle una notificación.
+                      Primero necesitás cargar un curso.
                     </p>
                   </div>
                 </div>
@@ -319,9 +453,7 @@ function CursosPreceptor() {
                 <button
                   type="submit"
                   className="cursos-modal-enviar"
-                  disabled={
-                    cursos.length === 0 || !cursoSeleccionado
-                  }
+                  disabled={!cursoSeleccionado}
                 >
                   Continuar
                 </button>
