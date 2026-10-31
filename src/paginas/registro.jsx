@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../firebase";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import "../estilos/registro.css";
 
 function Registro() {
@@ -12,6 +16,8 @@ function Registro() {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [confirmarContrasena, setConfirmarContrasena] = useState("");
+  const [rol, setRol] = useState("");
+  const [tratamiento, setTratamiento] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
@@ -24,7 +30,9 @@ function Registro() {
       !usuario.trim() ||
       !correo.trim() ||
       !contrasena ||
-      !confirmarContrasena
+      !confirmarContrasena ||
+      !rol ||
+      !tratamiento
     ) {
       setError("Completá todos los campos.");
       return;
@@ -53,16 +61,29 @@ function Registro() {
         displayName: nombre.trim(),
       });
 
-      navigate("/preceptor", { replace: true });
+      await setDoc(doc(db, "usuarios", credencial.user.uid), {
+        nombre: nombre.trim(),
+        usuario: usuario.trim(),
+        correo: correo.trim(),
+        rol: rol,
+        tratamiento: tratamiento,
+        fechaRegistro: serverTimestamp(),
+      });
+
+      if (rol === "preceptor") {
+        navigate("/preceptor", { replace: true });
+      } else {
+        navigate("/iniciotutor", { replace: true });
+      }
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("Ese correo ya está registrado.");
       } else if (error.code === "auth/invalid-email") {
         setError("Ingresá un correo electrónico válido.");
       } else if (error.code === "auth/weak-password") {
-        setError("La contraseña es demasiado débil.");
+        setError("La contraseña debe tener al menos 6 caracteres.");
       } else {
-        setError(`Error de Firebase: ${error.code || error.message}`);;
+        setError("No se pudo crear la cuenta. Error: " + error.message);
       }
     } finally {
       setCargando(false);
@@ -124,6 +145,38 @@ function Registro() {
                 onChange={(e) => setCorreo(e.target.value)}
                 autoComplete="email"
               />
+            </div>
+          </div>
+
+          <div className="registro-campo">
+            <label htmlFor="rol">Tipo de cuenta</label>
+
+            <div className="registro-input-container">
+              <select
+                id="rol"
+                value={rol}
+                onChange={(e) => setRol(e.target.value)}
+              >
+                <option value="">Seleccioná tu rol</option>
+                <option value="preceptor">Preceptor/a</option>
+                <option value="tutor">Padre/Madre/Tutor</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="registro-campo">
+            <label htmlFor="tratamiento">Tratamiento para el saludo</label>
+
+            <div className="registro-input-container">
+              <select
+                id="tratamiento"
+                value={tratamiento}
+                onChange={(e) => setTratamiento(e.target.value)}
+              >
+                <option value="">Seleccioná una opción</option>
+                <option value="Bienvenido">Bienvenido</option>
+                <option value="Bienvenida">Bienvenida</option>
+              </select>
             </div>
           </div>
 
