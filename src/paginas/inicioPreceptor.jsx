@@ -1,18 +1,31 @@
-
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 import "../estilos/inicioPreceptor.css";
 
 function InicioPreceptor() {
   const [fechaActual, setFechaActual] = useState(new Date());
+  const [nombre, setNombre] = useState("");
 
   const datos = {
-    nombre: "",
     cursos: [],
     alumnos: [],
     notificaciones: [],
     comunicaciones: [],
   };
+
+  useEffect(() => {
+    const cancelarEscucha = onAuthStateChanged(auth, (usuario) => {
+      if (usuario) {
+        setNombre(usuario.displayName || usuario.email || "");
+      } else {
+        setNombre("");
+      }
+    });
+
+    return () => cancelarEscucha();
+  }, []);
 
   useEffect(() => {
     const actualizarFecha = () => {
@@ -31,13 +44,8 @@ function InicioPreceptor() {
     year: "numeric",
   });
 
-  function iniciarSesion() {
-    window.location.href = "/login";
-  }
-
   return (
     <div className="panel">
-      {/* PANEL LATERAL */}
       <aside className="sidebar">
         <div className="logo">
           <h2>CUADERNO DE</h2>
@@ -97,37 +105,19 @@ function InicioPreceptor() {
             <span>Historial</span>
           </NavLink>
         </nav>
-
-        <button
-          type="button"
-          className="cerrar-sesion"
-          onClick={iniciarSesion}
-        >
-          <span className="logout-icon">⇥</span>
-          <span>Iniciar sesión</span>
-        </button>
       </aside>
 
-      {/* CONTENIDO PRINCIPAL */}
       <main className="contenido">
         <header className="encabezado">
           <div>
             <h1>
-              Bienvenido{datos.nombre ? `, ${datos.nombre}` : ""}
+              ¡Bienvenida{nombre ? `, ${nombre}` : ""}!
             </h1>
+
             <p className="fecha-actual">{fechaFormateada}</p>
           </div>
-
-          <button
-            type="button"
-            className="boton-login"
-            onClick={iniciarSesion}
-          >
-            Iniciar sesión <span>↗</span>
-          </button>
         </header>
 
-        {/* TARJETAS DE ESTADÍSTICAS */}
         <section className="estadisticas">
           <article className="tarjeta estadistica">
             <div className="icono-card azul">🎓</div>
@@ -190,7 +180,6 @@ function InicioPreceptor() {
           </article>
         </section>
 
-        {/* NOTIFICACIONES Y ACCIONES RÁPIDAS */}
         <section className="zona-central">
           <article className="tarjeta notificaciones">
             <div className="titulo-seccion">
@@ -206,10 +195,12 @@ function InicioPreceptor() {
               datos.notificaciones.map((notificacion) => (
                 <div className="notificacion" key={notificacion.id}>
                   <div className="notificacion-icon azul">!</div>
+
                   <div className="notificacion-texto">
                     <strong>{notificacion.titulo}</strong>
                     <span>{notificacion.descripcion}</span>
                   </div>
+
                   <span className="notificacion-fecha">
                     {notificacion.fecha}
                   </span>
@@ -232,34 +223,39 @@ function InicioPreceptor() {
 
             <Link to="/notificacionpreceptor" className="accion">
               <div className="accion-icon azul">➤</div>
+
               <div className="accion-texto">
                 <strong>Nueva comunicación</strong>
                 <span>Crear una nueva notificación</span>
               </div>
+
               <b>›</b>
             </Link>
 
             <Link to="/alumnospreceptor" className="accion">
               <div className="accion-icon verde">👥</div>
+
               <div className="accion-texto">
                 <strong>Gestionar alumnos</strong>
                 <span>Consultar los alumnos registrados</span>
               </div>
+
               <b>›</b>
             </Link>
 
             <Link to="/historialpreceptor" className="accion">
               <div className="accion-icon violeta">▤</div>
+
               <div className="accion-texto">
                 <strong>Ver historial</strong>
                 <span>Consultar comunicaciones enviadas</span>
               </div>
+
               <b>›</b>
             </Link>
           </article>
         </section>
 
-        {/* MIS CURSOS */}
         <section className="tarjeta cursos">
           <div className="titulo-seccion">
             <h2>Mis cursos</h2>
@@ -270,10 +266,12 @@ function InicioPreceptor() {
             <div className="sin-cursos">
               <span className="sin-cursos-icono">🎓</span>
               <strong>No hay cursos cargados</strong>
+
               <p>
                 Cuando se asignen cursos al preceptor,
                 aparecerán en esta sección.
               </p>
+
               <Link
                 to="/cursospreceptor"
                 className="boton-agregar"
