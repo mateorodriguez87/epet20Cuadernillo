@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+
 import {
   collection,
   onSnapshot,
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
+
 import { db } from "../firebase";
 
 import "../estilos/alumnospreceptor.css";
 import "../estilos/modalalumnospreceptor.css";
 
 function AlumnosPreceptor() {
+  const navigate = useNavigate();
+
   // Datos obtenidos de Firebase
   const [alumnos, setAlumnos] = useState([]);
   const [cursos, setCursos] = useState([]);
@@ -123,6 +127,7 @@ function AlumnosPreceptor() {
       dni: "",
       curso: "",
     });
+
     setMensaje("");
     setTipoMensaje("");
     setMostrarModal(true);
@@ -156,6 +161,7 @@ function AlumnosPreceptor() {
 
     const nombre = formulario.nombre.trim();
     const dni = formulario.dni.trim();
+
     const cursoSeleccionado = cursos.find(
       (c) => c.id === formulario.curso
     );
@@ -198,11 +204,13 @@ function AlumnosPreceptor() {
 
       setMensaje("");
       setMostrarModal(false);
+
       setFormulario({
         nombre: "",
         dni: "",
         curso: "",
       });
+
       setPagina(1);
     } catch (error) {
       console.error("Error al registrar alumno:", error);
@@ -210,6 +218,7 @@ function AlumnosPreceptor() {
       setMensaje(
         "No se pudo registrar el alumno. Revisá la conexión con Firebase."
       );
+
       setTipoMensaje("error");
     } finally {
       setGuardando(false);
@@ -253,9 +262,7 @@ function AlumnosPreceptor() {
     inicio + porPagina
   );
 
-  const desde =
-    alumnosFiltrados.length === 0 ? 0 : inicio + 1;
-
+  const desde = alumnosFiltrados.length === 0 ? 0 : inicio + 1;
   const hasta = inicio + alumnosPagina.length;
 
   const numeros = [];
@@ -348,7 +355,7 @@ function AlumnosPreceptor() {
           </div>
         </header>
 
-        {/* FILTROS */}
+        {/* FILTROS Y BOTONES */}
         <section className="filtros">
           <input
             type="search"
@@ -399,13 +406,20 @@ function AlumnosPreceptor() {
           >
             + Agregar alumno
           </button>
+
+          <button
+            type="button"
+            className="boton-dar-baja"
+            onClick={() => navigate("/altabajaalumnos")}
+          >
+            − Dar de baja alumno
+          </button>
         </section>
 
         {/* TARJETAS SUPERIORES */}
         <section className="estadisticas">
           <div className="tarjeta estadistica">
             <div className="icono-card azul">👥</div>
-
             <div className="info-card">
               <span>Total alumnos</span>
               <strong>{alumnos.length}</strong>
@@ -414,7 +428,6 @@ function AlumnosPreceptor() {
 
           <div className="tarjeta estadistica">
             <div className="icono-card verde">▤</div>
-
             <div className="info-card">
               <span>Comunicaciones enviadas (mes)</span>
               <strong>—</strong>
@@ -423,7 +436,6 @@ function AlumnosPreceptor() {
 
           <div className="tarjeta estadistica">
             <div className="icono-card naranja">✉</div>
-
             <div className="info-card">
               <span>Pendientes de leer</span>
               <strong>—</strong>
@@ -432,7 +444,6 @@ function AlumnosPreceptor() {
 
           <div className="tarjeta estadistica">
             <div className="icono-card violeta">✔</div>
-
             <div className="info-card">
               <span>Confirmadas por tutores</span>
               <strong>—</strong>
@@ -498,79 +509,33 @@ function AlumnosPreceptor() {
                           </div>
                         </td>
 
-                        <td>{alumno.dni || "—"}</td>
+                        <td>{alumno.dni}</td>
 
                         <td>
                           <span className="etiqueta-curso">
-                            {alumno.curso || "Sin curso"}
+                            {alumno.curso}
                           </span>
                         </td>
 
                         <td>
-                          <div
-                            className={`estado ${
-                              alumno.estado || "ok"
-                            }`}
+                          <span
+                            className={`estado estado-${alumno.estado || "ok"}`}
+                            title={estadoActual.detalle}
                           >
-                            <span className="estado-icono">
-                              {estadoActual.icono}
-                            </span>
-
-                            <div>
-                              <strong>
-                                {estadoActual.titulo}
-                              </strong>
-
-                              <span>
-                                {alumno.detalle ||
-                                  estadoActual.detalle}
-                              </span>
-                            </div>
-                          </div>
+                            {estadoActual.icono} {estadoActual.titulo}
+                          </span>
                         </td>
 
                         <td>
                           <div className="acciones-fila">
                             <button
                               type="button"
-                              className="accion-boton"
-                              title="Ver perfil"
+                              className="boton-secundario"
                               onClick={() =>
-                                window.alert(
-                                  `Alumno: ${alumno.nombre}\nDNI: ${alumno.dni}\nCurso: ${alumno.curso}`
-                                )
+                                navigate("/altabajaalumnos")
                               }
                             >
-                              <span>◉</span>
-                              Ver perfil
-                            </button>
-
-                            <button
-                              type="button"
-                              className="accion-boton"
-                              title="Enviar comunicación"
-                              onClick={() =>
-                                window.alert(
-                                  "La función de enviar comunicaciones la conectaremos después."
-                                )
-                              }
-                            >
-                              <span>➤</span>
-                              Enviar
-                            </button>
-
-                            <button
-                              type="button"
-                              className="accion-boton"
-                              title="Ver historial"
-                              onClick={() =>
-                                window.alert(
-                                  "La función de historial la conectaremos después."
-                                )
-                              }
-                            >
-                              <span>◷</span>
-                              Historial
+                              Dar de baja
                             </button>
                           </div>
                         </td>
@@ -583,162 +548,114 @@ function AlumnosPreceptor() {
           </div>
 
           {/* PAGINACIÓN */}
-          <footer className="paginacion">
-            <p>
-              Mostrando {desde} a {hasta} de{" "}
-              {alumnosFiltrados.length} alumnos
-            </p>
+          <div className="paginacion">
+            <span>
+              Mostrando {desde}–{hasta} de {alumnosFiltrados.length} alumnos
+            </span>
 
-            <div className="paginas">
+            <div className="controles-paginacion">
+              <label htmlFor="porPagina">Mostrar:</label>
+
+              <select
+                id="porPagina"
+                value={porPagina}
+                onChange={(e) => {
+                  setPorPagina(Number(e.target.value));
+                  setPagina(1);
+                }}
+              >
+                <option value={6}>6</option>
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+              </select>
+
               <button
                 type="button"
-                className="boton-pagina"
-                disabled={paginaActual <= 1}
-                onClick={() =>
-                  setPagina((actual) => Math.max(1, actual - 1))
-                }
+                disabled={paginaActual === 1}
+                onClick={() => setPagina((p) => Math.max(1, p - 1))}
               >
-                ← Anterior
+                Anterior
               </button>
 
-              {numeros.map((n, index) =>
-                n === "…" ? (
-                  <span
-                    key={`puntos-${index}`}
-                    className="puntos"
-                  >
-                    …
-                  </span>
+              {numeros.map((numero, index) =>
+                numero === "…" ? (
+                  <span key={`puntos-${index}`}>…</span>
                 ) : (
                   <button
                     type="button"
-                    key={n}
-                    className={`numero-pagina ${
-                      paginaActual === n ? "activa" : ""
-                    }`}
-                    onClick={() => setPagina(n)}
+                    key={numero}
+                    className={paginaActual === numero ? "pagina-activa" : ""}
+                    onClick={() => setPagina(numero)}
                   >
-                    {n}
+                    {numero}
                   </button>
                 )
               )}
 
               <button
                 type="button"
-                className="boton-pagina"
-                disabled={paginaActual >= totalPaginas}
+                disabled={paginaActual === totalPaginas}
                 onClick={() =>
-                  setPagina((actual) =>
-                    Math.min(totalPaginas, actual + 1)
-                  )
+                  setPagina((p) => Math.min(totalPaginas, p + 1))
                 }
               >
-                Siguiente →
+                Siguiente
               </button>
             </div>
-
-            <select
-              className="selector chico"
-              value={porPagina}
-              onChange={(e) => {
-                setPorPagina(Number(e.target.value));
-                setPagina(1);
-              }}
-            >
-              <option value={6}>6 por página</option>
-              <option value={12}>12 por página</option>
-              <option value={24}>24 por página</option>
-            </select>
-          </footer>
+          </div>
         </section>
       </main>
 
       {/* MODAL PARA AGREGAR ALUMNOS */}
       {mostrarModal && (
-        <div
-          className="modal-alumnos-fondo"
-          onClick={cerrarModal}
-        >
-          <section
-            className="modal-alumnos"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="titulo-modal-alumnos"
+        <div className="fondo-modal" onClick={cerrarModal}>
+          <div
+            className="modal"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-alumnos-header">
-              <div>
-                <h2 id="titulo-modal-alumnos">
-                  Agregar alumno
-                </h2>
-
-                <p>
-                  Completá los datos para registrar un nuevo alumno.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="modal-alumnos-cerrar"
-                onClick={cerrarModal}
-                disabled={guardando}
-                aria-label="Cerrar ventana"
-              >
-                ×
-              </button>
-            </div>
+            <h2>Agregar alumno</h2>
+            <p>Completá los datos para registrar un nuevo alumno.</p>
 
             <form onSubmit={agregarAlumno}>
-              <div className="modal-alumnos-grupo">
-                <label htmlFor="nombre-alumno">
-                  Nombre completo
-                </label>
-
+              <div className="campo">
+                <label htmlFor="nombre">Nombre y apellido</label>
                 <input
-                  id="nombre-alumno"
+                  id="nombre"
                   name="nombre"
                   type="text"
-                  placeholder="Ej.: Martina González"
+                  className="entrada"
                   value={formulario.nombre}
                   onChange={manejarCambio}
+                  placeholder="Ingresá el nombre completo"
                   required
-                  autoFocus
-                  maxLength={100}
                 />
               </div>
 
-              <div className="modal-alumnos-grupo">
-                <label htmlFor="dni-alumno">DNI</label>
-
+              <div className="campo">
+                <label htmlFor="dni">DNI</label>
                 <input
-                  id="dni-alumno"
+                  id="dni"
                   name="dni"
                   type="text"
-                  inputMode="numeric"
-                  placeholder="Ej.: 45123456"
+                  className="entrada"
                   value={formulario.dni}
-                  onChange={(e) =>
-                    setFormulario((anterior) => ({
-                      ...anterior,
-                      dni: e.target.value.replace(/\D/g, "").slice(0, 8),
-                    }))
-                  }
+                  onChange={manejarCambio}
+                  placeholder="Ej.: 12345678"
                   required
-                  maxLength={8}
                 />
               </div>
 
-              <div className="modal-alumnos-grupo">
-                <label htmlFor="curso-alumno">Curso</label>
-
+              <div className="campo">
+                <label htmlFor="curso">Curso</label>
                 <select
-                  id="curso-alumno"
+                  id="curso"
                   name="curso"
+                  className="entrada"
                   value={formulario.curso}
                   onChange={manejarCambio}
                   required
                 >
-                  <option value="">Seleccioná un curso</option>
+                  <option value="">Seleccionar curso</option>
 
                   {cursos.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -746,28 +663,18 @@ function AlumnosPreceptor() {
                     </option>
                   ))}
                 </select>
-
-                {cursos.length === 0 && (
-                  <small>
-                    Primero tenés que registrar un curso en la sección
-                    Cursos.
-                  </small>
-                )}
               </div>
 
               {mensaje && (
-                <p
-                  className={`modal-alumnos-mensaje ${tipoMensaje}`}
-                  role="alert"
-                >
+                <p className={`mensaje ${tipoMensaje}`}>
                   {mensaje}
                 </p>
               )}
 
-              <div className="modal-alumnos-botones">
+              <div className="botones">
                 <button
                   type="button"
-                  className="modal-alumnos-cancelar"
+                  className="boton-secundario"
                   onClick={cerrarModal}
                   disabled={guardando}
                 >
@@ -776,14 +683,14 @@ function AlumnosPreceptor() {
 
                 <button
                   type="submit"
-                  className="modal-alumnos-guardar"
-                  disabled={guardando || cursos.length === 0}
+                  className="boton-primario"
+                  disabled={guardando}
                 >
                   {guardando ? "Guardando..." : "Guardar alumno"}
                 </button>
               </div>
             </form>
-          </section>
+          </div>
         </div>
       )}
     </div>
