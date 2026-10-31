@@ -1,22 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  serverTimestamp
+} from "firebase/firestore";
+
+import { db } from "../firebase";
 import "../estilos/altaybajaalumnos.css";
 
 function AltaBajaAlumnos() {
-
-  const datos = {
-    nombre: "",
-    rol: "",
-    iniciales: "",
-    fecha: "",
-    dia: "",
-    cursos: [],
-    alumnos: []
-  };
-
-  /* Pestaña activa: "alta" | "baja" */
-  const [pestana, setPestana] = useState("alta");
-
-  /* Formulario de alta */
   const formularioVacio = {
     nombre: "",
     apellido: "",
@@ -29,12 +25,64 @@ function AltaBajaAlumnos() {
     tutorTelefono: ""
   };
 
+  const [pestana, setPestana] = useState("alta");
   const [form, setForm] = useState(formularioVacio);
+  const [alumnos, setAlumnos] = useState([]);
+  const [cursos, setCursos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [alumnoBaja, setAlumnoBaja] = useState(null);
+  const [motivo, setMotivo] = useState("");
+  const [tipoBaja, setTipoBaja] = useState("temporal");
+  const [confirmacionDefinitiva, setConfirmacionDefinitiva] =
+    useState(false);
+  const [procesando, setProcesando] = useState(false);
 
-  const cambiarCampo = (campo, valor) => {
-    setForm({ ...form, [campo]: valor });
+  // Cargar alumnos y cursos desde Firebase
+  const cargarDatos = async () => {
+    try {
+      setError("");
+
+      const [alumnosSnapshot, cursosSnapshot] = await Promise.all([
+        getDocs(collection(db, "Alumnos")),
+        getDocs(collection(db, "Cursos"))
+      ]);
+
+      setAlumnos(
+        alumnosSnapshot.docs.map((documento) => ({
+          id: documento.id,
+          ...documento.data()
+        }))
+      );
+
+      setCursos(
+        cursosSnapshot.docs.map((documento) => ({
+          id: documento.id,
+          ...documento.data()
+        }))
+      );
+    } catch (error) {
+      console.error("Error al cargar los datos:", error);
+      setError("No se pudieron cargar los datos de Firebase.");
+    } finally {
+      setCargando(false);
+    }
   };
 
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  // Actualizar campos del formulario
+  const cambiarCampo = (campo, valor) => {
+    setForm((anterior) => ({
+      ...anterior,
+      [campo]: valor
+    }));
+  };
+
+  // Validar formulario
   const altaLista =
     form.nombre.trim() !== "" &&
     form.apellido.trim() !== "" &&
@@ -42,52 +90,142 @@ function AltaBajaAlumnos() {
     form.curso !== "" &&
     form.tutorNombre.trim() !== "";
 
-  const guardarAlumno = (e) => {
+  // Registrar alumno en Firestore
+  const guardarAlumno = async (e) => {
     e.preventDefault();
-    if (!altaLista) return;
 
-    // Acá se conecta con la base de datos (alta)
-    // const nuevoAlumno = { ...form };
+    if (!altaLista || procesando) return;
 
-    setForm(formularioVacio);
+    try {
+      setProcesando(true);
+      setError("");
+
+      const cursoSeleccionado = cursos.find(
+        (curso) => curso.id === form.curso
+      );
+
+      await addDoc(collection(db, "Alumnos"), {
+        nombre: `${form.nombre.trim()} ${form.apellido.trim()}`,
+        apellido: form.apellido.trim(),
+        dni: form.dni.trim(),
+        legajo: form.legajo.trim(),
+        nacimiento: form.nacimiento,
+        curso: cursoSeleccionado?.nombre || "",
+        cursoId: cursoSeleccionado?.id || "",
+        tutorNombre: form.tutorNombre.trim(),
+        tutorEmail: form.tutorEmail.trim(),
+        tutorTelefono: form.tutorTelefono.trim(),
+        estado: "ok",
+        detalle: "Sin comunicaciones pendientes",
+        creadoEn: serverTimestamp()
+      });
+
+      await cargarDatos();
+      setForm(formularioVacio);
+      alert("Alumno registrado correctamente.");
+    } catch (error) {
+      console.error("Error al registrar al alumno:", error);
+      setError("No se pudo registrar al alumno.");
+    } finally {
+      setProcesando(false);
+    }
   };
 
-  /* Baja de alumnos */
-  const [busqueda, setBusqueda] = useState("");
-  const [alumnoBaja, setAlumnoBaja] = useState(null);
-  const [motivo, setMotivo] = useState("");
+  // Buscar alumnos activos
+  const alumnosFiltrados = alumnos.filter((alumno) => {
+    const nombre = (alumno.nombre || "").toLowerCase();
+    const dni = String(alumno.dni || "");
+    const termino = busqueda.toLowerCase();
 
-  const alumnosFiltrados = datos.alumnos.filter((alumno) =>
-    (alumno.nombre || "").toLowerCase().includes(busqueda.toLowerCase()) ||
-    (alumno.dni || "").includes(busqueda)
-  );
+    return (
+      alumno.estado !== "inactivo" &&
+      (nombre.includes(termino) || dni.includes(busqueda))
+    );
+  });
 
+  // Abrir ventana de baja
+  const abrirModal = (alumno) => {
+    setAlumnoBaja(alumno);
+    setMotivo("");
+    setTipoBaja("temporal");
+    setConfirmacionDefinitiva(false);
+    setError("");
+  };
+
+  // Cerrar ventana de baja
   const cerrarModal = () => {
+    if (procesando) return;
+
     setAlumnoBaja(null);
     setMotivo("");
+    setTipoBaja("temporal");
+    setConfirmacionDefinitiva(false);
+    setError("");
   };
 
-  const confirmarBaja = () => {
-    if (!alumnoBaja || motivo === "") return;
+  // Dar de baja o eliminar definitivamente
+  const confirmarBaja = async () => {
+    if (!alumnoBaja || !motivo || procesando) return;
 
-    // Acá se conecta con la base de datos (baja)
-    // const baja = { alumnoId: alumnoBaja.id, motivo };
+    // Solicitar una segunda confirmación antes de eliminar
+    if (
+      tipoBaja === "definitiva" &&
+      !confirmacionDefinitiva
+    ) {
+      setConfirmacionDefinitiva(true);
+      return;
+    }
 
-    cerrarModal();
+    try {
+      setProcesando(true);
+      setError("");
+
+      const referenciaAlumno = doc(
+        db,
+        "Alumnos",
+        alumnoBaja.id
+      );
+
+      if (tipoBaja === "temporal") {
+        // Conservar el documento, pero marcarlo como inactivo
+        await updateDoc(referenciaAlumno, {
+          estado: "inactivo",
+          motivoBaja: motivo,
+          fechaBaja: serverTimestamp()
+        });
+      } else {
+        // Eliminar definitivamente el documento del alumno
+        await deleteDoc(referenciaAlumno);
+      }
+
+      await cargarDatos();
+
+      setAlumnoBaja(null);
+      setMotivo("");
+      setTipoBaja("temporal");
+      setConfirmacionDefinitiva(false);
+    } catch (error) {
+      console.error("Error al dar de baja al alumno:", error);
+      setError("No se pudo completar la operación en Firebase.");
+    } finally {
+      setProcesando(false);
+    }
   };
 
+  // Obtener iniciales
   const iniciales = (nombre = "") =>
-    nombre.split(" ").filter(Boolean).map((p) => p[0]).join("").slice(0, 2);
+    nombre
+      .split(" ")
+      .filter(Boolean)
+      .map((parte) => parte[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
 
   return (
     <div className="panel">
-
-      {/* =========================
-          BARRA LATERAL
-      ========================= */}
-
+      {/* BARRA LATERAL */}
       <aside className="sidebar">
-
         <div className="logo">
           <h2>CUADERNO DE</h2>
           <h2>COMUNICACIONES</h2>
@@ -95,7 +233,6 @@ function AltaBajaAlumnos() {
         </div>
 
         <nav className="menu">
-
           <a href="#" className="menu-item">
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
@@ -120,93 +257,89 @@ function AltaBajaAlumnos() {
             <span className="menu-icon">▤</span>
             <span>Historial</span>
           </a>
-
         </nav>
 
         <a href="#" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
           <span>Cerrar sesión</span>
         </a>
-
       </aside>
 
-
-      {/* =========================
-          CONTENIDO
-      ========================= */}
-
+      {/* CONTENIDO */}
       <main className="contenido">
-
-        {/* ENCABEZADO */}
-
         <header className="encabezado encabezado-alumnos">
-
           <div>
             <h1>Alumnos</h1>
             <p>Inicio &gt; Alumnos &gt; Alta y baja</p>
           </div>
 
           <div className="encabezado-derecha">
-
             <div className="fecha">
-              <strong>{datos.fecha || ""}</strong>
-              <span>{datos.dia || ""}</span>
+              <strong>
+                {new Date().toLocaleDateString("es-AR")}
+              </strong>
+              <span>
+                {new Date().toLocaleDateString("es-AR", {
+                  weekday: "long"
+                })}
+              </span>
             </div>
 
             <div className="usuario">
-              <span className="usuario-avatar">{datos.iniciales}</span>
+              <span className="usuario-avatar">P</span>
               <div>
-                <strong>{datos.nombre}</strong>
-                <span>{datos.rol}</span>
+                <strong>Preceptor</strong>
+                <span>Administración</span>
               </div>
             </div>
-
           </div>
-
         </header>
 
         <p className="subtitulo">
           Registrar nuevos alumnos o dar de baja alumnos existentes.
         </p>
 
+        {error && !alumnoBaja && (
+          <p role="alert">{error}</p>
+        )}
 
         {/* PESTAÑAS */}
-
         <div className="pestanas">
-
           <button
+            type="button"
             className={`pestana ${pestana === "alta" ? "activa" : ""}`}
-            onClick={() => setPestana("alta")}
+            onClick={() => {
+              setPestana("alta");
+              setError("");
+            }}
           >
             + Dar de alta
           </button>
 
           <button
+            type="button"
             className={`pestana ${pestana === "baja" ? "activa" : ""}`}
-            onClick={() => setPestana("baja")}
+            onClick={() => {
+              setPestana("baja");
+              setError("");
+            }}
           >
             − Dar de baja
           </button>
-
         </div>
 
-
-        {/* =========================
-            ALTA DE ALUMNO
-        ========================= */}
-
+        {/* ALTA DE ALUMNO */}
         {pestana === "alta" && (
-
           <section className="zona-formulario">
-
-            <form className="tarjeta formulario" onSubmit={guardarAlumno}>
-
+            <form
+              className="tarjeta formulario"
+              onSubmit={guardarAlumno}
+            >
               <div className="titulo-seccion">
                 <h2>Datos del alumno</h2>
               </div>
 
               <div className="fila">
-
                 <div className="campo">
                   <label htmlFor="nombre">Nombre</label>
                   <input
@@ -214,7 +347,10 @@ function AltaBajaAlumnos() {
                     type="text"
                     className="entrada"
                     value={form.nombre}
-                    onChange={(e) => cambiarCampo("nombre", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("nombre", e.target.value)
+                    }
+                    required
                   />
                 </div>
 
@@ -225,14 +361,15 @@ function AltaBajaAlumnos() {
                     type="text"
                     className="entrada"
                     value={form.apellido}
-                    onChange={(e) => cambiarCampo("apellido", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("apellido", e.target.value)
+                    }
+                    required
                   />
                 </div>
-
               </div>
 
               <div className="fila">
-
                 <div className="campo">
                   <label htmlFor="dni">DNI</label>
                   <input
@@ -240,7 +377,10 @@ function AltaBajaAlumnos() {
                     type="text"
                     className="entrada"
                     value={form.dni}
-                    onChange={(e) => cambiarCampo("dni", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("dni", e.target.value)
+                    }
+                    required
                   />
                 </div>
 
@@ -251,22 +391,26 @@ function AltaBajaAlumnos() {
                     type="text"
                     className="entrada"
                     value={form.legajo}
-                    onChange={(e) => cambiarCampo("legajo", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("legajo", e.target.value)
+                    }
                   />
                 </div>
-
               </div>
 
               <div className="fila">
-
                 <div className="campo">
-                  <label htmlFor="nacimiento">Fecha de nacimiento</label>
+                  <label htmlFor="nacimiento">
+                    Fecha de nacimiento
+                  </label>
                   <input
                     id="nacimiento"
                     type="date"
                     className="entrada"
                     value={form.nacimiento}
-                    onChange={(e) => cambiarCampo("nacimiento", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("nacimiento", e.target.value)
+                    }
                   />
                 </div>
 
@@ -276,45 +420,55 @@ function AltaBajaAlumnos() {
                     id="curso"
                     className="entrada"
                     value={form.curso}
-                    onChange={(e) => cambiarCampo("curso", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("curso", e.target.value)
+                    }
+                    required
                   >
                     <option value="">Seleccionar curso</option>
-                    {datos.cursos.map((curso, index) => (
-                      <option key={curso.id || index} value={curso.nombre}>
-                        {curso.nombre}
+
+                    {cursos.map((curso) => (
+                      <option key={curso.id} value={curso.id}>
+                        {curso.nombre || curso.nombreCurso || curso.id}
                       </option>
                     ))}
                   </select>
                 </div>
-
               </div>
-
 
               <div className="titulo-seccion separado">
                 <h2>Datos del tutor</h2>
               </div>
 
               <div className="campo">
-                <label htmlFor="tutor-nombre">Nombre completo del tutor</label>
+                <label htmlFor="tutor-nombre">
+                  Nombre completo del tutor
+                </label>
                 <input
                   id="tutor-nombre"
                   type="text"
                   className="entrada"
                   value={form.tutorNombre}
-                  onChange={(e) => cambiarCampo("tutorNombre", e.target.value)}
+                  onChange={(e) =>
+                    cambiarCampo("tutorNombre", e.target.value)
+                  }
+                  required
                 />
               </div>
 
               <div className="fila">
-
                 <div className="campo">
-                  <label htmlFor="tutor-email">Correo electrónico</label>
+                  <label htmlFor="tutor-email">
+                    Correo electrónico
+                  </label>
                   <input
                     id="tutor-email"
                     type="email"
                     className="entrada"
                     value={form.tutorEmail}
-                    onChange={(e) => cambiarCampo("tutorEmail", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("tutorEmail", e.target.value)
+                    }
                   />
                 </div>
 
@@ -325,15 +479,14 @@ function AltaBajaAlumnos() {
                     type="tel"
                     className="entrada"
                     value={form.tutorTelefono}
-                    onChange={(e) => cambiarCampo("tutorTelefono", e.target.value)}
+                    onChange={(e) =>
+                      cambiarCampo("tutorTelefono", e.target.value)
+                    }
                   />
                 </div>
-
               </div>
 
-
               <div className="botones">
-
                 <button
                   type="button"
                   className="boton-secundario"
@@ -345,20 +498,15 @@ function AltaBajaAlumnos() {
                 <button
                   type="submit"
                   className="boton-primario"
-                  disabled={!altaLista}
+                  disabled={!altaLista || procesando}
                 >
-                  + Guardar alumno
+                  {procesando ? "Guardando..." : "+ Guardar alumno"}
                 </button>
-
               </div>
-
             </form>
 
-
             {/* RESUMEN */}
-
             <aside className="tarjeta resumen">
-
               <div className="titulo-seccion">
                 <h2>Resumen</h2>
               </div>
@@ -369,7 +517,7 @@ function AltaBajaAlumnos() {
                   <span>Alumno:</span>
                   <strong>
                     {form.nombre || form.apellido
-                      ? `${form.nombre} ${form.apellido}`
+                      ? `${form.nombre} ${form.apellido}`.trim()
                       : "—"}
                   </strong>
                 </div>
@@ -379,7 +527,13 @@ function AltaBajaAlumnos() {
                 <div className="icono-card azul">🎓</div>
                 <div>
                   <span>Curso:</span>
-                  <strong>{form.curso || "—"}</strong>
+                  <strong>
+                    {cursos.find((curso) => curso.id === form.curso)
+                      ?.nombre ||
+                      cursos.find((curso) => curso.id === form.curso)
+                        ?.nombreCurso ||
+                      "—"}
+                  </strong>
                 </div>
               </div>
 
@@ -395,7 +549,11 @@ function AltaBajaAlumnos() {
                 <div className="icono-card azul">✉</div>
                 <div>
                   <span>Estado:</span>
-                  <span className={`estado-etiqueta ${altaLista ? "listo" : "incompleto"}`}>
+                  <span
+                    className={`estado-etiqueta ${
+                      altaLista ? "listo" : "incompleto"
+                    }`}
+                  >
                     {altaLista ? "Listo para registrar" : "Faltan datos"}
                   </span>
                 </div>
@@ -404,28 +562,17 @@ function AltaBajaAlumnos() {
               <div className="aviso">
                 <span className="aviso-icono">i</span>
                 <p>
-                  Al guardar, el alumno quedará registrado y su tutor podrá
-                  recibir las comunicaciones del cuaderno digital.
+                  Al guardar, el alumno quedará registrado en Firebase.
                 </p>
               </div>
-
             </aside>
-
           </section>
-
         )}
 
-
-        {/* =========================
-            BAJA DE ALUMNO
-        ========================= */}
-
+        {/* BAJA DE ALUMNOS */}
         {pestana === "baja" && (
-
           <section className="tarjeta tabla-alumnos">
-
             <div className="filtros">
-
               <input
                 type="search"
                 className="buscador"
@@ -433,13 +580,10 @@ function AltaBajaAlumnos() {
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
-
             </div>
 
             <div className="tabla-scroll">
-
               <table>
-
                 <thead>
                   <tr>
                     <th>Alumno</th>
@@ -450,85 +594,110 @@ function AltaBajaAlumnos() {
                 </thead>
 
                 <tbody>
-
-                  {alumnosFiltrados.length === 0 ? (
-
+                  {cargando ? (
+                    <tr>
+                      <td colSpan={4} className="sin-datos">
+                        Cargando alumnos...
+                      </td>
+                    </tr>
+                  ) : alumnosFiltrados.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="sin-datos">
                         No hay alumnos para mostrar
                       </td>
                     </tr>
-
                   ) : (
-
-                    alumnosFiltrados.map((alumno, index) => (
-
-                      <tr key={alumno.id || index}>
-
+                    alumnosFiltrados.map((alumno) => (
+                      <tr key={alumno.id}>
                         <td>
                           <div className="alumno">
                             <span className="avatar">
-                              {alumno.foto
-                                ? <img src={alumno.foto} alt={alumno.nombre} />
-                                : iniciales(alumno.nombre)}
+                              {iniciales(alumno.nombre)}
                             </span>
                             <strong>{alumno.nombre}</strong>
                           </div>
                         </td>
 
-                        <td>{alumno.dni}</td>
+                        <td>{alumno.dni || "—"}</td>
 
                         <td>
-                          <span className="etiqueta-curso">{alumno.curso}</span>
+                          <span className="etiqueta-curso">
+                            {alumno.curso || "—"}
+                          </span>
                         </td>
 
                         <td>
                           <div className="acciones-fila">
                             <button
+                              type="button"
                               className="boton-baja"
-                              onClick={() => setAlumnoBaja(alumno)}
+                              onClick={() => abrirModal(alumno)}
                             >
                               Dar de baja
                             </button>
                           </div>
                         </td>
-
                       </tr>
-
                     ))
-
                   )}
-
                 </tbody>
-
               </table>
-
             </div>
-
           </section>
-
         )}
-
       </main>
 
-
-      {/* =========================
-          CONFIRMAR BAJA
-      ========================= */}
-
+      {/* MODAL DE BAJA */}
       {alumnoBaja && (
-
         <div className="fondo-modal" onClick={cerrarModal}>
-
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-icono">!</div>
 
             <h2>Dar de baja alumno</h2>
 
             <p>
-              Vas a dar de baja a <strong>{alumnoBaja.nombre}</strong>.
-              Esta acción deja de enviar comunicaciones a su tutor.
+              Alumno: <strong>{alumnoBaja.nombre}</strong>
+            </p>
+
+            <div className="campo">
+              <label>¿Qué acción querés realizar?</label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoBaja"
+                  value="temporal"
+                  checked={tipoBaja === "temporal"}
+                  onChange={() => {
+                    setTipoBaja("temporal");
+                    setConfirmacionDefinitiva(false);
+                  }}
+                />
+                Dar de baja temporalmente
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoBaja"
+                  value="definitiva"
+                  checked={tipoBaja === "definitiva"}
+                  onChange={() => {
+                    setTipoBaja("definitiva");
+                    setConfirmacionDefinitiva(false);
+                  }}
+                />
+                Eliminar definitivamente
+              </label>
+            </div>
+
+            <p>
+              {tipoBaja === "temporal"
+                ? "El alumno conservará sus datos, pero quedará inactivo."
+                : "Se eliminará el documento del alumno de Firebase. Las comunicaciones guardadas en otras colecciones no se borrarán automáticamente."}
             </p>
 
             <div className="campo">
@@ -547,28 +716,44 @@ function AltaBajaAlumnos() {
               </select>
             </div>
 
-            <div className="botones">
+            {confirmacionDefinitiva &&
+              tipoBaja === "definitiva" && (
+                <p role="alert">
+                  ¿Confirmás que querés eliminar definitivamente a este
+                  alumno? Presioná nuevamente el botón para confirmar.
+                </p>
+              )}
 
-              <button className="boton-secundario" onClick={cerrarModal}>
+            {error && <p role="alert">{error}</p>}
+
+            <div className="botones">
+              <button
+                type="button"
+                className="boton-secundario"
+                onClick={cerrarModal}
+                disabled={procesando}
+              >
                 Cancelar
               </button>
 
               <button
+                type="button"
                 className="boton-peligro"
-                disabled={motivo === ""}
+                disabled={!motivo || procesando}
                 onClick={confirmarBaja}
               >
-                Confirmar baja
+                {procesando
+                  ? "Procesando..."
+                  : tipoBaja === "definitiva"
+                    ? confirmacionDefinitiva
+                      ? "Sí, eliminar definitivamente"
+                      : "Continuar"
+                    : "Confirmar baja"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       )}
-
     </div>
   );
 }
