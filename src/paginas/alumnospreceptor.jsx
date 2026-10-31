@@ -1,75 +1,243 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebase";
+
 import "../estilos/alumnospreceptor.css";
+import "../estilos/modalalumnospreceptor.css";
 
 function AlumnosPreceptor() {
- // const datos = {
-   // nombre: "",
-    //rol: "",
-    //iniciales: "",
-    //fecha: "",
-    //dia: "",
-    //cursos: [],
-    //alumnos: [],
-    //notificaciones: [],
-    //comunicaciones: [],
-  //};
+  // Datos obtenidos de Firebase
+  const [alumnos, setAlumnos] = useState([]);
+  const [cursos, setCursos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-  const datos = {
-  nombre: "",
-  rol: "",
-  iniciales: "",
-  fecha: "",
-  dia: "",
-  cursos: [
-    { id: 1, nombre: "3.º A" },
-  ],
-  alumnos: [
-    {
-      id: 1,
-      nombre: "Martina González",
-      dni: "45123456",
-      curso: "3.º A",
-      estado: "ok",
-      detalle: "Todas las comunicaciones confirmadas",
-    },
-    {
-      id: 2,
-      nombre: "Thiago Fernández",
-      dni: "46234567",
-      curso: "3.º A",
-      estado: "pendiente",
-      detalle: "Tiene comunicaciones sin leer",
-    },
-  ],
-  notificaciones: [],
-  comunicaciones: [],
-};
-
-  // Estado de la pantalla (filtros y paginación)
+  // Filtros y paginación
   const [busqueda, setBusqueda] = useState("");
   const [curso, setCurso] = useState("todos");
   const [estado, setEstado] = useState("todos");
   const [pagina, setPagina] = useState(1);
   const [porPagina, setPorPagina] = useState(6);
 
-  // Información visual de cada estado
+  // Modal para agregar alumnos
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState("");
+
+  const [formulario, setFormulario] = useState({
+    nombre: "",
+    dni: "",
+    curso: "",
+  });
+
+  // Estados visuales de las comunicaciones
   const estados = {
-    ok: { titulo: "Al día", icono: "✔" },
-    pendiente: { titulo: "Pendiente", icono: "◷" },
-    obs: { titulo: "Con observaciones", icono: "!" },
+    ok: {
+      titulo: "Al día",
+      icono: "✔",
+      detalle: "Todas las comunicaciones confirmadas",
+    },
+    pendiente: {
+      titulo: "Pendiente",
+      icono: "◷",
+      detalle: "Tiene comunicaciones sin leer",
+    },
+    obs: {
+      titulo: "Con observaciones",
+      icono: "!",
+      detalle: "Requiere revisión",
+    },
   };
 
-  // Filtrado de alumnos
-  const alumnosFiltrados = datos.alumnos.filter(
-    (alumno) =>
-      (alumno.nombre || "")
-        .toLowerCase()
-        .includes(busqueda.toLowerCase()) &&
-      (curso === "todos" || alumno.curso === curso) &&
-      (estado === "todos" || alumno.estado === estado)
-  );
+  // Escuchar alumnos de Firebase en tiempo real
+  useEffect(() => {
+    const cancelarAlumnos = onSnapshot(
+      collection(db, "Alumnos"),
+      (snapshot) => {
+        const lista = snapshot.docs.map((documento) => ({
+          id: documento.id,
+          ...documento.data(),
+        }));
+
+        setAlumnos(lista);
+        setCargando(false);
+        setError("");
+      },
+      (error) => {
+        console.error("Error al obtener alumnos:", error);
+        setError("No se pudieron cargar los alumnos.");
+        setCargando(false);
+      }
+    );
+
+    return () => cancelarAlumnos();
+  }, []);
+
+  // Escuchar cursos de Firebase en tiempo real
+  useEffect(() => {
+    const cancelarCursos = onSnapshot(
+      collection(db, "Cursos"),
+      (snapshot) => {
+        const lista = snapshot.docs.map((documento) => {
+          const datos = documento.data();
+
+          return {
+            id: documento.id,
+            ...datos,
+            nombre: `${datos.curso || ""} ${datos.division || ""}`.trim(),
+          };
+        });
+
+        setCursos(lista);
+      },
+      (error) => {
+        console.error("Error al obtener cursos:", error);
+      }
+    );
+
+    return () => cancelarCursos();
+  }, []);
+
+  // Obtener las iniciales del alumno
+  function iniciales(nombre = "") {
+    return nombre
+      .split(" ")
+      .filter(Boolean)
+      .map((palabra) => palabra[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  // Abrir modal
+  function abrirModal() {
+    setFormulario({
+      nombre: "",
+      dni: "",
+      curso: "",
+    });
+    setMensaje("");
+    setTipoMensaje("");
+    setMostrarModal(true);
+  }
+
+  // Cerrar modal
+  function cerrarModal() {
+    if (guardando) return;
+
+    setMostrarModal(false);
+    setMensaje("");
+    setTipoMensaje("");
+  }
+
+  // Actualizar campos
+  function manejarCambio(e) {
+    const { name, value } = e.target;
+
+    setFormulario((anterior) => ({
+      ...anterior,
+      [name]: value,
+    }));
+  }
+
+  // Registrar alumno en Firebase
+  async function agregarAlumno(e) {
+    e.preventDefault();
+
+    setMensaje("");
+    setTipoMensaje("");
+
+    const nombre = formulario.nombre.trim();
+    const dni = formulario.dni.trim();
+    const cursoSeleccionado = cursos.find(
+      (c) => c.id === formulario.curso
+    );
+
+    if (!nombre || !dni || !cursoSeleccionado) {
+      setMensaje("Completá todos los campos.");
+      setTipoMensaje("error");
+      return;
+    }
+
+    if (!/^\d{7,8}$/.test(dni)) {
+      setMensaje("Ingresá un DNI válido de 7 u 8 números.");
+      setTipoMensaje("error");
+      return;
+    }
+
+    // Evitar registrar dos veces el mismo DNI
+    const dniExistente = alumnos.some(
+      (alumno) => String(alumno.dni || "").trim() === dni
+    );
+
+    if (dniExistente) {
+      setMensaje("Ya existe un alumno registrado con ese DNI.");
+      setTipoMensaje("error");
+      return;
+    }
+
+    setGuardando(true);
+
+    try {
+      await addDoc(collection(db, "Alumnos"), {
+        nombre,
+        dni,
+        curso: cursoSeleccionado.nombre,
+        cursoId: cursoSeleccionado.id,
+        estado: "ok",
+        detalle: "Sin comunicaciones pendientes",
+        creadoEn: serverTimestamp(),
+      });
+
+      setMensaje("");
+      setMostrarModal(false);
+      setFormulario({
+        nombre: "",
+        dni: "",
+        curso: "",
+      });
+      setPagina(1);
+    } catch (error) {
+      console.error("Error al registrar alumno:", error);
+
+      setMensaje(
+        "No se pudo registrar el alumno. Revisá la conexión con Firebase."
+      );
+      setTipoMensaje("error");
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  // Filtrar alumnos
+  const alumnosFiltrados = alumnos.filter((alumno) => {
+    const coincideNombre = (alumno.nombre || "")
+      .toLowerCase()
+      .includes(busqueda.toLowerCase());
+
+    const coincideDni = String(alumno.dni || "").includes(busqueda);
+
+    const coincideCurso =
+      curso === "todos" ||
+      alumno.cursoId === curso ||
+      alumno.curso === curso;
+
+    const coincideEstado =
+      estado === "todos" || alumno.estado === estado;
+
+    return (
+      (coincideNombre || coincideDni) &&
+      coincideCurso &&
+      coincideEstado
+    );
+  });
 
   // Paginación
   const totalPaginas = Math.max(
@@ -77,7 +245,9 @@ function AlumnosPreceptor() {
     Math.ceil(alumnosFiltrados.length / porPagina)
   );
 
-  const inicio = (pagina - 1) * porPagina;
+  const paginaActual = Math.min(pagina, totalPaginas);
+  const inicio = (paginaActual - 1) * porPagina;
+
   const alumnosPagina = alumnosFiltrados.slice(
     inicio,
     inicio + porPagina
@@ -97,14 +267,6 @@ function AlumnosPreceptor() {
       numeros.push("…");
     }
   }
-
-  const iniciales = (nombre = "") =>
-    nombre
-      .split(" ")
-      .filter(Boolean)
-      .map((p) => p[0])
-      .join("")
-      .slice(0, 2);
 
   return (
     <div className="panel">
@@ -134,7 +296,7 @@ function AlumnosPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♙</span>
+            <span className="menu-icon">▤</span>
             <span>Cursos</span>
           </NavLink>
 
@@ -184,23 +346,6 @@ function AlumnosPreceptor() {
             <h1>Alumnos</h1>
             <p>Inicio &gt; Alumnos</p>
           </div>
-
-          <div className="encabezado-derecha">
-            <div className="fecha">
-              <strong>{datos.fecha || ""}</strong>
-              <span>{datos.dia || ""}</span>
-            </div>
-
-            <div className="usuario">
-              <span className="usuario-avatar">
-                {datos.iniciales}
-              </span>
-              <div>
-                <strong>{datos.nombre}</strong>
-                <span>{datos.rol}</span>
-              </div>
-            </div>
-          </div>
         </header>
 
         {/* FILTROS */}
@@ -225,8 +370,9 @@ function AlumnosPreceptor() {
             }}
           >
             <option value="todos">Todos los cursos</option>
-            {datos.cursos.map((c, index) => (
-              <option key={index} value={c.nombre}>
+
+            {cursos.map((c) => (
+              <option key={c.id} value={c.id}>
                 {c.nombre}
               </option>
             ))}
@@ -246,7 +392,11 @@ function AlumnosPreceptor() {
             <option value="obs">Con observaciones</option>
           </select>
 
-          <button type="button" className="boton-primario">
+          <button
+            type="button"
+            className="boton-primario"
+            onClick={abrirModal}
+          >
             + Agregar alumno
           </button>
         </section>
@@ -255,42 +405,34 @@ function AlumnosPreceptor() {
         <section className="estadisticas">
           <div className="tarjeta estadistica">
             <div className="icono-card azul">👥</div>
+
             <div className="info-card">
               <span>Total alumnos</span>
-              <strong>
-                {datos.alumnos.length > 0
-                  ? datos.alumnos.length
-                  : "—"}
-              </strong>
+              <strong>{alumnos.length}</strong>
             </div>
           </div>
 
           <div className="tarjeta estadistica">
             <div className="icono-card verde">▤</div>
+
             <div className="info-card">
               <span>Comunicaciones enviadas (mes)</span>
-              <strong>
-                {datos.comunicaciones.length > 0
-                  ? datos.comunicaciones.length
-                  : "—"}
-              </strong>
+              <strong>—</strong>
             </div>
           </div>
 
           <div className="tarjeta estadistica">
             <div className="icono-card naranja">✉</div>
+
             <div className="info-card">
               <span>Pendientes de leer</span>
-              <strong>
-                {datos.notificaciones.length > 0
-                  ? datos.notificaciones.length
-                  : "—"}
-              </strong>
+              <strong>—</strong>
             </div>
           </div>
 
           <div className="tarjeta estadistica">
             <div className="icono-card violeta">✔</div>
+
             <div className="info-card">
               <span>Confirmadas por tutores</span>
               <strong>—</strong>
@@ -313,93 +455,128 @@ function AlumnosPreceptor() {
               </thead>
 
               <tbody>
-                {alumnosPagina.length === 0 ? (
+                {cargando ? (
                   <tr>
                     <td colSpan={5} className="sin-datos">
-                      No hay alumnos para mostrar
+                      Cargando alumnos...
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={5} className="sin-datos">
+                      {error}
+                    </td>
+                  </tr>
+                ) : alumnosPagina.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="sin-datos">
+                      No hay alumnos para mostrar.
+                      {busqueda && " Probá con otra búsqueda."}
                     </td>
                   </tr>
                 ) : (
-                  alumnosPagina.map((alumno, index) => (
-                    <tr key={alumno.id || index}>
-                      <td>
-                        <div className="alumno">
-                          <span className="avatar">
-                            {alumno.foto ? (
-                              <img
-                                src={alumno.foto}
-                                alt={alumno.nombre}
-                              />
-                            ) : (
-                              iniciales(alumno.nombre)
-                            )}
+                  alumnosPagina.map((alumno) => {
+                    const estadoActual =
+                      estados[alumno.estado] || estados.ok;
+
+                    return (
+                      <tr key={alumno.id}>
+                        <td>
+                          <div className="alumno">
+                            <span className="avatar">
+                              {alumno.foto ? (
+                                <img
+                                  src={alumno.foto}
+                                  alt={alumno.nombre}
+                                />
+                              ) : (
+                                iniciales(alumno.nombre)
+                              )}
+                            </span>
+
+                            <strong>{alumno.nombre}</strong>
+                          </div>
+                        </td>
+
+                        <td>{alumno.dni || "—"}</td>
+
+                        <td>
+                          <span className="etiqueta-curso">
+                            {alumno.curso || "Sin curso"}
                           </span>
-                          <strong>{alumno.nombre}</strong>
-                        </div>
-                      </td>
+                        </td>
 
-                      <td>{alumno.dni}</td>
-
-                      <td>
-                        <span className="etiqueta-curso">
-                          {alumno.curso}
-                        </span>
-                      </td>
-
-                      <td>
-                        {estados[alumno.estado] && (
+                        <td>
                           <div
-                            className={`estado ${alumno.estado}`}
+                            className={`estado ${
+                              alumno.estado || "ok"
+                            }`}
                           >
                             <span className="estado-icono">
-                              {estados[alumno.estado].icono}
+                              {estadoActual.icono}
                             </span>
+
                             <div>
                               <strong>
-                                {estados[alumno.estado].titulo}
+                                {estadoActual.titulo}
                               </strong>
-                              <span>{alumno.detalle}</span>
+
+                              <span>
+                                {alumno.detalle ||
+                                  estadoActual.detalle}
+                              </span>
                             </div>
                           </div>
-                        )}
-                      </td>
+                        </td>
 
-                      <td>
-                        <div className="acciones-fila">
-                          <button
-                            type="button"
-                            className="accion-boton"
-                          >
-                            <span>◉</span>
-                            Ver perfil
-                          </button>
+                        <td>
+                          <div className="acciones-fila">
+                            <button
+                              type="button"
+                              className="accion-boton"
+                              title="Ver perfil"
+                              onClick={() =>
+                                window.alert(
+                                  `Alumno: ${alumno.nombre}\nDNI: ${alumno.dni}\nCurso: ${alumno.curso}`
+                                )
+                              }
+                            >
+                              <span>◉</span>
+                              Ver perfil
+                            </button>
 
-                          <button
-                            type="button"
-                            className="accion-boton"
-                          >
-                            <span>➤</span>
-                            Enviar
-                          </button>
+                            <button
+                              type="button"
+                              className="accion-boton"
+                              title="Enviar comunicación"
+                              onClick={() =>
+                                window.alert(
+                                  "La función de enviar comunicaciones la conectaremos después."
+                                )
+                              }
+                            >
+                              <span>➤</span>
+                              Enviar
+                            </button>
 
-                          <button
-                            type="button"
-                            className="accion-boton"
-                          >
-                            <span>◷</span>
-                            Historial
-                          </button>
-
-                          <button
-                            type="button"
-                            className="mas-opciones"
-                          >
-                            ⋮
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                            <button
+                              type="button"
+                              className="accion-boton"
+                              title="Ver historial"
+                              onClick={() =>
+                                window.alert(
+                                  "La función de historial la conectaremos después."
+                                )
+                              }
+                            >
+                              <span>◷</span>
+                              Historial
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -416,11 +593,9 @@ function AlumnosPreceptor() {
               <button
                 type="button"
                 className="boton-pagina"
-                disabled={pagina <= 1}
+                disabled={paginaActual <= 1}
                 onClick={() =>
-                  setPagina((paginaActual) =>
-                    Math.max(1, paginaActual - 1)
-                  )
+                  setPagina((actual) => Math.max(1, actual - 1))
                 }
               >
                 ← Anterior
@@ -428,7 +603,10 @@ function AlumnosPreceptor() {
 
               {numeros.map((n, index) =>
                 n === "…" ? (
-                  <span key={`puntos-${index}`} className="puntos">
+                  <span
+                    key={`puntos-${index}`}
+                    className="puntos"
+                  >
                     …
                   </span>
                 ) : (
@@ -436,7 +614,7 @@ function AlumnosPreceptor() {
                     type="button"
                     key={n}
                     className={`numero-pagina ${
-                      pagina === n ? "activa" : ""
+                      paginaActual === n ? "activa" : ""
                     }`}
                     onClick={() => setPagina(n)}
                   >
@@ -448,10 +626,10 @@ function AlumnosPreceptor() {
               <button
                 type="button"
                 className="boton-pagina"
-                disabled={pagina >= totalPaginas}
+                disabled={paginaActual >= totalPaginas}
                 onClick={() =>
-                  setPagina((paginaActual) =>
-                    Math.min(totalPaginas, paginaActual + 1)
+                  setPagina((actual) =>
+                    Math.min(totalPaginas, actual + 1)
                   )
                 }
               >
@@ -474,6 +652,140 @@ function AlumnosPreceptor() {
           </footer>
         </section>
       </main>
+
+      {/* MODAL PARA AGREGAR ALUMNOS */}
+      {mostrarModal && (
+        <div
+          className="modal-alumnos-fondo"
+          onClick={cerrarModal}
+        >
+          <section
+            className="modal-alumnos"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-modal-alumnos"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-alumnos-header">
+              <div>
+                <h2 id="titulo-modal-alumnos">
+                  Agregar alumno
+                </h2>
+
+                <p>
+                  Completá los datos para registrar un nuevo alumno.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="modal-alumnos-cerrar"
+                onClick={cerrarModal}
+                disabled={guardando}
+                aria-label="Cerrar ventana"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={agregarAlumno}>
+              <div className="modal-alumnos-grupo">
+                <label htmlFor="nombre-alumno">
+                  Nombre completo
+                </label>
+
+                <input
+                  id="nombre-alumno"
+                  name="nombre"
+                  type="text"
+                  placeholder="Ej.: Martina González"
+                  value={formulario.nombre}
+                  onChange={manejarCambio}
+                  required
+                  autoFocus
+                  maxLength={100}
+                />
+              </div>
+
+              <div className="modal-alumnos-grupo">
+                <label htmlFor="dni-alumno">DNI</label>
+
+                <input
+                  id="dni-alumno"
+                  name="dni"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Ej.: 45123456"
+                  value={formulario.dni}
+                  onChange={(e) =>
+                    setFormulario((anterior) => ({
+                      ...anterior,
+                      dni: e.target.value.replace(/\D/g, "").slice(0, 8),
+                    }))
+                  }
+                  required
+                  maxLength={8}
+                />
+              </div>
+
+              <div className="modal-alumnos-grupo">
+                <label htmlFor="curso-alumno">Curso</label>
+
+                <select
+                  id="curso-alumno"
+                  name="curso"
+                  value={formulario.curso}
+                  onChange={manejarCambio}
+                  required
+                >
+                  <option value="">Seleccioná un curso</option>
+
+                  {cursos.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nombre}
+                    </option>
+                  ))}
+                </select>
+
+                {cursos.length === 0 && (
+                  <small>
+                    Primero tenés que registrar un curso en la sección
+                    Cursos.
+                  </small>
+                )}
+              </div>
+
+              {mensaje && (
+                <p
+                  className={`modal-alumnos-mensaje ${tipoMensaje}`}
+                  role="alert"
+                >
+                  {mensaje}
+                </p>
+              )}
+
+              <div className="modal-alumnos-botones">
+                <button
+                  type="button"
+                  className="modal-alumnos-cancelar"
+                  onClick={cerrarModal}
+                  disabled={guardando}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  className="modal-alumnos-guardar"
+                  disabled={guardando || cursos.length === 0}
+                >
+                  {guardando ? "Guardando..." : "Guardar alumno"}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
