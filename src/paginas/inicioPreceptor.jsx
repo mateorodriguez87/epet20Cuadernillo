@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import { collection, onSnapshot } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import "../estilos/inicioPreceptor.css";
 
 function InicioPreceptor() {
   const [fechaActual, setFechaActual] = useState(new Date());
   const [nombre, setNombre] = useState("");
 
-  const datos = {
-    cursos: [],
-    alumnos: [],
-    notificaciones: [],
-    comunicaciones: [],
-  };
+  // son los datos obtenidos de Firebase
+  const [cursos, setCursos] = useState([]);
+  const [alumnos, setAlumnos] = useState([]);
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [comunicaciones, setComunicaciones] = useState([]);
 
+  // obtener el usuario que inició sesión
   useEffect(() => {
     const cancelarEscucha = onAuthStateChanged(auth, (usuario) => {
       if (usuario) {
@@ -27,6 +28,27 @@ function InicioPreceptor() {
     return () => cancelarEscucha();
   }, []);
 
+  // se obtienen los cursos de Firebase en tiempo real
+  useEffect(() => {
+    const cancelar = onSnapshot(
+      collection(db, "Cursos"),
+      (snapshot) => {
+        setCursos(
+          snapshot.docs.map((documento) => ({
+            id: documento.id,
+            ...documento.data(),
+          }))
+        );
+      },
+      (error) => {
+        console.error("Error al cargar cursos:", error);
+      }
+    );
+
+    return () => cancelar();
+  }, []);
+
+  // esto actualiza la fecha
   useEffect(() => {
     const actualizarFecha = () => {
       setFechaActual(new Date());
@@ -118,16 +140,20 @@ function InicioPreceptor() {
           </div>
         </header>
 
+        {/* ESTADÍSTICAS */}
         <section className="estadisticas">
           <article className="tarjeta estadistica">
             <div className="icono-card azul">🎓</div>
 
             <div className="info-card">
               <span>Cursos a cargo</span>
-              <strong>{datos.cursos.length || "—"}</strong>
+              <strong>{cursos.length}</strong>
             </div>
 
-            <Link to="/cursospreceptor" className="enlace-estadistica">
+            <Link
+              to="/cursospreceptor"
+              className="enlace-estadistica"
+            >
               Ver cursos <span>›</span>
             </Link>
           </article>
@@ -137,10 +163,13 @@ function InicioPreceptor() {
 
             <div className="info-card">
               <span>Alumnos a cargo</span>
-              <strong>{datos.alumnos.length || "—"}</strong>
+              <strong>{alumnos.length || "—"}</strong>
             </div>
 
-            <Link to="/alumnospreceptor" className="enlace-estadistica">
+            <Link
+              to="/alumnospreceptor"
+              className="enlace-estadistica"
+            >
               Ver alumnos <span>›</span>
             </Link>
           </article>
@@ -151,7 +180,7 @@ function InicioPreceptor() {
             <div className="info-card">
               <span>Notificaciones pendientes</span>
               <strong className="numero-rojo">
-                {datos.notificaciones.length || "—"}
+                {notificaciones.length || "—"}
               </strong>
             </div>
 
@@ -168,7 +197,7 @@ function InicioPreceptor() {
 
             <div className="info-card">
               <span>Comunicaciones enviadas (este mes)</span>
-              <strong>{datos.comunicaciones.length || "—"}</strong>
+              <strong>{comunicaciones.length || "—"}</strong>
             </div>
 
             <Link
@@ -180,6 +209,7 @@ function InicioPreceptor() {
           </article>
         </section>
 
+        {/* ZONA CENTRAL */}
         <section className="zona-central">
           <article className="tarjeta notificaciones">
             <div className="titulo-seccion">
@@ -187,13 +217,16 @@ function InicioPreceptor() {
               <Link to="/notificacionpreceptor">Ver todas</Link>
             </div>
 
-            {datos.notificaciones.length === 0 ? (
+            {notificaciones.length === 0 ? (
               <div className="sin-datos">
                 No hay notificaciones pendientes
               </div>
             ) : (
-              datos.notificaciones.map((notificacion) => (
-                <div className="notificacion" key={notificacion.id}>
+              notificaciones.map((notificacion) => (
+                <div
+                  className="notificacion"
+                  key={notificacion.id}
+                >
                   <div className="notificacion-icon azul">!</div>
 
                   <div className="notificacion-texto">
@@ -221,7 +254,10 @@ function InicioPreceptor() {
               <h2>Acciones rápidas</h2>
             </div>
 
-            <Link to="/notificacionpreceptor" className="accion">
+            <Link
+              to="/notificacionpreceptor"
+              className="accion"
+            >
               <div className="accion-icon azul">➤</div>
 
               <div className="accion-texto">
@@ -232,7 +268,10 @@ function InicioPreceptor() {
               <b>›</b>
             </Link>
 
-            <Link to="/alumnospreceptor" className="accion">
+            <Link
+              to="/alumnospreceptor"
+              className="accion"
+            >
               <div className="accion-icon verde">👥</div>
 
               <div className="accion-texto">
@@ -243,7 +282,10 @@ function InicioPreceptor() {
               <b>›</b>
             </Link>
 
-            <Link to="/historialpreceptor" className="accion">
+            <Link
+              to="/historialpreceptor"
+              className="accion"
+            >
               <div className="accion-icon violeta">▤</div>
 
               <div className="accion-texto">
@@ -256,20 +298,22 @@ function InicioPreceptor() {
           </article>
         </section>
 
+        {/* MIS CURSOS */}
         <section className="tarjeta cursos">
           <div className="titulo-seccion">
             <h2>Mis cursos</h2>
             <Link to="/cursospreceptor">Ver todos</Link>
           </div>
 
-          {datos.cursos.length === 0 ? (
+          {cursos.length === 0 ? (
             <div className="sin-cursos">
               <span className="sin-cursos-icono">🎓</span>
+
               <strong>No hay cursos cargados</strong>
 
               <p>
-                Cuando se asignen cursos al preceptor,
-                aparecerán en esta sección.
+                Cuando agregues cursos desde la sección Cursos,
+                aparecerán automáticamente en esta sección.
               </p>
 
               <Link
@@ -281,10 +325,12 @@ function InicioPreceptor() {
             </div>
           ) : (
             <div className="lista-cursos">
-              {datos.cursos.map((curso) => (
+              {cursos.map((curso) => (
                 <div className="curso" key={curso.id}>
-                  <strong>{curso.nombre}</strong>
-                  <span>{curso.alumnos} alumnos</span>
+                  <strong>
+                    {`${curso.curso || ""} ${curso.division || ""}`.trim()}
+                  </strong>
+                  <span>Curso registrado</span>
                   <b>♧</b>
                 </div>
               ))}
