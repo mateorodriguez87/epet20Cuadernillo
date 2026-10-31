@@ -10,15 +10,27 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import "../estilos/cursospreceptor.css";
+import "../estilos/modalcursospreceptor.css";
 
 function CursosPreceptor() {
   const [fecha, setFecha] = useState(new Date());
   const [cursos, setCursos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [cursoSeleccionado, setCursoSeleccionado] = useState("");
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [tipoModal, setTipoModal] = useState("");
+  const [cursoActual, setCursoActual] = useState(null);
+
+  const [formulario, setFormulario] = useState({
+    curso: "",
+    division: "",
+  });
+
+  const [cursoSeleccionado, setCursoSeleccionado] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
   // Obtener los cursos de Firebase en tiempo real.
   useEffect(() => {
@@ -36,7 +48,7 @@ function CursosPreceptor() {
       },
       (error) => {
         console.error("Error al obtener cursos:", error);
-        setError("No se pudieron cargar los cursos. Revisá las reglas de Firebase.");
+        setError("No se pudieron cargar los cursos.");
         setCargando(false);
       }
     );
@@ -60,108 +72,142 @@ function CursosPreceptor() {
     year: "numeric",
   });
 
-  // Mostrar el nombre completo del curso.
   function nombreCurso(curso) {
     return `${curso.curso || ""} ${curso.division || ""}`.trim();
   }
 
-  // Agregar un curso a Firebase.
-  async function agregarCursos() {
-    const nombre = prompt(
-      "Ingresá el año del curso (ejemplo: primero):"
-    );
-
-    if (!nombre || !nombre.trim()) return;
-
-    const division = prompt(
-      "Ingresá la división (ejemplo: primera):"
-    );
-
-    if (!division || !division.trim()) return;
-
-    try {
-      await addDoc(collection(db, "Cursos"), {
-        curso: nombre.trim().toLowerCase(),
-        division: division.trim().toLowerCase(),
-      });
-
-      alert("¡Curso agregado correctamente!");
-    } catch (error) {
-      console.error("Error al agregar el curso:", error);
-      alert("No se pudo agregar el curso. Revisá las reglas de Firebase.");
-    }
+  // Abrir el formulario para agregar un curso.
+  function abrirAgregar() {
+    setFormulario({ curso: "", division: "" });
+    setCursoActual(null);
+    setMensaje("");
+    setTipoModal("agregar");
+    setMostrarModal(true);
   }
 
-  // Editar un curso.
-  async function editarCurso(curso) {
-    const nombre = prompt(
-      "Modificá el año del curso:",
-      curso.curso || ""
-    );
+  // Abrir el formulario para editar un curso.
+  function abrirEditar(curso) {
+    setFormulario({
+      curso: curso.curso || "",
+      division: curso.division || "",
+    });
+    setCursoActual(curso);
+    setMensaje("");
+    setTipoModal("editar");
+    setMostrarModal(true);
+  }
 
-    if (!nombre || !nombre.trim()) return;
+  // Abrir la confirmación personalizada para eliminar.
+  function abrirEliminar(curso) {
+    setCursoActual(curso);
+    setMensaje("");
+    setTipoModal("eliminar");
+    setMostrarModal(true);
+  }
 
-    const division = prompt(
-      "Modificá la división:",
-      curso.division || ""
-    );
+  // Abrir el formulario de notificación.
+  function abrirNotificacion() {
+    setCursoSeleccionado("");
+    setMensaje("");
+    setTipoModal("notificar");
+    setMostrarModal(true);
+  }
 
-    if (!division || !division.trim()) return;
+  function cerrarModal() {
+    if (guardando) return;
+
+    setMostrarModal(false);
+    setTipoModal("");
+    setCursoActual(null);
+    setMensaje("");
+  }
+
+  function manejarCambio(e) {
+    const { name, value } = e.target;
+
+    setFormulario((anterior) => ({
+      ...anterior,
+      [name]: value,
+    }));
+  }
+
+  // Guardar un curso nuevo o editar uno existente.
+  async function guardarCurso(e) {
+    e.preventDefault();
+    setMensaje("");
+
+    const nombre = formulario.curso.trim();
+    const division = formulario.division.trim();
+
+    if (!nombre || !division) {
+      setMensaje("Completá todos los campos.");
+      return;
+    }
+
+    setGuardando(true);
 
     try {
-      await updateDoc(doc(db, "Cursos", curso.id), {
-        curso: nombre.trim().toLowerCase(),
-        division: division.trim().toLowerCase(),
-      });
+      const datos = {
+        curso: nombre.toLowerCase(),
+        division: division.toLowerCase(),
+      };
 
-      alert("¡Curso actualizado correctamente!");
+      if (tipoModal === "agregar") {
+        await addDoc(collection(db, "Cursos"), datos);
+      } else {
+        await updateDoc(doc(db, "Cursos", cursoActual.id), datos);
+      }
+
+      setMostrarModal(false);
+      setTipoModal("");
+      setCursoActual(null);
+      setMensaje("");
     } catch (error) {
-      console.error("Error al editar el curso:", error);
-      alert("No se pudo editar el curso.");
+      console.error("Error al guardar el curso:", error);
+      setMensaje("No se pudo guardar el curso. Intentá nuevamente.");
+    } finally {
+      setGuardando(false);
     }
   }
 
   // Eliminar un curso.
-  async function eliminarCurso(curso) {
-    const confirmar = window.confirm(
-      `¿Seguro que querés eliminar el curso ${nombreCurso(curso)}?`
-    );
+  async function confirmarEliminar() {
+    if (!cursoActual) return;
 
-    if (!confirmar) return;
+    setGuardando(true);
+    setMensaje("");
 
     try {
-      await deleteDoc(doc(db, "Cursos", curso.id));
-      alert("¡Curso eliminado correctamente!");
+      await deleteDoc(doc(db, "Cursos", cursoActual.id));
+      setMostrarModal(false);
+      setTipoModal("");
+      setCursoActual(null);
     } catch (error) {
       console.error("Error al eliminar el curso:", error);
-      alert("No se pudo eliminar el curso.");
+      setMensaje("No se pudo eliminar el curso. Intentá nuevamente.");
+    } finally {
+      setGuardando(false);
     }
+  }
+
+  // Por ahora, la notificación no se envía: todavía no está conectada.
+  function notificarCurso(e) {
+    e.preventDefault();
+
+    if (!cursoSeleccionado) {
+      setMensaje("Seleccioná un curso.");
+      return;
+    }
+
+    setMensaje(
+      "El curso fue seleccionado. El envío de notificaciones todavía no está conectado."
+    );
   }
 
   function iniciarSesion() {
     window.location.href = "/login";
   }
 
-  function abrirNotificacion() {
-    setCursoSeleccionado("");
-    setMostrarModal(true);
-  }
-
-  function cerrarModal() {
-    setMostrarModal(false);
-    setCursoSeleccionado("");
-  }
-
-  function notificarCurso(e) {
-    e.preventDefault();
-
-    if (!cursoSeleccionado) return;
-
-    alert("Seleccionaste el curso. Próximamente conectaremos el envío de notificaciones.");
-    cerrarModal();
-  }
-
-  // Filtrar cursos mediante el buscador.
   const cursosFiltrados = cursos.filter((curso) =>
     nombreCurso(curso).toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -293,7 +339,7 @@ function CursosPreceptor() {
             <button
               type="button"
               className="cursos-agregar"
-              onClick={agregarCursos}
+              onClick={abrirAgregar}
             >
               <span>＋</span>
               Agregar cursos
@@ -332,7 +378,7 @@ function CursosPreceptor() {
                 <button
                   type="button"
                   className="cursos-agregar cursos-agregar-centro"
-                  onClick={agregarCursos}
+                  onClick={abrirAgregar}
                 >
                   <span>＋</span>
                   Agregar cursos
@@ -351,7 +397,7 @@ function CursosPreceptor() {
                   <div className="cursos-acciones-crud">
                     <button
                       type="button"
-                      onClick={() => editarCurso(curso)}
+                      onClick={() => abrirEditar(curso)}
                       aria-label={`Editar ${nombreCurso(curso)}`}
                     >
                       Editar
@@ -359,7 +405,7 @@ function CursosPreceptor() {
 
                     <button
                       type="button"
-                      onClick={() => eliminarCurso(curso)}
+                      onClick={() => abrirEliminar(curso)}
                       aria-label={`Eliminar ${nombreCurso(curso)}`}
                     >
                       Eliminar
@@ -376,7 +422,7 @@ function CursosPreceptor() {
         </footer>
       </main>
 
-      {/* VENTANA PARA NOTIFICAR A UN CURSO */}
+      {/* VENTANAS PERSONALIZADAS */}
       {mostrarModal && (
         <div
           className="cursos-modal-fondo"
@@ -392,10 +438,21 @@ function CursosPreceptor() {
             <div className="cursos-modal-header">
               <div>
                 <h2 id="titulo-modal-cursos">
-                  Notificar al curso
+                  {tipoModal === "agregar" && "Agregar curso"}
+                  {tipoModal === "editar" && "Editar curso"}
+                  {tipoModal === "eliminar" && "Eliminar curso"}
+                  {tipoModal === "notificar" && "Notificar al curso"}
                 </h2>
+
                 <p>
-                  Seleccioná el curso al que querés enviar una comunicación.
+                  {tipoModal === "agregar" &&
+                    "Completá los datos para registrar un nuevo curso."}
+                  {tipoModal === "editar" &&
+                    "Modificá los datos del curso seleccionado."}
+                  {tipoModal === "eliminar" &&
+                    "Revisá la información antes de confirmar."}
+                  {tipoModal === "notificar" &&
+                    "Seleccioná el curso al que querés enviar una comunicación."}
                 </p>
               </div>
 
@@ -403,62 +460,165 @@ function CursosPreceptor() {
                 type="button"
                 className="cursos-modal-cerrar"
                 onClick={cerrarModal}
+                disabled={guardando}
                 aria-label="Cerrar ventana"
               >
                 ×
               </button>
             </div>
 
-            <form onSubmit={notificarCurso}>
-              <label htmlFor="seleccionar-curso">
-                Curso
-              </label>
-
-              <select
-                id="seleccionar-curso"
-                value={cursoSeleccionado}
-                onChange={(e) => setCursoSeleccionado(e.target.value)}
-                disabled={cursos.length === 0}
-              >
-                <option value="">Seleccionar curso</option>
-
-                {cursos.map((curso) => (
-                  <option key={curso.id} value={curso.id}>
-                    {nombreCurso(curso)}
-                  </option>
-                ))}
-              </select>
-
-              {cursos.length === 0 && (
-                <div className="cursos-modal-vacio">
-                  <span>ⓘ</span>
-                  <div>
-                    <strong>No hay cursos disponibles</strong>
-                    <p>
-                      Primero necesitás cargar un curso.
-                    </p>
-                  </div>
+            {(tipoModal === "agregar" || tipoModal === "editar") && (
+              <form onSubmit={guardarCurso}>
+                <div className="cursos-form-grupo">
+                  <label htmlFor="curso">Año del curso</label>
+                  <input
+                    id="curso"
+                    name="curso"
+                    type="text"
+                    placeholder="Ej.: primero o 1°"
+                    value={formulario.curso}
+                    onChange={manejarCambio}
+                    required
+                    autoFocus
+                  />
                 </div>
-              )}
 
-              <div className="cursos-modal-botones">
-                <button
-                  type="button"
-                  className="cursos-modal-cancelar"
-                  onClick={cerrarModal}
-                >
-                  Cerrar
-                </button>
+                <div className="cursos-form-grupo">
+                  <label htmlFor="division">División</label>
+                  <input
+                    id="division"
+                    name="division"
+                    type="text"
+                    placeholder="Ej.: primera o 1"
+                    value={formulario.division}
+                    onChange={manejarCambio}
+                    required
+                  />
+                </div>
 
-                <button
-                  type="submit"
-                  className="cursos-modal-enviar"
-                  disabled={!cursoSeleccionado}
-                >
-                  Continuar
-                </button>
+                {mensaje && (
+                  <p className="cursos-modal-mensaje" role="alert">
+                    {mensaje}
+                  </p>
+                )}
+
+                <div className="cursos-modal-botones">
+                  <button
+                    type="button"
+                    className="cursos-modal-cancelar"
+                    onClick={cerrarModal}
+                    disabled={guardando}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="cursos-modal-enviar"
+                    disabled={guardando}
+                  >
+                    {guardando
+                      ? "Guardando..."
+                      : tipoModal === "agregar"
+                      ? "Guardar curso"
+                      : "Guardar cambios"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {tipoModal === "eliminar" && (
+              <div>
+                <div className="cursos-modal-confirmacion">
+                  ¿Seguro que querés eliminar el curso{" "}
+                  <strong>{nombreCurso(cursoActual || {})}</strong>?
+                  <p>Esta acción no se puede deshacer.</p>
+                </div>
+
+                {mensaje && (
+                  <p className="cursos-modal-mensaje" role="alert">
+                    {mensaje}
+                  </p>
+                )}
+
+                <div className="cursos-modal-botones">
+                  <button
+                    type="button"
+                    className="cursos-modal-cancelar"
+                    onClick={cerrarModal}
+                    disabled={guardando}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="button"
+                    className="cursos-modal-eliminar"
+                    onClick={confirmarEliminar}
+                    disabled={guardando}
+                  >
+                    {guardando ? "Eliminando..." : "Sí, eliminar"}
+                  </button>
+                </div>
               </div>
-            </form>
+            )}
+
+            {tipoModal === "notificar" && (
+              <form onSubmit={notificarCurso}>
+                <div className="cursos-form-grupo">
+                  <label htmlFor="seleccionar-curso">Curso</label>
+
+                  <select
+                    id="seleccionar-curso"
+                    value={cursoSeleccionado}
+                    onChange={(e) => {
+                      setCursoSeleccionado(e.target.value);
+                      setMensaje("");
+                    }}
+                    disabled={cursos.length === 0}
+                    required
+                  >
+                    <option value="">Seleccionar curso</option>
+
+                    {cursos.map((curso) => (
+                      <option key={curso.id} value={curso.id}>
+                        {nombreCurso(curso)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {cursos.length === 0 && (
+                  <p className="cursos-modal-mensaje">
+                    Primero necesitás cargar un curso.
+                  </p>
+                )}
+
+                {mensaje && (
+                  <p className="cursos-modal-mensaje" role="status">
+                    {mensaje}
+                  </p>
+                )}
+
+                <div className="cursos-modal-botones">
+                  <button
+                    type="button"
+                    className="cursos-modal-cancelar"
+                    onClick={cerrarModal}
+                  >
+                    Cerrar
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="cursos-modal-enviar"
+                    disabled={!cursoSeleccionado}
+                  >
+                    Continuar
+                  </button>
+                </div>
+              </form>
+            )}
           </section>
         </div>
       )}

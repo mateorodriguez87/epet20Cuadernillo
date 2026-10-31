@@ -1,0 +1,214 @@
+/* FONDO DEL MODAL */
+.cursos-modal-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+/* VENTANA */
+.cursos-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: aparecerModal 0.2s ease-out;
+}
+
+@keyframes aparecerModal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ENCABEZADO */
+.cursos-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.cursos-modal-header h2 {
+  margin: 0 0 8px;
+  color: #253783;
+  font-size: 24px;
+}
+
+.cursos-modal-header p {
+  margin: 0;
+  color: #68738a;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* BOTÓN CERRAR */
+.cursos-modal-cerrar {
+  border: none;
+  background: #f0f3fa;
+  color: #34418f;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 25px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cursos-modal-cerrar:hover {
+  background: #e0e6f5;
+}
+
+/* CAMPOS DEL FORMULARIO */
+.cursos-form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.cursos-form-grupo label {
+  color: #29345d;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cursos-form-grupo input,
+.cursos-form-grupo select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  border: 1px solid #d9dfeb;
+  border-radius: 9px;
+  background: #fff;
+  color: #26324d;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cursos-form-grupo input:focus,
+.cursos-form-grupo select:focus {
+  border-color: #3158c9;
+  box-shadow: 0 0 0 3px rgba(49, 88, 201, 0.12);
+}
+
+.cursos-form-grupo input::placeholder {
+  color: #9aa3b5;
+}
+
+/* BOTONES */
+.cursos-modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.cursos-modal-botones button {
+  border: none;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.cursos-modal-botones button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.cursos-modal-botones button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cursos-modal-cancelar {
+  background: #edf0f6;
+  color: #47516a;
+}
+
+.cursos-modal-cancelar:hover:not(:disabled) {
+  background: #dfe4ee;
+}
+
+.cursos-modal-enviar {
+  background: #2458d3;
+  color: #fff;
+}
+
+.cursos-modal-enviar:hover:not(:disabled) {
+  background: #1946b5;
+}
+
+.cursos-modal-eliminar {
+  background: #dc3545;
+  color: #fff;
+}
+
+.cursos-modal-eliminar:hover:not(:disabled) {
+  background: #bd2635;
+}
+
+/* CONFIRMACIÓN Y MENSAJES */
+.cursos-modal-confirmacion {
+  color: #34405b;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.cursos-modal-confirmacion strong {
+  color: #253783;
+}
+
+.cursos-modal-confirmacion p {
+  margin-bottom: 0;
+  color: #788197;
+  font-size: 14px;
+}
+
+.cursos-modal-mensaje {
+  margin: 12px 0;
+  padding: 12px;
+  background: #fff4e5;
+  color: #8a5200;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ADAPTACIÓN A CELULARES */
+@media (max-width: 520px) {
+  .cursos-modal {
+    padding: 22px;
+  }
+
+  .cursos-modal-header h2 {
+    font-size: 21px;
+  }
+
+  .cursos-modal-botones {
+    flex-direction: column-reverse;
+  }
+
+  .cursos-modal-botones button {
+    width: 100%;
+  }
+}
