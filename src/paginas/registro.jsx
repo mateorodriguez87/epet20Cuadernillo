@@ -62,8 +62,7 @@ function Registro() {
       } else if (error.code === "auth/weak-password") {
         setError("La contraseña es demasiado débil.");
       } else {
-        setError("No se pudo crear la cuenta. Revisá la configuración de Firebase.");
-        console.error(error);
+        setError(`Error de Firebase: ${error.code || error.message}`);;
       }
     } finally {
       setCargando(false);
