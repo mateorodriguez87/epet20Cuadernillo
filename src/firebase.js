@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCDU-oSlCXfr_KNqub0zHxMuXGA6pHDe0c",
+  apiKey: "AIzaSyCDU-oSlCXfr_KNqub0zHxMuXGA6pHDeOc",
   authDomain: "cuadernilloepet20.firebaseapp.com",
   projectId: "cuadernilloepet20",
   storageBucket: "cuadernilloepet20.firebasestorage.app",
@@ -15,5 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+console.log("Firebase Auth:", auth.config.apiKey);
 
 export { db, auth };
