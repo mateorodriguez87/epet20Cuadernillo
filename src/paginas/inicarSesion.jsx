@@ -1,19 +1,52 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 import "../estilos/iniciarSesion.css";
 
 function Login() {
   const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    console.log({
-      usuario,
-      contrasena,
-    });
+    if (!usuario.trim() || !contrasena) {
+      setError("Completá el correo y la contraseña.");
+      return;
+    }
+
+    try {
+      setCargando(true);
+
+      await signInWithEmailAndPassword(
+        auth,
+        usuario.trim(),
+        contrasena
+      );
+
+      navigate("/preceptor", { replace: true });
+    } catch (error) {
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/wrong-password" ||
+        error.code === "auth/user-not-found"
+      ) {
+        setError("El correo o la contraseña son incorrectos.");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Ingresá un correo electrónico válido.");
+      } else {
+        setError("No se pudo iniciar sesión. Intentá nuevamente.");
+        console.error("Error de inicio de sesión:", error.code);
+      }
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
@@ -26,24 +59,24 @@ function Login() {
         </p>
 
         <form onSubmit={handleSubmit}>
-          {/* Usuario */}
           <div className="campo">
-            <label htmlFor="usuario">Usuario</label>
+            <label htmlFor="usuario">Correo electrónico</label>
 
             <div className="input-container">
               <span className="icon">♙</span>
 
               <input
-                type="text"
+                type="email"
                 id="usuario"
-                placeholder="Ingresa tu usuario"
+                placeholder="Ingresa tu correo"
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
+                autoComplete="email"
+                required
               />
             </div>
           </div>
 
-          {/* Contraseña */}
           <div className="campo">
             <label htmlFor="contrasena">Contraseña</label>
 
@@ -56,37 +89,40 @@ function Login() {
                 placeholder="Ingresa tu contraseña"
                 value={contrasena}
                 onChange={(e) => setContrasena(e.target.value)}
+                autoComplete="current-password"
+                required
               />
             </div>
           </div>
 
-          {/* Botón */}
-          <button type="submit" className="btn-ingresar">
+          {error && <p role="alert">{error}</p>}
+
+          <button
+            type="submit"
+            className="btn-ingresar"
+            disabled={cargando}
+          >
             <span>♙</span>
-            Ingresar
+            {cargando ? "Ingresando..." : "Ingresar"}
           </button>
         </form>
 
-        {/* Separador */}
         <div className="separador">
           <span></span>
           <p>o</p>
           <span></span>
         </div>
 
-        {/* Recuperar contraseña */}
-        <a href="#" className="recuperar">
+        <Link to="/login" className="recuperar">
           ♧ ¿Olvidaste tu contraseña?
-        </a>
+        </Link>
 
-        {/* Registro */}
         <p className="registro">
           ¿No tienes una cuenta?{" "}
-          <a href="/registro">Regístrate aquí</a>
+          <Link to="/registro">Regístrate aquí</Link>
         </p>
       </div>
 
-      {/* Footer */}
       <footer>
         COPYRIGHT © 2026 EPET N° 20 - NEUQUÉN. TODOS LOS DERECHOS RESERVADOS.
       </footer>
