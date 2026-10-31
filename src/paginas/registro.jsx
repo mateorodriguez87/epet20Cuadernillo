@@ -1,6 +1,7 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../firebase";
 import "../estilos/registro.css";
 
 function Registro() {
@@ -12,8 +13,9 @@ function Registro() {
   const [contrasena, setContrasena] = useState("");
   const [confirmarContrasena, setConfirmarContrasena] = useState("");
   const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -38,10 +40,34 @@ function Registro() {
       return;
     }
 
-    // Por ahora, el registro es una demostración.
-    // Más adelante se conectará con una base de datos.
-    alert("¡Formulario completado! Próximamente podrás crear tu cuenta.");
-    navigate("/login");
+    try {
+      setCargando(true);
+
+      const credencial = await createUserWithEmailAndPassword(
+        auth,
+        correo.trim(),
+        contrasena
+      );
+
+      await updateProfile(credencial.user, {
+        displayName: nombre.trim(),
+      });
+
+      navigate("/preceptor", { replace: true });
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        setError("Ese correo ya está registrado.");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Ingresá un correo electrónico válido.");
+      } else if (error.code === "auth/weak-password") {
+        setError("La contraseña es demasiado débil.");
+      } else {
+        setError("No se pudo crear la cuenta. Revisá la configuración de Firebase.");
+        console.error(error);
+      }
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
@@ -144,8 +170,12 @@ function Registro() {
             </p>
           )}
 
-          <button type="submit" className="registro-boton">
-            Crear cuenta
+          <button
+            type="submit"
+            className="registro-boton"
+            disabled={cargando}
+          >
+            {cargando ? "Creando cuenta..." : "Crear cuenta"}
           </button>
         </form>
 
