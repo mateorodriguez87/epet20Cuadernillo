@@ -1,136 +1,235 @@
+/* =====================================================================
+   ALTA Y BAJA DE ALUMNOS - ESTILOS
+   Acá está todo el diseño de la pantalla donde el preceptor da de alta
+   y de baja alumnos. Va de arriba para abajo: variables, estructura,
+   barra lateral, contenido, pestañas, tarjetas, formulario, resumen,
+   tabla de bajas, el modal y al final el responsive.
+   ===================================================================== */
+
+/* Las variables: se definen una vez acá y se usan en todos lados con
+   var(--nombre). */
 :root {
-  --azul-sidebar: #2c3a96;
-  --azul-activo: #6f98c9;
-  --azul: #1b3fb3;
-  --fondo: #f5f6fa;
-  --borde: #e5e8f0;
-  --texto: #1f2430;
-  --suave: #6b7280;
-  --rojo: #d93a3a;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  --azul-sidebar: #2c3a96;  /* El azul oscuro de la barra lateral */
+  --azul-activo: #6f98c9;   /* El celeste de la opción del menú donde estás parado */
+  --azul: #1b3fb3;          /* Azul principal: botones, títulos y cuando seleccionás un campo */
+  --fondo: #f5f6fa;         /* Gris clarito de fondo de toda la página */
+  --borde: #e5e8f0;         /* Para bordes y rayitas separadoras */
+  --texto: #1f2430;         /* Color del texto normal */
+  --suave: #6b7280;         /* Gris para textos secundarios, los menos importantes */
+  --rojo: #d93a3a;          /* Rojo para bajas y cosas peligrosas */
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;  /* Tipografía con alternativas por si la primera no está instalada */
 }
 
+/* Reinicios básicos para que el navegador  */
+/* border-box: el padding y el borde cuentan dentro del ancho, así las
+   medidas no se desarman cuando agregás espacio. */
 * { box-sizing: border-box; }
+/* Sacamos el margen que el navegador predeterminado y ponemos el fondo y el color del texto */
 body { margin: 0; background: var(--fondo); color: var(--texto); }
+/* Los controles de formulario no heredan la fuente solos; esto lo fuerza */
 button, input, select, textarea { font: inherit; color: inherit; }
+/* Manito al pasar por arriba de cualquier botón */
 button { cursor: pointer; }
+/* Los links quedan como texto común: sin subrayado y sin el azul  */
 a { text-decoration: none; color: inherit; }
 
 /* ---------- Layout ---------- */
+/* El contenedor de todo: una grilla de 2 columnas. La primera, de 290px,
+   es la barra lateral, y la segunda (1fr) se queda con todo lo que sobra.
+   El min-height hace que siempre llegue hasta abajo de la pantalla. */
 .panel { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
 
 /* ---------- Sidebar ---------- */
+/* La barra azul de la izquierda. Es una columna con espacio entre sus
+   tres partes: logo, menú y cerrar sesión. */
 .sidebar {
   background: var(--azul-sidebar); color: #fff;
   padding: 36px 0 28px; display: flex; flex-direction: column; gap: 36px;
 }
+/* El bloque del logo ("Cuaderno de comunicaciones digital") */
 .logo { padding: 0 48px; }
 .logo h2 { margin: 0; font-size: 19px; line-height: 1.4; }
+/* La palabra "DIGITAL" va en celeste y en negrita para que resalte */
 .logo span { color: #9fb0e8; font-weight: 700; font-size: 19px; }
 
+/* Las opciones del menú, una abajo de la otra */
 .menu { display: flex; flex-direction: column; gap: 10px; }
+/* Cada opción: el iconito y el texto uno al lado del otro */
 .menu-item { display: flex; align-items: center; gap: 14px; font-size: 24px; padding: 14px 24px; color: #fff; }
+/* Le damos un ancho fijo al ícono para que todos los textos queden alineados */
 .menu-icon { width: 30px; text-align: center; }
+/* La opción donde estás: fondo celeste y puntita derecha redondeada,
+   queda como una pastilla que sale hacia el contenido */
 .menu-item.activo { background: var(--azul-activo); border-radius: 0 40px 40px 0; margin-right: 20px; }
+/* El margin-top: auto es el truco que manda "Cerrar sesión" al fondo de la barra */
 .cerrar-sesion { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 0 24px; font-size: 24px; }
 
 /* ---------- Contenido ---------- */
+/* Todo lo que está a la derecha de la barra. El min-width: 0 es para que
+   la tabla no ensanche la columna cuando es muy grande. */
 .contenido { padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 
+/* El encabezado: título a la izquierda, fecha y usuario a la derecha.
+   Con flex-wrap, si no entran, uno baja a la línea de abajo. */
 .encabezado-alumnos { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
 .encabezado h1 { margin: 0; font-size: 22px; }
+/* El textito gris de abajo del título (el "Inicio > Alumnos..." ) */
 .encabezado p { margin: 2px 0 0; font-size: 11px; color: var(--suave); }
+/* El grupito de la derecha: fecha + usuario */
 .encabezado-derecha { display: flex; align-items: center; gap: 32px; }
+/* Dos líneas de texto apiladas: la importante arriba y la secundaria abajo */
 .fecha, .usuario div { display: flex; flex-direction: column; line-height: 1.3; }
 .fecha strong, .usuario strong { font-size: 12px; font-weight: 600; }
+/* La línea de abajo (día de la semana, rol). El :not() deja afuera el
+   circulito de las iniciales para que no se le pegue este estilo. */
 .fecha span, .usuario span:not(.usuario-avatar) { font-size: 11px; color: var(--suave); }
 .usuario { display: flex; align-items: center; gap: 10px; }
+/* El círculo azul con las iniciales de quien está logueado */
 .usuario-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--azul); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+/* La frasecita explicativa debajo del encabezado */
 .subtitulo { margin: 0; font-size: 12px; color: var(--suave); }
 
 /* ---------- Pestañas ---------- */
+/* Los botones para cambiar entre "Dar de alta" y "Dar de baja" */
 .pestanas { display: flex; gap: 8px; }
+/* Pestaña que no está elegida: fondo blanco y texto gris */
 .pestana { height: 38px; padding: 0 20px; border-radius: 8px; background: #fff; border: 1px solid var(--borde); font-size: 13px; font-weight: 600; color: var(--suave); }
+/* Pestaña elegida: se pinta de azul con letras blancas */
 .pestana.activa { background: var(--azul); border-color: var(--azul); color: #fff; }
 
 /* ---------- Tarjetas ---------- */
+/* La cajita blanca con borde y esquinas redondeadas que usamos para el
+   formulario, el resumen y la tabla. Se reutiliza en todos lados. */
 .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 10px; }
+/* Cuadradito redondeado donde va un ícono. El flex-shrink: 0 hace que
+   no se achique cuando falta lugar. */
 .icono-card { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
 .icono-card.azul { background: #eef2fb; color: var(--azul); }
 
+/* El título de cada bloque, con una rayita abajo */
 .titulo-seccion { border-bottom: 1px solid var(--borde); padding-bottom: 10px; }
 .titulo-seccion h2 { margin: 0; font-size: 15px; color: var(--azul); }
+/* Versión con un poco de aire arriba, para el segundo título del formulario */
 .titulo-seccion.separado { margin-top: 6px; }
 
 /* ---------- Formulario ---------- */
+/* Dos columnas: el formulario toma lo que sobra (minmax(0, 1fr)) y el
+   resumen tiene 290px fijos. Con align-items: start evitamos que las dos
+   tarjetas se estiren a la misma altura. */
 .zona-formulario { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
 .formulario { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+/* Una fila con dos campos lado a lado, del mismo ancho */
 .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+/* Un campo: la etiqueta arriba y el input abajo */
 .campo { display: flex; flex-direction: column; gap: 6px; }
 .campo > label { font-size: 12px; font-weight: 600; }
+/* El estilo que comparten todos los inputs y selects */
 .entrada { width: 100%; background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 0 12px; height: 40px; font-size: 13px; }
+/* Cuando hacés clic en un campo, se marca con un contorno azul */
 .entrada:focus { outline: 2px solid #b9c8f0; border-color: var(--azul); }
 
+/* Donde están los botones Cancelar y Guardar, bien centrados */
 .botones { display: flex; justify-content: center; gap: 14px; padding-top: 4px; }
+/* Tamaño y forma que comparten los tres tipos de botón */
 .boton-primario, .boton-secundario, .boton-peligro { height: 38px; padding: 0 22px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+/* El botón principal, el azul */
 .boton-primario { background: var(--azul); color: #fff; border: 0; }
+/* El hover solo funciona si el botón NO está deshabilitado */
 .boton-primario:hover:not(:disabled) { background: #15338f; }
+/* Botones deshabilitados: medio transparentes y con el cursor de "prohibido" */
 .boton-primario:disabled, .boton-peligro:disabled { opacity: 0.5; cursor: not-allowed; }
+/* El botón secundario (blanco con borde), por ejemplo "Cancelar" */
 .boton-secundario { background: #fff; border: 1px solid var(--borde); }
 .boton-secundario:hover { background: #f3f5fa; }
+/* El botón rojo para lo destructivo, tipo "Confirmar baja" */
 .boton-peligro { background: var(--rojo); color: #fff; border: 0; }
 .boton-peligro:hover:not(:disabled) { background: #b92d2d; }
 
 /* ---------- Resumen ---------- */
+/* La tarjeta de al lado que va mostrando los datos a medida que los cargás */
 .resumen { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+/* Cada dato del resumen: el ícono a la izquierda y el texto a la derecha */
 .resumen-item { display: flex; align-items: center; gap: 12px; }
+/* El texto del resumen: título chico arriba y el valor abajo */
 .resumen-item div:not(.icono-card) { display: flex; flex-direction: column; gap: 3px; }
 .resumen-item span { font-size: 11px; }
 .resumen-item strong { font-size: 12px; }
+/* La etiquetita de estado. El !important está para que el tamaño de letra
+   le gane a la regla de .resumen-item span de arriba. */
 .estado-etiqueta { align-self: flex-start; font-size: 10px !important; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+/* Verde: el formulario ya está completo */
 .estado-etiqueta.listo { background: #dff5e7; color: #1b7a45; }
+/* Naranja: todavía falta completar cosas */
 .estado-etiqueta.incompleto { background: #fdeccf; color: #9a6208; }
+/* Cajita celeste informativa con una "i" y un texto que explica algo */
 .aviso { display: flex; gap: 10px; background: #e8eefc; border-radius: 8px; padding: 14px; font-size: 11px; color: #1b2f7a; }
 .aviso p { margin: 0; line-height: 1.5; }
+/* El circulito azul con la "i" del aviso */
 .aviso-icono { width: 14px; height: 14px; border-radius: 50%; background: var(--azul); color: #fff; font-size: 9px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; margin-top: 2px; }
 
 /* ---------- Baja: tabla ---------- */
+/* La tarjeta que tiene el buscador y la tabla de alumnos */
 .tabla-alumnos { padding: 14px; }
 .filtros { padding-bottom: 12px; }
+/* El buscador: ocupa todo el ancho que pueda, pero hasta 360px como máximo */
 .buscador { width: 100%; max-width: 360px; height: 40px; background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 0 14px; font-size: 13px; }
+/* Si la tabla es más ancha que la pantalla, el scroll aparece solo acá
+   adentro y no en toda la página. */
 .tabla-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; min-width: 600px; }
+/* Los títulos de las columnas, con fondo gris clarito */
 thead th { background: #f3f5fa; font-size: 11px; font-weight: 500; color: var(--suave); text-align: left; padding: 12px 16px; }
+/* Redondeamos solo las puntas de afuera de la fila de títulos */
 thead th:first-child { border-radius: 8px 0 0 8px; }
 thead th:last-child { border-radius: 0 8px 8px 0; }
+/* Título centrado (el de la columna "Acciones") */
 th.centrado { text-align: center; }
+/* Las celdas del cuerpo, con una rayita entre fila y fila */
 tbody td { padding: 10px 16px; border-bottom: 1px solid var(--borde); font-size: 12px; }
+/* La última fila le sacamos la rayita de abajo */
 tbody tr:last-child td { border-bottom: 0; }
+/* El cartelito "No hay alumnos para mostrar" cuando la lista está vacía */
 td.sin-datos { text-align: center; color: var(--suave); padding: 28px 0; }
 
+/* El alumno en la tabla: foto (o iniciales) y nombre al lado */
 .alumno { display: flex; align-items: center; gap: 12px; }
+/* El círculo del avatar. El overflow: hidden recorta la foto para que
+   quede redondita. */
 .avatar { width: 36px; height: 36px; border-radius: 50%; background: #9aa7d1; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; overflow: hidden; }
+/* La foto llena todo el círculo sin deformarse (object-fit: cover) */
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
+/* La pastillita que muestra el curso (por ejemplo "3° A") */
 .etiqueta-curso { background: #e2ecfa; color: #2a4a8a; font-weight: 600; font-size: 11px; padding: 4px 12px; border-radius: 999px; }
 .acciones-fila { display: flex; justify-content: center; }
+/* El botón "Dar de baja" de cada fila: contorno y letras rojas sobre fondo blanco */
 .boton-baja { background: #fff; border: 1px solid #f0c4c4; color: var(--rojo); border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 600; }
 .boton-baja:hover { background: #fdecec; }
 
 /* ---------- Modal de baja ---------- */
+/* La capa oscura que tapa toda la pantalla (position: fixed + inset: 0)
+   y deja la ventanita en el medio. El z-index: 10 la pone arriba de todo. */
 .fondo-modal { position: fixed; inset: 0; background: rgba(20, 25, 50, 0.45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+/* La ventana de confirmación: blanca, de hasta 400px y con todo centrado */
 .modal { background: #fff; border-radius: 12px; padding: 26px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 14px; text-align: center; }
 .modal h2 { margin: 0; font-size: 18px; }
 .modal p { margin: 0; font-size: 13px; color: var(--suave); line-height: 1.5; }
+/* Adentro del modal, el campo "Motivo" va alineado a la izquierda */
 .modal .campo { text-align: left; }
+/* El círculo rojo con el "!" de arriba del modal. El margin: 0 auto lo centra. */
 .modal-icono { width: 46px; height: 46px; border-radius: 50%; background: #fbdcdc; color: var(--rojo); display: grid; place-items: center; font-weight: 700; font-size: 20px; margin: 0 auto; }
 
 /* ---------- Responsive ---------- */
+/* Pantallas medianas (hasta 1100px, tipo tablet): la barra lateral se
+   angosta y el resumen se va abajo del formulario. */
 @media (max-width: 1100px) {
   .panel { grid-template-columns: 230px 1fr; }
   .logo { padding: 0 24px; }
   .menu-item, .cerrar-sesion { font-size: 19px; }
   .zona-formulario { grid-template-columns: 1fr; }
 }
+/* Pantallas chicas (hasta 760px, o sea celulares): todo en una sola
+   columna, el menú pasa a ser una fila de botoncitos redondeados arriba
+   y los campos del formulario se apilan uno abajo del otro. */
 @media (max-width: 760px) {
   .panel { grid-template-columns: 1fr; }
   .sidebar { padding: 16px; gap: 14px; }
