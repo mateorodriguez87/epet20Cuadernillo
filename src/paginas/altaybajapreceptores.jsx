@@ -1,8 +1,13 @@
+// Hook de React para guardar los datos de la pantalla
 import { useState } from "react";
+// Estilos de esta pantalla
 import "../estilos/altaybajapreceptores.css";
 
+// Pantalla de alta y baja de preceptores
 function AltaBajaPreceptores() {
 
+  // Datos de la pantalla: por ahora vacíos, se completan con la base de datos
+  // Tiene el usuario del encabezado y las listas de cursos y preceptores
   const datos = {
     nombre: "",
     rol: "",
@@ -17,6 +22,8 @@ function AltaBajaPreceptores() {
   const [pestana, setPestana] = useState("alta");
 
   /* Formulario de alta */
+  // Formulario en blanco: se usa al empezar y para limpiarlo
+  // "cursos" es una lista porque un preceptor puede tener varios
   const formularioVacio = {
     nombre: "",
     apellido: "",
@@ -27,12 +34,15 @@ function AltaBajaPreceptores() {
     cursos: []
   };
 
+  // Lo que se va escribiendo en el formulario
   const [form, setForm] = useState(formularioVacio);
 
+  // Cambia un solo campo y conserva el resto (por eso el form)
   const cambiarCampo = (campo, valor) => {
     setForm({ ...form, [campo]: valor });
   };
 
+  // Marca o desmarca un curso: si ya estaba en la lista lo saca, y si no lo agrega
   const alternarCurso = (nombreCurso) => {
     const yaEsta = form.cursos.includes(nombreCurso);
 
@@ -44,38 +54,48 @@ function AltaBajaPreceptores() {
     });
   };
 
+  // Es true cuando están los datos obligatorios (nombre, apellido, DNI y correo)
+  // Habilita el botón Guardar. Turno, teléfono y cursos son opcionales
   const altaLista =
     form.nombre.trim() !== "" &&
     form.apellido.trim() !== "" &&
     form.dni.trim() !== "" &&
     form.email.trim() !== "";
 
+  // Se ejecuta al enviar el formulario
   const guardarPreceptor = (e) => {
     e.preventDefault();
+    // Si falta algún dato obligatorio, no hace nada
     if (!altaLista) return;
 
     // Acá se conecta con la base de datos (alta)
-    // const nuevoPreceptor = { ...form };
+    // const nuevoPreceptor = {.form };
 
+    // Limpia el formulario después de guardar
     setForm(formularioVacio);
   };
 
   /* Baja de preceptores */
+  // Estados de la baja: busqueda (texto del buscador), preceptorBaja (preceptor elegido; si hay uno se abre el modal) y motivo
   const [busqueda, setBusqueda] = useState("");
   const [preceptorBaja, setPreceptorBaja] = useState(null);
   const [motivo, setMotivo] = useState("");
 
+  // Filtra la tabla por nombre o por DNI: alcanza con que coincida uno de los dos
   const preceptoresFiltrados = datos.preceptores.filter((preceptor) =>
     (preceptor.nombre || "").toLowerCase().includes(busqueda.toLowerCase()) ||
     (preceptor.dni || "").includes(busqueda)
   );
 
+  // Cierra el modal y borra lo que se había elegido
   const cerrarModal = () => {
     setPreceptorBaja(null);
     setMotivo("");
   };
 
+  // Se ejecuta al apretar "Confirmar baja"
   const confirmarBaja = () => {
+    // Sin preceptor o sin motivo, no hace nada
     if (!preceptorBaja || motivo === "") return;
 
     // Acá se conecta con la base de datos (baja)
@@ -84,9 +104,11 @@ function AltaBajaPreceptores() {
     cerrarModal();
   };
 
+  // Saca las iniciales para el avatar cuando el preceptor no tiene foto (ejemplo: "Ana Pérez" queda "AP")
   const iniciales = (nombre = "") =>
     nombre.split(" ").filter(Boolean).map((p) => p[0]).join("").slice(0, 2);
 
+  // Desde acá empieza lo que se dibuja en pantalla
   return (
     <div className="panel">
 
@@ -96,12 +118,14 @@ function AltaBajaPreceptores() {
 
       <aside className="sidebar">
 
+        {/* Logo del sistema */}
         <div className="logo">
           <h2>CUADERNO DE</h2>
           <h2>COMUNICACIONES</h2>
           <span>DIGITAL</span>
         </div>
 
+        {/* Menú de navegación: la clase "activo" marca la pantalla actual (Preceptores) */}
         <nav className="menu">
 
           <a href="#" className="menu-item">
@@ -131,6 +155,7 @@ function AltaBajaPreceptores() {
 
         </nav>
 
+        {/* Cerrar sesión (por ahora solo es el botón visual) */}
         <a href="#" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
           <span>Cerrar sesión</span>
@@ -147,6 +172,7 @@ function AltaBajaPreceptores() {
 
         {/* ENCABEZADO */}
 
+        {/* Título a la izquierda, fecha y usuario a la derecha */}
         <header className="encabezado encabezado-alumnos">
 
           <div>
@@ -156,11 +182,13 @@ function AltaBajaPreceptores() {
 
           <div className="encabezado-derecha">
 
+            {/* Fecha y día de la semana (vienen de datos) */}
             <div className="fecha">
               <strong>{datos.fecha || ""}</strong>
               <span>{datos.dia || ""}</span>
             </div>
 
+            {/* Usuario logueado (viene de datos) */}
             <div className="usuario">
               <span className="usuario-avatar">{datos.iniciales}</span>
               <div>
@@ -180,6 +208,7 @@ function AltaBajaPreceptores() {
 
         {/* PESTAÑAS */}
 
+        {/* El estado pestana decide qué sección se ve y cuál botón queda marcado como activo */}
         <div className="pestanas">
 
           <button
@@ -207,12 +236,14 @@ function AltaBajaPreceptores() {
 
           <section className="zona-formulario">
 
+            {/* Formulario de alta: al enviarlo se ejecuta guardarPreceptor */}
             <form className="tarjeta formulario" onSubmit={guardarPreceptor}>
 
               <div className="titulo-seccion">
                 <h2>Datos del preceptor</h2>
               </div>
 
+              {/* Nombre y apellido */}
               <div className="fila">
 
                 <div className="campo">
@@ -239,6 +270,7 @@ function AltaBajaPreceptores() {
 
               </div>
 
+              {/* DNI y turno */}
               <div className="fila">
 
                 <div className="campo">
@@ -269,6 +301,7 @@ function AltaBajaPreceptores() {
 
               </div>
 
+              {/* Correo y teléfono */}
               <div className="fila">
 
                 <div className="campo">
@@ -296,10 +329,12 @@ function AltaBajaPreceptores() {
               </div>
 
 
+              {/* Cursos a cargo (se pueden elegir varios) */}
               <div className="titulo-seccion separado">
                 <h2>Cursos a cargo</h2>
               </div>
 
+              {/* Si no hay cursos cargados muestra un mensaje; si hay, una casilla por cada curso */}
               {datos.cursos.length === 0 ? (
 
                 <div className="sin-cursos">
@@ -310,6 +345,7 @@ function AltaBajaPreceptores() {
 
                 <div className="lista-cursos">
 
+                  {/* La casilla queda tildada si el curso está en form.cursos; la clase "marcado" resalta la opción */}
                   {datos.cursos.map((curso, index) => (
 
                     <label
@@ -331,6 +367,7 @@ function AltaBajaPreceptores() {
               )}
 
 
+              {/* Cancelar limpia el formulario; Guardar se habilita cuando altaLista es true */}
               <div className="botones">
 
                 <button
@@ -362,6 +399,7 @@ function AltaBajaPreceptores() {
                 <h2>Resumen</h2>
               </div>
 
+              {/* El resumen se va actualizando mientras se completa el formulario */}
               <div className="resumen-item">
                 <div className="icono-card azul">♙</div>
                 <div>
@@ -402,6 +440,7 @@ function AltaBajaPreceptores() {
                 </div>
               </div>
 
+              {/* Aviso informativo */}
               <div className="aviso">
                 <span className="aviso-icono">i</span>
                 <p>
@@ -425,6 +464,7 @@ function AltaBajaPreceptores() {
 
           <section className="tarjeta tabla-alumnos">
 
+            {/* Buscador por nombre o DNI */}
             <div className="filtros">
 
               <input
@@ -437,6 +477,7 @@ function AltaBajaPreceptores() {
 
             </div>
 
+            {/* Tabla de preceptores */}
             <div className="tabla-scroll">
 
               <table>
@@ -450,6 +491,7 @@ function AltaBajaPreceptores() {
                   </tr>
                 </thead>
 
+                {/* Dos casos: lista vacía o una fila por cada preceptor */}
                 <tbody>
 
                   {preceptoresFiltrados.length === 0 ? (
@@ -469,6 +511,7 @@ function AltaBajaPreceptores() {
                         <td>
                           <div className="alumno">
                             <span className="avatar">
+                              {/* Si el preceptor tiene foto se muestra; si no, sus iniciales */}
                               {preceptor.foto
                                 ? <img src={preceptor.foto} alt={preceptor.nombre} />
                                 : iniciales(preceptor.nombre)}
@@ -480,6 +523,7 @@ function AltaBajaPreceptores() {
                         <td>{preceptor.dni}</td>
 
                         <td>
+                          {/* Una etiqueta por cada curso a cargo (si no tiene cursos, no muestra nada) */}
                           {(preceptor.cursos || []).map((curso, i) => (
                             <span className="etiqueta-curso" key={i}>{curso}</span>
                           ))}
@@ -519,12 +563,14 @@ function AltaBajaPreceptores() {
           CONFIRMAR BAJA
       ========================= */}
 
+      {/* El modal solo se muestra si hay un preceptor elegido (preceptorBaja) */}
       {preceptorBaja && (
 
         <div className="fondo-modal" onClick={cerrarModal}>
 
           <div className="modal" onClick={(e) => e.stopPropagation()}>
 
+            {/* Ícono de advertencia */}
             <div className="modal-icono">!</div>
 
             <h2>Dar de baja preceptor</h2>
@@ -535,6 +581,7 @@ function AltaBajaPreceptores() {
               quedarán sin preceptor a cargo.
             </p>
 
+            {/* Motivo de la baja: sin elegirlo, el botón rojo queda deshabilitado */}
             <div className="campo">
               <label htmlFor="motivo">Motivo de la baja</label>
               <select
@@ -552,6 +599,7 @@ function AltaBajaPreceptores() {
               </select>
             </div>
 
+            {/* Cancelar cierra el modal; Confirmar baja ejecuta confirmarBaja */}
             <div className="botones">
 
               <button className="boton-secundario" onClick={cerrarModal}>
