@@ -1,8 +1,13 @@
+// Hook de React para guardar los datos de la pantalla
 import { useState } from "react";
+// Estilos de esta pantalla
 import "../estilos/altaybajacursos.css";
 
+// Pantalla de alta y baja de cursos
 function AltaBajaCurso() {
 
+  // Datos de la pantalla: por ahora vacíos, se completan con la base de datos
+  // Tiene el usuario del encabezado y las listas de preceptores y cursos
   const datos = {
     nombre: "",
     rol: "",
@@ -17,6 +22,7 @@ function AltaBajaCurso() {
   const [pestana, setPestana] = useState("alta");
 
   /* Formulario de alta */
+  // Formulario en blanco: se usa al empezar y para limpiarlo
   const formularioVacio = {
     anio: "",
     division: "",
@@ -25,52 +31,67 @@ function AltaBajaCurso() {
     preceptor: ""
   };
 
+  // Lo que se va escribiendo en el formulario
   const [form, setForm] = useState(formularioVacio);
 
+  // Cambia un solo campo y conserva el resto (por eso el form)
   const cambiarCampo = (campo, valor) => {
     setForm({ ...form, [campo]: valor });
   };
 
+  // Arma el nombre del curso para el resumen, ej: "3° A"
+  // Queda vacío si todavía no se escribió ni año ni división
   const nombreCurso =
     form.anio.trim() !== "" || form.division.trim() !== ""
       ? `${form.anio.trim()}° ${form.division.trim()}`
       : "";
 
+  // Es true cuando están los datos obligatorios (año, división, turno y ciclo)
+  // Habilita el botón Guardar. El preceptor es opcional
   const altaLista =
     form.anio.trim() !== "" &&
     form.division.trim() !== "" &&
     form.turno !== "" &&
     form.ciclo.trim() !== "";
 
+  // Busca el preceptor elegido en el select (se compara como texto porque el value del select siempre es string)
   const preceptorElegido = datos.preceptores.find(
     (preceptor) => String(preceptor.id) === String(form.preceptor)
   );
 
+  // Se ejecuta al enviar el formulario
   const guardarCurso = (e) => {
     e.preventDefault();
+    // Si falta algún dato obligatorio, no hace nada
     if (!altaLista) return;
 
     // Acá se conecta con la base de datos (alta)
-    // const nuevoCurso = { ...form, nombre: nombreCurso };
+    // const nuevoCurso = { form, nombre: nombreCurso };
 
+    // Limpia el formulario después de guardar
     setForm(formularioVacio);
   };
 
   /* Baja de cursos */
+  // Estados de la baja: busqueda (texto del buscador), cursoBaja (curso elegido; si hay uno se abre el modal) y motivo
   const [busqueda, setBusqueda] = useState("");
   const [cursoBaja, setCursoBaja] = useState(null);
   const [motivo, setMotivo] = useState("");
 
+  // Filtra la tabla por lo que se escriba en el buscador (todo en minúsculas)
   const cursosFiltrados = datos.cursos.filter((curso) =>
     (curso.nombre || "").toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  // Cierra el modal y borra lo que se había elegido
   const cerrarModal = () => {
     setCursoBaja(null);
     setMotivo("");
   };
 
+  // Se ejecuta al apretar "Confirmar baja"
   const confirmarBaja = () => {
+    // Sin curso o sin motivo, no hace nada
     if (!cursoBaja || motivo === "") return;
 
     // Acá se conecta con la base de datos (baja)
@@ -79,12 +100,14 @@ function AltaBajaCurso() {
     cerrarModal();
   };
 
+  // Traduce el valor guardado del turno al texto que se muestra (manana pasa a Mañana)
   const turnos = {
     manana: "Mañana",
     tarde: "Tarde",
     noche: "Noche"
   };
 
+  // Desde acá empieza lo que se dibuja en pantalla
   return (
     <div className="panel">
 
@@ -94,12 +117,14 @@ function AltaBajaCurso() {
 
       <aside className="sidebar">
 
+        {/* Logo del sistema */}
         <div className="logo">
           <h2>CUADERNO DE</h2>
           <h2>COMUNICACIONES</h2>
           <span>DIGITAL</span>
         </div>
 
+        {/* Menú de navegación: la clase "activo" marca la pantalla actual (Cursos) */}
         <nav className="menu">
 
           <a href="#" className="menu-item">
@@ -129,6 +154,7 @@ function AltaBajaCurso() {
 
         </nav>
 
+        {/* Cerrar sesión (por ahora solo es el botón visual) */}
         <a href="#" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
           <span>Cerrar sesión</span>
@@ -145,6 +171,7 @@ function AltaBajaCurso() {
 
         {/* ENCABEZADO */}
 
+        {/* Título a la izquierda, fecha y usuario a la derecha */}
         <header className="encabezado encabezado-alumnos">
 
           <div>
@@ -154,11 +181,13 @@ function AltaBajaCurso() {
 
           <div className="encabezado-derecha">
 
+            {/* Fecha y día de la semana (vienen de datos) */}
             <div className="fecha">
               <strong>{datos.fecha || ""}</strong>
               <span>{datos.dia || ""}</span>
             </div>
 
+            {/* Usuario logueado (viene de datos) */}
             <div className="usuario">
               <span className="usuario-avatar">{datos.iniciales}</span>
               <div>
@@ -178,6 +207,7 @@ function AltaBajaCurso() {
 
         {/* PESTAÑAS */}
 
+        {/* El estado pestana decide qué sección se ve y cuál botón queda marcado como activo */}
         <div className="pestanas">
 
           <button
@@ -205,12 +235,14 @@ function AltaBajaCurso() {
 
           <section className="zona-formulario">
 
+            {/* Formulario de alta: al enviarlo se ejecuta guardarCurso */}
             <form className="tarjeta formulario" onSubmit={guardarCurso}>
 
               <div className="titulo-seccion">
                 <h2>Datos del curso</h2>
               </div>
 
+              {/* Año y división (juntos forman el nombre del curso, por ejemplo 3° A) */}
               <div className="fila">
 
                 <div className="campo">
@@ -237,6 +269,7 @@ function AltaBajaCurso() {
 
               </div>
 
+              {/* Turno y ciclo lectivo */}
               <div className="fila">
 
                 <div className="campo">
@@ -268,6 +301,7 @@ function AltaBajaCurso() {
               </div>
 
 
+              {/* Preceptor a cargo (opcional) */}
               <div className="titulo-seccion separado">
                 <h2>Preceptor a cargo</h2>
               </div>
@@ -281,6 +315,7 @@ function AltaBajaCurso() {
                   onChange={(e) => cambiarCampo("preceptor", e.target.value)}
                 >
                   <option value="">Sin asignar</option>
+                  {/* Las opciones salen de la lista de preceptores: se guarda el id y se muestra el nombre */}
                   {datos.preceptores.map((preceptor, index) => (
                     <option key={preceptor.id || index} value={preceptor.id}>
                       {preceptor.nombre}
@@ -290,6 +325,7 @@ function AltaBajaCurso() {
               </div>
 
 
+              {/* Cancelar limpia el formulario; Guardar se habilita cuando altaLista es true */}
               <div className="botones">
 
                 <button
@@ -321,6 +357,7 @@ function AltaBajaCurso() {
                 <h2>Resumen</h2>
               </div>
 
+              {/* El resumen se va actualizando mientras se completa el formulario */}
               <div className="resumen-item">
                 <div className="icono-card azul">🎓</div>
                 <div>
@@ -357,6 +394,7 @@ function AltaBajaCurso() {
                 </div>
               </div>
 
+              {/* Aviso informativo */}
               <div className="aviso">
                 <span className="aviso-icono">i</span>
                 <p>
@@ -380,6 +418,7 @@ function AltaBajaCurso() {
 
           <section className="tarjeta tabla-alumnos">
 
+            {/* Buscador de cursos */}
             <div className="filtros">
 
               <input
@@ -392,6 +431,7 @@ function AltaBajaCurso() {
 
             </div>
 
+            {/* Tabla de cursos */}
             <div className="tabla-scroll">
 
               <table>
@@ -406,6 +446,7 @@ function AltaBajaCurso() {
                   </tr>
                 </thead>
 
+                {/* Dos casos: lista vacía o una fila por cada curso */}
                 <tbody>
 
                   {cursosFiltrados.length === 0 ? (
@@ -466,12 +507,14 @@ function AltaBajaCurso() {
           CONFIRMAR BAJA
       ========================= */}
 
+      {/* El modal solo se muestra si hay un curso elegido (cursoBaja) */}
       {cursoBaja && (
 
         <div className="fondo-modal" onClick={cerrarModal}>
 
           <div className="modal" onClick={(e) => e.stopPropagation()}>
 
+            {/* Ícono de advertencia */}
             <div className="modal-icono">!</div>
 
             <h2>Dar de baja curso</h2>
@@ -480,6 +523,8 @@ function AltaBajaCurso() {
               Vas a dar de baja el curso <strong>{cursoBaja.nombre}</strong>.
             </p>
 
+            {/* Si el curso tiene alumnos, avisa que hay que reasignarlos antes de seguir */}
+            {/* Es solo un aviso: no bloquea el botón de confirmar */}
             {Number(cursoBaja.alumnos) > 0 && (
               <div className="aviso-peligro">
                 Este curso tiene {cursoBaja.alumnos} alumnos. Recordá
@@ -487,6 +532,7 @@ function AltaBajaCurso() {
               </div>
             )}
 
+            {/* Motivo de la baja: sin elegirlo, el botón rojo queda deshabilitado */}
             <div className="campo">
               <label htmlFor="motivo">Motivo de la baja</label>
               <select
@@ -503,6 +549,7 @@ function AltaBajaCurso() {
               </select>
             </div>
 
+            {/* Cancelar cierra el modal; Confirmar baja ejecuta confirmarBaja */}
             <div className="botones">
 
               <button className="boton-secundario" onClick={cerrarModal}>
