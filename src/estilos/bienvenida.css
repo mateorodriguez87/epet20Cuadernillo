@@ -1,9 +1,17 @@
+/* =====================================================================
+   BIENVENIDA 
+   header azul arriba, tarjeta en el medio con
+   el nombre de la escuela y el escudo, y footer abajo.
+   ===================================================================== */
+
+/* Reinicio básico: se sacan los márgenes y espacios de fábrica del navegador, y border-box hace que el padding y el borde cuenten dentro del ancho */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Tipografía de toda la página y un gris clarito de fondo */
 body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: #f4f4f4;
@@ -13,6 +21,7 @@ body {
    PÁGINA COMPLETA
 ========================= */
 
+/* El <div className="pagina"> que envuelve todo: una columna con el header arriba, el contenido en el medio y el footer abajo. El min-height: 100vh hace que ocupe como mínimo toda la pantalla */
 .pagina {
   width: 100%;
   min-height: 100vh;
@@ -21,12 +30,14 @@ body {
   flex-direction: column;
 
   /* Fondo tipo papel */
+  /* Un gradiente radial repetido que dibuja puntitos muy suaves (efecto papel) */
   background:
     radial-gradient(
       rgba(0, 0, 0, 0.04) 1px,
       transparent 1px
     );
 
+  /* Cada puntito se repite cada 5px */
   background-size: 5px 5px;
 }
 
@@ -34,6 +45,7 @@ body {
    HEADER
 ========================= */
 
+/* La barra azul de arriba (<header>): alto fijo de 83px, con el ícono y los títulos a la izquierda y "AYUDA" a la derecha (space-between) */
 .header {
   width: 100%;
   height: 83px;
@@ -49,6 +61,7 @@ body {
   border-bottom: 1px solid #555;
 }
 
+/* Agrupa el ícono y los títulos para que queden juntos, uno al lado del otro */
 .header-izquierda {
   display: flex;
   align-items: center;
@@ -57,6 +70,7 @@ body {
 
 /* Ícono de computadora */
 
+/* Círculo con borde blanco que contiene el emoji de la compu (el font-size agranda el emoji) */
 .icono-laptop {
   width: 52px;
   height: 52px;
@@ -74,6 +88,7 @@ body {
 
 /* Título */
 
+/* "ESCUELA TÉCNICA" */
 .titulo-header h1 {
   color: white;
   font-size: 18px;
@@ -81,6 +96,7 @@ body {
   margin-bottom: 4px;
 }
 
+/* "CUADERNO DE COMUNICACIONES DIGITAL", en celeste claro (en celulares se oculta) */
 .titulo-header p {
   color: #a9c0da;
   font-size: 13px;
@@ -88,6 +104,7 @@ body {
 
 /* Ayuda */
 
+/* "? AYUDA" de la derecha: el círculo y el texto en fila */
 .ayuda {
   display: flex;
   align-items: center;
@@ -97,6 +114,7 @@ body {
   font-size: 14px;
 }
 
+/* El circulito con el "?" */
 .signo {
   width: 18px;
   height: 18px;
@@ -116,6 +134,7 @@ body {
    CONTENIDO PRINCIPAL
 ========================= */
 
+/* El <main>: ocupa todo el espacio libre entre header y footer (flex: 1) y centra la tarjeta en el medio */
 .contenido {
   flex: 1;
   width: 100%;
@@ -129,6 +148,7 @@ body {
 
 /* Tarjeta */
 
+/* Tarjeta del centro: ocupa el 90% del ancho con tope de 1200px, con el texto a la izquierda y el escudo a la derecha (space-between). El padding derecho es más grande para separar el escudo del borde */
 .tarjeta {
   width: 90%;
   max-width: 1200px;
@@ -147,6 +167,7 @@ body {
    TEXTO PRINCIPAL
 ========================= */
 
+/* "E.P.E.T N°20" en letra gigante */
 .texto h2 {
   font-size: 80px;
   line-height: 1.08;
@@ -157,6 +178,7 @@ body {
   margin-bottom: 28px;
 }
 
+/* La frase "CLICK PARA CONTINUAR", con las letras bien separadas (letter-spacing).el link de adentro no tiene regla propia, así que usa el color y el subrayado que trae el navegador */
 .texto p {
   font-size: 25px;
   line-height: 1.1;
@@ -170,6 +192,7 @@ body {
    ESCUDO
 ========================= */
 
+/* Caja de tamaño fijo donde va el escudo, con la imagen centrada */
 .escudo {
   width: 215px;
   height: 310px;
@@ -179,6 +202,7 @@ body {
   justify-content: center;
 }
 
+/* La imagen se achica para entrar en la caja sin deformarse (object-fit: contain) */
 .escudo img {
   max-width: 100%;
   max-height: 100%;
@@ -190,6 +214,7 @@ body {
    FOOTER
 ========================= */
 
+/* El <footer> (no tiene clase, se estiliza por la etiqueta): barra de 50px con el copyright centrado en gris */
 footer {
   width: 100%;
   height: 50px;
@@ -208,26 +233,32 @@ footer {
    RESPONSIVE
 ========================= */
 
+/* Celulares (hasta 700px): el header se adapta, se oculta el subtítulo, la tarjeta apila texto y escudo en columna y las letras se achican */
 @media (max-width: 700px) {
 
+  /* Altura automática (con mínimo de 83px) y menos espacio a los costados, para que no se corte */
   .header {
     height: auto;
     min-height: 83px;
     padding: 15px;
   }
 
+  /* Se oculta el subtítulo para que entre el título */
   .titulo-header p {
     display: none;
   }
 
+  /* "AYUDA" un poco más chico */
   .ayuda {
     font-size: 12px;
   }
 
+  /* Menos espacio alrededor de la tarjeta */
   .contenido {
     padding: 20px;
   }
 
+  /* La tarjeta ocupa todo el ancho y apila el texto y el escudo en columna (flex-direction: column). El height: auto es el valor normal, así que no cambia nada: la altura la manda el min-height */
   .tarjeta {
     width: 100%;
     height: auto;
@@ -241,29 +272,35 @@ footer {
     padding: 35px 20px;
   }
 
+  /* Texto centrado */
   .texto {
     text-align: center;
   }
 
+  /* Título más chico */
   .texto h2 {
     font-size: 55px;
   }
 
+  /* Frase y separación de letras más chicas */
   .texto p {
     font-size: 18px;
     letter-spacing: 4px;
   }
 
+  /* Escudo un poco más grande que en la compu */
   .escudo {
   width: 260px;
   height: 350px;
 }
 
+/* Esta regla y la de arriba quedaron con otra sangría, pero siguen adentro del @media. La imagen pasa a tener ancho fijo de 250px */
 .escudo img {
   width: 250px;
   height: auto;
   object-fit: contain;
 }
+  /* Altura automática y un poco de espacio, para que el texto largo del copyright no se corte */
   footer {
     padding: 10px;
     height: auto;
