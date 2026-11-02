@@ -1,10 +1,18 @@
+/* =====================================================================
+   DATOS DEL ALUMNO (TUTOR)
+    barra lateral, encabezado, tarjeta con el
+   mensaje de "todavía no hay alumnos", aviso y pie. Va de arriba para abajo
+   en ese mismo orden.
+   ===================================================================== */
 
 /* ===== ESTILOS GENERALES ===== */
 
+/* Reinicio básico: border-box hace que el padding y el borde cuenten dentro del ancho, así las medidas no se descuadran */
 * {
   box-sizing: border-box;
 }
 
+/* El <div className="datos-alumno-pagina"> que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Acá también se define el fondo, el color de texto y la tipografía de toda la pantalla */
 .datos-alumno-pagina {
   display: flex;
   width: 100%;
@@ -14,6 +22,7 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
+/* Los botones de esta pantalla heredan la fuente y tienen manito.Este selector pesa más que las clases sueltas de los botones, por eso .datos-alumno-login y .datos-alumno-agregar llevan !important en el font-size */
 .datos-alumno-pagina button {
   font: inherit;
   cursor: pointer;
@@ -21,6 +30,7 @@
 
 /* ===== PANEL LATERAL ===== */
 
+/* El <aside> de la izquierda: columna azul de ancho fijo (220px). El flex-shrink: 0 evita que se achique y el min-height la estira hasta abajo */
 .datos-alumno-sidebar {
   display: flex;
   flex-direction: column;
@@ -34,6 +44,7 @@
   color: white;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .datos-alumno-logo {
   margin-bottom: 0;
   padding: 0 10px;
@@ -48,6 +59,7 @@
   line-height: 1.5;
 }
 
+/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
 .datos-alumno-logo span {
   display: block;
   margin-top: 3px;
@@ -59,12 +71,14 @@
 
 /* ===== MENÚ LATERAL ===== */
 
+/* Los links del menú del tutor, uno abajo del otro */
 .datos-alumno-menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Cada link: ícono + texto en fila, con esquinas redondeadas y sin subrayado */
 .datos-alumno-menu-item {
   display: flex;
   align-items: center;
@@ -80,15 +94,18 @@
   transition: background 0.2s;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .datos-alumno-menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
 .datos-alumno-menu-item.activo {
   background: #7099cc;
   color: white;
 }
 
+/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
 .datos-alumno-icono {
   display: inline-flex;
   align-items: center;
@@ -102,6 +119,7 @@
 
 /* ===== CERRAR SESIÓN ===== */
 
+/* El <Link> de abajo de la barra: margin-top: auto lo manda al fondo.A diferencia del menú, no tiene text-decoration: none, así que puede verse subrayado */
 .datos-alumno-cerrar-sesion {
   display: flex;
   align-items: center;
@@ -123,6 +141,7 @@
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 
+/* El <main>: ocupa todo el ancho que queda (flex: 1) y apila sus partes en columna. El min-width: 0 evita que se desborde */
 .datos-alumno-contenido {
   display: flex;
   flex: 1;
@@ -133,6 +152,7 @@
 
 /* ===== ENCABEZADO ===== */
 
+/* Encabezado blanco con una rayita abajo: título a la izquierda y fecha con botón de login a la derecha (con flex-wrap bajan de línea si no entran) */
 .datos-alumno-header {
   display: flex;
   align-items: center;
@@ -145,18 +165,21 @@
   background: white;
 }
 
+/* Título "Datos del alumno" */
 .datos-alumno-header h1 {
   margin: 0;
   color: #303d91;
   font-size: 24px;
 }
 
+/* El "Inicio › Datos del alumno" de abajo del título (el > first-child apunta solo al bloque del título) */
 .datos-alumno-header > div:first-child p {
   margin: 7px 0 0;
   color: #7c8496;
   font-size: 12px;
 }
 
+/* Fecha de hoy con su ícono y, al lado, el botón "Iniciar sesión" */
 .datos-alumno-fecha {
   display: flex;
   align-items: center;
@@ -164,16 +187,19 @@
   color: #535d71;
 }
 
+/* El ícono de calendario ▦ */
 .datos-alumno-fecha > span {
   font-size: 20px;
 }
 
+/* La fecha: text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
 .datos-alumno-fecha p {
   margin: 0;
   font-size: 12px;
   text-transform: capitalize;
 }
 
+/* Botón "Iniciar sesión ↗": blanco con borde. El margin-left lo separa de la fecha */
 .datos-alumno-login {
   margin-left: 10px;
   padding: 10px 12px;
@@ -191,6 +217,7 @@
 
 /* ===== TARJETA PRINCIPAL ===== */
 
+/* La tarjeta blanca grande del medio (la <section>). El flex: 1 la estira para ocupar el alto que sobra */
 .datos-alumno-tarjeta {
   display: flex;
   flex: 1;
@@ -204,6 +231,7 @@
 
 /* ===== ESTADO SIN ALUMNOS ===== */
 
+/* Mensaje de "Todavía no hay alumnos cargados": todo centrado dentro de la tarjeta */
 .datos-alumno-vacio {
   display: flex;
   flex: 1;
@@ -214,6 +242,7 @@
   text-align: center;
 }
 
+/* Círculo con el ícono de persona (no es una foto) */
 .datos-alumno-avatar {
   display: flex;
   align-items: center;
@@ -233,6 +262,7 @@
   font-size: 21px;
 }
 
+/* Texto de apoyo con un ancho máximo, para que no quede demasiado estirado */
 .datos-alumno-vacio p {
   max-width: 450px;
   margin: 0 0 24px;
@@ -243,6 +273,7 @@
 
 /* ===== BOTÓN AGREGAR ALUMNO ===== */
 
+/* Botón "＋ Agregar alumno": azul */
 .datos-alumno-agregar {
   display: inline-flex;
   align-items: center;
@@ -263,12 +294,14 @@
   background: #1047a6;
 }
 
+/* El ícono ＋, un poco más grande que el texto */
 .datos-alumno-agregar span {
   font-size: 19px;
 }
 
 /* ===== AVISO INFORMATIVO ===== */
 
+/* Caja celeste informativa de abajo de la tarjeta: ícono ⓘ + texto */
 .datos-alumno-aviso {
   display: flex;
   align-items: center;
@@ -281,6 +314,7 @@
   color: #304795;
 }
 
+/* El ícono ⓘ (el flex-shrink: 0 evita que se achique) */
 .datos-alumno-aviso > span {
   flex-shrink: 0;
   font-size: 17px;
@@ -294,6 +328,7 @@
 
 /* ===== PIE DE PÁGINA ===== */
 
+/* Pie de la pantalla: texto chico, gris y centrado */
 .datos-alumno-footer {
   padding: 20px 5px 0;
   color: #8b93a3;
@@ -303,6 +338,7 @@
 
 /* ===== TABLETS ===== */
 
+/* Tablets: barra lateral un poco más angosta y el encabezado se alinea arriba */
 @media (max-width: 900px) {
   .datos-alumno-sidebar {
     width: 200px;
@@ -313,6 +349,7 @@
     align-items: flex-start;
   }
 
+  /* La fecha y el botón de login pueden bajar de línea si no entran */
   .datos-alumno-fecha {
     flex-wrap: wrap;
   }
@@ -320,6 +357,7 @@
 
 /* ===== CELULARES ===== */
 
+/* Celulares: barra lateral más angosta con letras más chicas, encabezado en columna y textos de la tarjeta más chicos */
 @media (max-width: 600px) {
   .datos-alumno-sidebar {
     width: 165px;
@@ -365,6 +403,7 @@
     gap: 7px;
   }
 
+  /* Sin margen a la izquierda: la separación la da el gap de la fecha */
   .datos-alumno-login {
     margin-left: 0;
   }
@@ -384,6 +423,7 @@
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
+/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
   .datos-alumno-sidebar {
     width: 64px;
@@ -391,6 +431,7 @@
     padding: 15px 6px;
   }
 
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
   .datos-alumno-logo h2,
   .datos-alumno-logo span,
   .datos-alumno-menu-item > span:last-child,
