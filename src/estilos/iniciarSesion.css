@@ -1,14 +1,23 @@
+/* =====================================================================
+   LOGIN (INICIAR SESIÓN)
+    fondo con la foto del edificio, tarjeta con el
+   formulario, botón de ingresar, links de recuperar contraseña y registro,
+   y el pie. Va de arriba para abajo en ese mismo orden.
+   ===================================================================== */
 
+/* Reinicio total: se sacan los márgenes y espacios de fábrica del navegador, y border-box hace que el padding y el borde cuenten dentro del ancho */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Tipografía de toda la pantalla */
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* El <div className="login-page"> que envuelve todo: ocupa toda la pantalla y centra la tarjeta (con flex) */
 .login-page {
   min-height: 100vh;
   width: 100%;
@@ -16,6 +25,7 @@ body {
   justify-content: center;
   align-items: center;
 
+  /* Dos fondos apilados: primero una capa blanca al 75% de opacidad (el linear-gradient) y debajo la foto del edificio. La ruta de la foto es relativa a este archivo CSS */
   background-image:
     linear-gradient(
       rgba(255, 255, 255, 0.75),
@@ -27,11 +37,13 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 
+  /* Necesario para que el footer (que es position: absolute) se ubique respecto de esta caja */
   position: relative;
 }
 
 /* TARJETA */
 
+/* La tarjeta blanca semitransparente del medio, con esquinas bien redondeadas y una sombra suave */
 .login-card {
   width: 380px;
   background: rgba(255, 255, 255, 0.92);
@@ -42,6 +54,7 @@ body {
 
 /* TITULO */
 
+/* Título "Bienvenido" */
 .login-card h1 {
   text-align: center;
   font-size: 34px;
@@ -50,6 +63,7 @@ body {
   margin-bottom: 4px;
 }
 
+/* La frase "Inicia sesión para continuar" */
 .subtitulo {
   text-align: center;
   font-size: 12px;
@@ -59,10 +73,12 @@ body {
 
 /* CAMPOS */
 
+/* Cada campo (correo y contraseña): etiqueta arriba y caja abajo, con espacio entre uno y otro */
 .campo {
   margin-bottom: 15px;
 }
 
+/* Etiqueta del campo (display: block para que quede arriba del input) */
 .campo label {
   display: block;
   font-size: 12px;
@@ -71,6 +87,7 @@ body {
   margin-bottom: 7px;
 }
 
+/* La caja redondeada que agrupa el ícono y el input: el borde y la sombra los tiene este contenedor, no el input */
 .input-container {
   height: 38px;
   display: flex;
@@ -82,12 +99,14 @@ body {
   border: 1px solid #eaeaea;
 }
 
+/* El ícono de la izquierda, en gris clarito */
 .input-container .icon {
   font-size: 16px;
   color: #b0b0b0;
   margin-right: 10px;
 }
 
+/* El input no tiene borde, contorno ni fondo propios, así se ve como parte de la cajita */
 .input-container input {
   width: 100%;
   border: none;
@@ -97,12 +116,14 @@ body {
   color: #333;
 }
 
+/* Color gris clarito de los textos de ejemplo ("Ingresa tu correo") */
 .input-container input::placeholder {
   color: #c5c5c5;
 }
 
 /* BOTON */
 
+/* Botón "Ingresar": ocupa todo el ancho, con el ícono y el texto centrados en fila */
 .btn-ingresar {
   width: 100%;
   height: 38px;
@@ -120,16 +141,19 @@ body {
   transition: 0.2s;
 }
 
+/* Al pasar el mouse se oscurece un poco. (solo cambia el texto) */
 .btn-ingresar:hover {
   background: #5f8dbb;
 }
 
+/* El ícono del botón */
 .btn-ingresar span {
   font-size: 14px;
 }
 
 /* SEPARADOR */
 
+/* La línea con una "o" en el medio: línea, texto y línea en fila */
 .separador {
   display: flex;
   align-items: center;
@@ -137,12 +161,14 @@ body {
   margin: 18px 0 15px;
 }
 
+/* Las dos líneas de los costados (el flex: 1 las estira para ocupar el espacio) */
 .separador span {
   flex: 1;
   height: 1px;
   background: #e0e0e0;
 }
 
+/* La "o" del medio */
 .separador p {
   font-size: 11px;
   color: #999;
@@ -150,6 +176,7 @@ body {
 
 /* RECUPERAR CONTRASEÑA */
 
+/* El link "¿Olvidaste tu contraseña?": se muestra en bloque, centrado y sin subrayado */
 .recuperar {
   display: block;
   text-align: center;
@@ -159,12 +186,14 @@ body {
   font-weight: bold;
 }
 
+/* Al pasar el mouse se subraya */
 .recuperar:hover {
   text-decoration: underline;
 }
 
 /* REGISTRO */
 
+/* La frase "¿No tienes una cuenta? Regístrate aquí" */
 .registro {
   margin-top: 18px;
   text-align: center;
@@ -172,18 +201,21 @@ body {
   font-size: 12px;
 }
 
+/* El link "Regístrate aquí": en negrita y sin subrayado */
 .registro a {
   color: #25206d;
   font-weight: bold;
   text-decoration: none;
 }
 
+/* Al pasar el mouse se subraya */
 .registro a:hover {
   text-decoration: underline;
 }
 
 /* FOOTER */
 
+/* El <footer> (no tiene clase, se estiliza por la etiqueta): va pegado abajo de la pantalla (position: absolute + bottom) y ocupa todo el ancho. El text-shadow blanco ayuda a leerlo sobre la foto */
 footer {
   position: absolute;
   bottom: 10px;
@@ -197,6 +229,7 @@ footer {
 
 /* RESPONSIVE */
 
+/* Celulares: la tarjeta ocupa el 90% del ancho, con menos espacio interno, y el título y el pie se achican */
 @media (max-width: 500px) {
   .login-card {
     width: 90%;
