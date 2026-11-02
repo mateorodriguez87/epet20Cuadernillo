@@ -1,10 +1,18 @@
+/* =====================================================================
+   HISTORIAL (PRECEPTOR) - ESTILOS
+   Estilos de HistorialPreceptor.jsx: barra lateral, encabezado, filtros,
+   tabla (hoy vacía) con su paginación y pie. Va de arriba para abajo en
+   ese mismo orden.
+   ===================================================================== */
 
 /* ===== ESTILOS GENERALES ===== */
 
+/* Reinicio básico: border-box hace que el padding y el borde cuenten dentro del ancho, así las medidas no se descuadran */
 * {
   box-sizing: border-box;
 }
 
+/* El <div className="historial-pagina"> que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Acá también se define el fondo, el color de texto y la tipografía de toda la pantalla */
 .historial-pagina {
   display: flex;
   width: 100%;
@@ -16,6 +24,7 @@
 
 /* ===== PANEL LATERAL ===== */
 
+/* El <aside> de la izquierda: columna azul de ancho fijo (220px). El min-height la estira hasta abajo */
 .historial-sidebar {
   width: 220px;
   min-width: 220px;
@@ -27,6 +36,7 @@
   flex-direction: column;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL". El margin-bottom lo separa del menú */
 .historial-logo {
   padding: 0 10px;
   margin-bottom: 30px;
@@ -40,6 +50,7 @@
   font-weight: 700;
 }
 
+/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
 .historial-logo span {
   display: block;
   margin-top: 3px;
@@ -51,12 +62,14 @@
 
 /* ===== MENÚ LATERAL ===== */
 
+/* Los links del menú, uno abajo del otro */
 .historial-menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Cada link (los NavLink del JSX): ícono + texto en fila, con esquinas redondeadas y sin subrayado */
 .historial-menu-item {
   display: flex;
   align-items: center;
@@ -71,15 +84,18 @@
   transition: background 0.2s;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .historial-menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
 .historial-menu-item.activo {
   background: #7099cc;
   color: white;
 }
 
+/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
 .historial-icono {
   display: inline-flex;
   align-items: center;
@@ -90,6 +106,7 @@
   line-height: 1;
 }
 
+/* El <Link> de abajo de la barra: el margin-top: auto lo manda al fondo. Ojo: a diferencia del menú, no tiene text-decoration: none, así que puede verse subrayado */
 .historial-cerrar-sesion {
   display: flex;
   align-items: center;
@@ -112,6 +129,7 @@
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 
+/* El <main>: ocupa todo el ancho que queda (flex: 1). El min-width: 0 evita que se desborde */
 .historial-contenido {
   flex: 1;
   min-width: 0;
@@ -120,6 +138,7 @@
 
 /* ===== ENCABEZADO ===== */
 
+/* Encabezado blanco con una rayita abajo: título a la izquierda, fecha y botón de login a la derecha */
 .historial-header {
   min-height: 76px;
   display: flex;
@@ -131,6 +150,7 @@
   background: white;
 }
 
+/* Título "Historial" con su ícono al lado */
 .historial-titulo h1 {
   display: flex;
   align-items: center;
@@ -140,23 +160,27 @@
   font-size: 21px;
 }
 
+/* El ícono ▤ que va antes del título */
 .historial-titulo-icono {
   color: #304795;
   font-size: 24px;
 }
 
+/* El "Inicio › Historial" de abajo del título */
 .historial-titulo p {
   margin: 6px 0 0;
   color: #7c8496;
   font-size: 12px;
 }
 
+/* Grupo de la derecha: fecha + botón de login */
 .historial-header-derecha {
   display: flex;
   align-items: center;
   gap: 18px;
 }
 
+/* Fecha de hoy con su ícono de calendario */
 .historial-fecha {
   display: flex;
   align-items: center;
@@ -168,6 +192,7 @@
   font-size: 21px;
 }
 
+/* La fecha tiene un ancho máximo y text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
 .historial-fecha p {
   max-width: 190px;
   margin: 0;
@@ -175,6 +200,7 @@
   text-transform: capitalize;
 }
 
+/* Botón "Iniciar sesión ↗": blanco con borde */
 .historial-login {
   display: flex;
   align-items: center;
@@ -195,6 +221,7 @@
 
 /* ===== INTRODUCCIÓN ===== */
 
+/* El título "Historial de comunicaciones" y la frase de abajo, antes de los filtros */
 .historial-introduccion {
   padding: 16px 0 12px;
 }
@@ -214,6 +241,7 @@
 
 /* ===== FILTROS ===== */
 
+/* La <section> de filtros: grilla de 5 columnas, una por cada filtro (curso, alumno, fecha desde y fecha hasta) y la última (auto) para el botón Filtrar. El align-items: end alinea el botón con la parte de abajo de los campos */
 .historial-filtros {
   display: grid;
   grid-template-columns: 1.1fr 1.1fr 1fr 1fr auto;
@@ -227,6 +255,7 @@
   box-shadow: 0 3px 12px rgba(28, 42, 80, 0.03);
 }
 
+/* Un filtro: etiqueta arriba y select o input abajo. El min-width: 0 deja que se achique dentro de la grilla */
 .historial-campo {
   display: flex;
   flex-direction: column;
@@ -240,6 +269,7 @@
   font-weight: 600;
 }
 
+/* Estilo común de los selects y de los inputs de fecha */
 .historial-campo select,
 .historial-campo input {
   width: 100%;
@@ -255,12 +285,14 @@
   outline: none;
 }
 
+/* Al hacer clic en un campo se marca con borde azul y un halo suave */
 .historial-campo select:focus,
 .historial-campo input:focus {
   border-color: #5078ca;
   box-shadow: 0 0 0 2px rgba(80, 120, 202, 0.12);
 }
 
+/* Botón "Filtrar": azul */
 .historial-filtrar {
   display: flex;
   align-items: center;
@@ -281,12 +313,14 @@
   background: #1047a6;
 }
 
+/* El ícono ⌕, un poco más grande que el texto */
 .historial-filtrar span {
   font-size: 18px;
 }
 
 /* ===== TABLA ===== */
 
+/* La tarjeta blanca que contiene la tabla y la paginación. El overflow: hidden recorta las esquinas */
 .historial-tabla-panel {
   overflow: hidden;
   border: 1px solid #e5e9f1;
@@ -295,17 +329,20 @@
   box-shadow: 0 3px 12px rgba(28, 42, 80, 0.03);
 }
 
+/* Si la tabla no entra en pantalla, el scroll horizontal aparece solo acá adentro */
 .historial-tabla-scroll {
   width: 100%;
   overflow-x: auto;
 }
 
+/* La tabla ocupa todo el ancho. Con border-collapse: collapse los bordes de las celdas se unen */
 .historial-tabla {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
+/* Fila de títulos (Fecha, Alumno, Asunto, Estado y Acciones) con fondo gris clarito */
 .historial-tabla thead {
   background: #f7f8fc;
 }
@@ -319,12 +356,14 @@
   white-space: nowrap;
 }
 
+/* Las celdas no tienen padding porque hoy la única celda es la del mensaje de vacío, que ya trae su propio espacio. Ojo: cuando se agreguen filas reales, sus celdas van a quedar pegadas si no se les da padding */
 .historial-tabla td {
   padding: 0;
 }
 
 /* ===== HISTORIAL VACÍO ===== */
 
+/* Mensaje de "No hay comunicaciones registradas": todo centrado dentro de la celda */
 .historial-vacio {
   display: flex;
   flex-direction: column;
@@ -335,6 +374,7 @@
   text-align: center;
 }
 
+/* Círculo con el ícono ▤ */
 .historial-vacio-icono {
   display: flex;
   align-items: center;
@@ -354,6 +394,7 @@
   font-size: 17px;
 }
 
+/* Texto de apoyo con un ancho máximo, para que no quede demasiado estirado */
 .historial-vacio p {
   max-width: 380px;
   margin: 0;
@@ -364,6 +405,7 @@
 
 /* ===== PAGINACIÓN ===== */
 
+/* Barra de abajo de la tabla: el texto a la izquierda y los botones a la derecha, con una rayita arriba */
 .historial-paginacion {
   display: flex;
   align-items: center;
@@ -373,17 +415,20 @@
   border-top: 1px solid #edf0f5;
 }
 
+/* El texto "Mostrando 0 comunicaciones" */
 .historial-paginacion > span {
   color: #687287;
   font-size: 11px;
 }
 
+/* Los botones de paginación, en fila */
 .historial-paginas {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+/* Estilo de los botones Anterior, número y Siguiente */
 .historial-paginas button {
   min-height: 31px;
   padding: 0 10px;
@@ -394,11 +439,13 @@
   font-size: 11px;
 }
 
+/* Hoy todos están deshabilitados: se ven apagados y con cursor de "prohibido" */
 .historial-paginas button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
 
+/* El "1", pintado de azul (en el JSX tiene la clase pagina-actual) */
 .historial-paginas .pagina-actual {
   background: #1558cb;
   color: white;
@@ -407,6 +454,7 @@
 
 /* ===== PIE DE PÁGINA ===== */
 
+/* Pie de la pantalla: texto chico, gris y centrado */
 .historial-footer {
   padding: 20px 5px 0;
   color: #8b93a3;
@@ -416,11 +464,14 @@
 
 /* ===== TABLETS ===== */
 
+/* Tablets: los filtros pasan a 2 columnas y la barra lateral se angosta un poco */
 @media (max-width: 1050px) {
+  /* Los filtros en 2 columnas iguales */
   .historial-filtros {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* El botón Filtrar queda alineado a la izquierda, abajo */
   .historial-filtrar {
     align-self: end;
     justify-self: start;
@@ -434,6 +485,7 @@
 
 /* ===== CELULARES ===== */
 
+/* Celulares: barra lateral más angosta con letras más chicas, encabezado en columna, filtros en una sola columna y la paginación apilada */
 @media (max-width: 760px) {
   .historial-sidebar {
     width: 165px;
@@ -481,6 +533,7 @@
     gap: 8px;
   }
 
+  /* Los filtros uno debajo del otro */
   .historial-filtros {
     grid-template-columns: 1fr;
     padding: 13px;
@@ -495,6 +548,7 @@
     flex-direction: column;
   }
 
+  /* La tabla mantiene un ancho mínimo (580px): como el contenedor tiene scroll horizontal, se desliza en vez de aplastarse */
   .historial-tabla {
     min-width: 580px;
   }
@@ -502,6 +556,7 @@
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
+/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
   .historial-sidebar {
     width: 64px;
@@ -513,6 +568,7 @@
     padding: 0;
   }
 
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
   .historial-logo h2,
   .historial-logo span,
   .historial-menu-item > span:last-child,
