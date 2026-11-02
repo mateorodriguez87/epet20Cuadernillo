@@ -1,27 +1,39 @@
+/* =====================================================================
+   ALUMNOS (PRECEPTOR) 
+  lista de alumnos con filtros,
+   tarjetas de estadísticas, tabla, paginación y el modal para agregar
+   alumnos. Va de arriba para abajo en ese mismo orden.
+   ===================================================================== */
+
+/* Variables globales: se definen una vez y se usan en todo el archivo con var(--nombre).*/
 :root {
-  --azul-sidebar: #2c3a96;
-  --azul-activo: #6f98c9;
-  --azul: #1b3fb3;
-  --fondo: #f5f6fa;
-  --borde: #e5e8f0;
-  --texto: #1f2430;
-  --suave: #6b7280;
-  --verde: #22a45d;
-  --amarillo: #e6a417;
-  --rojo: #e0453a;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  --azul-sidebar: #2c3a96;  /* Azul oscuro de la barra lateral */
+  --azul-activo: #6f98c9;  /* Celeste de la opción de menú activa */
+  --azul: #1b3fb3;  /* Azul principal: botones, foco de los campos y página activa */
+  --fondo: #f5f6fa;  /* Gris clarito de fondo de la página */
+  --borde: #e5e8f0;  /* Bordes y rayitas separadoras */
+  --texto: #1f2430;  /* Texto normal */
+  --suave: #6b7280;  /* Gris para textos secundarios */
+  --verde: #22a45d;  /* Verde: estado Al día */
+  --amarillo: #e6a417;  /* Amarillo: estado Pendiente */
+  --rojo: #e0453a;  /* Rojo: estado Con observaciones */
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;  /* Si no tiene Inter, usa la siguiente de la lista */
 }
 
+/* Reinicios básicos */
+/* border-box: el padding y el borde cuentan dentro del ancho, así las medidas no se descuadran */
 * {
   box-sizing: border-box;
 }
 
+/* Sin margen de fábrica, con el fondo y el color de texto de arriba */
 body {
   margin: 0;
   background: var(--fondo);
   color: var(--texto);
 }
 
+/* Botones, inputs y selects no heredan la fuente solos, así que se la forzamos */
 button,
 input,
 select {
@@ -29,15 +41,18 @@ select {
   color: inherit;
 }
 
+/* Manito en todos los botones */
 button {
   cursor: pointer;
 }
 
+/* Cualquier botón deshabilitado se ve apagado: Guardar mientras se guarda, Anterior en la primera página, etc. */
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* Los links del menú (NavLink y Link) se ven como texto común, sin subrayado */
 a {
   text-decoration: none;
   color: inherit;
@@ -45,12 +60,14 @@ a {
 
 /* ---------- Layout ---------- */
 
+/* El <div className="panel"> que envuelve todo: grilla de 2 columnas, la barra lateral (266px) y el contenido. El minmax(0, 1fr) evita que el contenido ensanche la columna */
 .panel {
   display: grid;
   grid-template-columns: 266px minmax(0, 1fr);
   min-height: 100vh;
 }
 
+/* El <aside> de la izquierda: columna con espacio entre logo, menú y cerrar sesión */
 .sidebar {
   background: var(--azul-sidebar);
   color: #fff;
@@ -61,6 +78,7 @@ a {
   min-width: 0;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .logo {
   padding: 0 26px;
 }
@@ -71,18 +89,21 @@ a {
   line-height: 1.5;
 }
 
+/* "DIGITAL" va en celeste y en negrita */
 .logo span {
   color: #9fb0e8;
   font-weight: 700;
   font-size: 17px;
 }
 
+/* Los links del menú, uno abajo del otro */
 .menu {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+/* Cada link: ícono + texto en fila */
 .menu-item {
   display: flex;
   align-items: center;
@@ -92,18 +113,21 @@ a {
   color: #fff;
 }
 
+/* Ancho fijo para que los textos queden alineados (el flex-shrink: 0 evita que se achique) */
 .menu-icon {
   width: 30px;
   text-align: center;
   flex-shrink: 0;
 }
 
+/* La clase la pone NavLink solo en la opción que coincide con la ruta actual (isActive): pastilla celeste con la punta derecha redondeada */
 .menu-item.activo {
   background: var(--azul-activo);
   border-radius: 0 40px 40px 0;
   margin-right: 20px;
 }
 
+/* El margin-top: auto manda "Cerrar sesión" al fondo de la barra */
 .cerrar-sesion {
   margin-top: auto;
   display: flex;
@@ -115,6 +139,7 @@ a {
 
 /* ---------- Contenido ---------- */
 
+/* El <main>. El min-width: 0 evita que la tabla ensanche la columna */
 .contenido {
   padding: 22px 26px;
   display: flex;
@@ -124,6 +149,7 @@ a {
   width: 100%;
 }
 
+/* Encabezado: título a la izquierda y, si hubiera algo más, a la derecha (con flex-wrap baja de línea si no entra) */
 .encabezado-alumnos {
   display: flex;
   justify-content: space-between;
@@ -132,30 +158,35 @@ a {
   gap: 16px;
 }
 
+/* Fondo blanco con una rayita abajo */
 .encabezado {
   background: #fff;
   border-bottom: 1px solid var(--borde);
   padding: 12px 0 16px;
 }
 
+/* Título "Alumnos" */
 .encabezado h1 {
   margin: 0;
   font-size: 32px;
   color: var(--azul-sidebar);
 }
 
+/* El "Inicio > Alumnos" de abajo del título */
 .encabezado p {
   margin: 8px 0 0;
   font-size: 13px;
   color: var(--suave);
 }
 
+/* de acá hasta .usuario-avatar son estilos de fecha y usuario, que este JSX no usa (su encabezado solo tiene título y migas). Quedaron de otras pantallas */
 .encabezado-derecha {
   display: flex;
   align-items: center;
   gap: 24px;
 }
 
+/* Dos líneas apiladas: arriba la fecha (o el nombre) y abajo el día (o el rol) */
 .fecha,
 .usuario div {
   display: flex;
@@ -169,18 +200,21 @@ a {
   font-weight: 600;
 }
 
+/* Línea de abajo en gris. El :not() deja afuera el círculo de las iniciales */
 .fecha span,
 .usuario span:not(.usuario-avatar) {
   font-size: 11px;
   color: var(--suave);
 }
 
+/* Usuario: círculo con iniciales y al lado nombre y rol */
 .usuario {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* Círculo azul con las iniciales del usuario */
 .usuario-avatar {
   width: 38px;
   height: 38px;
@@ -195,6 +229,7 @@ a {
 
 /* ---------- Filtros ---------- */
 
+/* La <section className="filtros">: buscador, dos selects y los dos botones, todos en una fila (con flex-wrap bajan de línea si no entran) */
 .filtros {
   display: flex;
   gap: 12px;
@@ -204,6 +239,7 @@ a {
   min-width: 0;
 }
 
+/* Estilo común del buscador y de los selects (curso y estado) */
 .buscador,
 .selector {
   height: 48px;
@@ -215,10 +251,12 @@ a {
   min-width: 0;
 }
 
+/* El buscador crece para ocupar el espacio que sobra (mínimo 220px) */
 .buscador {
   flex: 1 1 220px;
 }
 
+/* Los selects no se estiran: ocupan lo que necesitan, con un mínimo de 150px */
 .selector {
   flex: 0 1 auto;
   min-width: 150px;
@@ -226,6 +264,7 @@ a {
 
 /* ---------- Botones principales ---------- */
 
+/* Tamaño y forma que comparten los botones: "+ Agregar alumno" (primario), "− Dar de baja alumno" (dar-baja) y los secundarios. El nowrap evita que el texto se parta en dos líneas */
 .boton-primario,
 .boton-secundario,
 .boton-dar-baja {
@@ -245,12 +284,14 @@ a {
     color 0.2s;
 }
 
+/* "+ Agregar alumno" y "Guardar alumno" del modal: azul */
 .boton-primario {
   border: 1px solid var(--azul);
   background: var(--azul);
   color: #fff;
 }
 
+/* Al pasar el mouse se oscurece un poco */
 .boton-primario:hover {
   background: #15338f;
   border-color: #15338f;
@@ -258,6 +299,7 @@ a {
 
 /* Botón para cancelar o dar de baja */
 
+/* .boton-dar-baja es el "− Dar de baja alumno" de arriba; .boton-secundario es el "Dar de baja" de cada fila y el "Cancelar" del modal. Los tres comparten este tono rojo */
 .boton-secundario,
 .boton-dar-baja {
   border: 1px solid #e5b8b8;
@@ -265,6 +307,7 @@ a {
   color: #b83232;
 }
 
+/* Hover: fondo rosado clarito y borde más marcado */
 .boton-secundario:hover,
 .boton-dar-baja:hover {
   background: #fff1f1;
@@ -273,12 +316,14 @@ a {
 
 /* Botón de baja de cada fila */
 
+/* Para que el botón de cada fila tenga un ancho mínimo parejo */
 .acciones-fila .boton-secundario {
   min-width: 110px;
 }
 
 /* ---------- Tarjetas ---------- */
 
+/* Cajita blanca con borde y esquinas redondeadas (la usan las tarjetas de estadísticas y la tabla). El min-width: 0 evita que ensanche su contenedor */
 .tarjeta {
   background: #fff;
   border: 1px solid var(--borde);
@@ -286,6 +331,7 @@ a {
   min-width: 0;
 }
 
+/* Las 4 tarjetas de arriba van pegadas dentro de una sola caja con borde (gap: 0). El overflow: hidden recorta las esquinas */
 .estadisticas {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -297,16 +343,19 @@ a {
   min-width: 0;
 }
 
+/* Cada tarjeta pierde su propio borde y esquinas, y solo deja una rayita a la derecha como separador */
 .estadisticas .tarjeta {
   border: 0;
   border-right: 1px solid var(--borde);
   border-radius: 0;
 }
 
+/* A la última no le hace falta la rayita */
 .estadisticas .tarjeta:last-child {
   border-right: 0;
 }
 
+/* Cada tarjeta: ícono a la izquierda y texto a la derecha */
 .estadistica {
   display: flex;
   align-items: center;
@@ -315,6 +364,7 @@ a {
   min-width: 0;
 }
 
+/* Texto de la tarjeta: título chico arriba y número grande abajo */
 .info-card {
   display: flex;
   flex-direction: column;
@@ -326,12 +376,14 @@ a {
   color: var(--suave);
 }
 
+/* El número (en el JSX: total de alumnos o "—") */
 .info-card strong {
   font-size: 24px;
   font-weight: 600;
   color: var(--azul-sidebar);
 }
 
+/* Círculo para el ícono de cada tarjeta (el flex-shrink: 0 evita que se achique) */
 .icono-card {
   width: 44px;
   height: 44px;
@@ -341,6 +393,7 @@ a {
   flex-shrink: 0;
 }
 
+/* Un color de fondo por tarjeta, en el mismo orden del JSX: azul, verde, naranja y violeta */
 .icono-card.azul {
   background: #e5ecfb;
 }
@@ -359,6 +412,7 @@ a {
 
 /* ---------- Tabla de alumnos ---------- */
 
+/* La <section> que tiene la tabla y la paginación. El overflow: hidden evita que algo se salga de la tarjeta */
 .tabla-alumnos {
   display: block;
   padding: 16px 18px;
@@ -368,6 +422,7 @@ a {
   overflow: hidden;
 }
 
+/* Si la tabla no entra en pantalla, el scroll horizontal aparece solo acá adentro */
 .tabla-scroll {
   display: block;
   width: 100%;
@@ -376,6 +431,7 @@ a {
   overflow-x: auto;
 }
 
+/* La tabla tiene un ancho mínimo (760px) para que no se aplaste. border-collapse: separate permite redondear las esquinas de los títulos */
 .tabla-scroll table {
   width: 100%;
   min-width: 760px;
@@ -384,6 +440,7 @@ a {
   table-layout: auto;
 }
 
+/* Títulos de columna con fondo gris clarito */
 .tabla-scroll thead th {
   background: #f3f5fa;
   font-size: 13px;
@@ -394,6 +451,7 @@ a {
   white-space: nowrap;
 }
 
+/* Se redondean solo las puntas de afuera de la fila de títulos */
 .tabla-scroll thead th:first-child {
   border-radius: 10px 0 0 10px;
 }
@@ -402,10 +460,12 @@ a {
   border-radius: 0 10px 10px 0;
 }
 
+/* Título centrado: el de "Acciones" */
 th.centrado {
   text-align: center;
 }
 
+/* Celdas con rayita entre filas, contenido centrado en vertical */
 .tabla-scroll tbody td {
   padding: 12px 18px;
   border-bottom: 1px solid var(--borde);
@@ -413,16 +473,19 @@ th.centrado {
   vertical-align: middle;
 }
 
+/* A la última fila no se le pone rayita */
 .tabla-scroll tbody tr:last-child td {
   border-bottom: 0;
 }
 
+/* Para "Cargando alumnos...", el error de carga y "No hay alumnos para mostrar" */
 td.sin-datos {
   text-align: center;
   color: var(--suave);
   padding: 28px 0;
 }
 
+/* Alumno en la tabla: avatar + nombre */
 .alumno {
   display: flex;
   align-items: center;
@@ -430,6 +493,7 @@ td.sin-datos {
   min-width: 180px;
 }
 
+/* Círculo del avatar. El overflow: hidden recorta la foto para que quede redondo */
 .avatar {
   width: 42px;
   height: 42px;
@@ -444,12 +508,14 @@ td.sin-datos {
   overflow: hidden;
 }
 
+/* Si el alumno tiene foto, llena todo el círculo sin deformarse; si no, el JSX muestra las iniciales */
 .avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+/* Pastillita con el curso del alumno (por ejemplo "3° A") */
 .etiqueta-curso {
   display: inline-block;
   background: #e2ecfa;
@@ -461,6 +527,7 @@ td.sin-datos {
   white-space: nowrap;
 }
 
+/* de acá hasta .estado.obs son estilos de un estado con ícono y detalle. El JSX actual usa <span className="estado estado-ok"> (con "estado-" adelante) y no tiene .estado-icono, así que los colores de .estado.ok, .pendiente y .obs hoy no se aplican */
 .estado {
   display: flex;
   align-items: center;
@@ -478,6 +545,7 @@ td.sin-datos {
   color: var(--suave);
 }
 
+/* Círculo con borde del color del estado (el color lo pone la regla de cada estado) */
 .estado-icono {
   width: 22px;
   height: 22px;
@@ -490,18 +558,22 @@ td.sin-datos {
   flex-shrink: 0;
 }
 
+/* Verde: Al día */
 .estado.ok .estado-icono {
   color: var(--verde);
 }
 
+/* Amarillo: Pendiente */
 .estado.pendiente .estado-icono {
   color: var(--amarillo);
 }
 
+/* Rojo: Con observaciones */
 .estado.obs .estado-icono {
   color: var(--rojo);
 }
 
+/* Botones de la última columna, centrados */
 .acciones-fila {
   display: flex;
   align-items: center;
@@ -509,6 +581,7 @@ td.sin-datos {
   gap: 8px;
 }
 
+/* .accion-boton y .mas-opciones (botones de ver perfil, enviar, historial y los tres puntitos) no se usan en este JSX, solo hay un botón "Dar de baja" por fila */
 .accion-boton {
   display: inline-flex;
   align-items: center;
@@ -545,6 +618,7 @@ td.sin-datos {
 
 /* ---------- Paginación: siempre debajo de la tabla ---------- */
 
+/* La barra de paginación va pegada debajo de la tabla, con una rayita arriba que la separa. El > hace que solo afecte a la que está directamente dentro de la tarjeta */
 .tabla-alumnos > .paginacion {
   display: flex;
   align-items: center;
@@ -558,6 +632,7 @@ td.sin-datos {
   border-top: 1px solid var(--borde);
 }
 
+/* El texto "Mostrando X–Y de Z alumnos" */
 .paginacion > span {
   display: block;
   margin: 0;
@@ -565,6 +640,7 @@ td.sin-datos {
   color: var(--suave);
 }
 
+/* Selector "Mostrar", Anterior, números y Siguiente, en fila (con flex-wrap bajan de línea si no entran) */
 .controles-paginacion {
   display: flex;
   align-items: center;
@@ -578,6 +654,7 @@ td.sin-datos {
   color: var(--suave);
 }
 
+/* Estilo común para el select y los botones de la paginación */
 .controles-paginacion select,
 .controles-paginacion button {
   min-height: 36px;
@@ -590,27 +667,32 @@ td.sin-datos {
   transition: background 0.2s, border-color 0.2s;
 }
 
+/* Manito para el select de "Mostrar" */
 .controles-paginacion select {
   cursor: pointer;
 }
 
+/* Hover solo si el botón no está deshabilitado */
 .controles-paginacion button:hover:not(:disabled) {
   background: #edf2ff;
   border-color: #c7d5f5;
 }
 
+/* El JSX le pone "pagina-activa" al número de la página actual: se pinta de azul */
 .controles-paginacion button.pagina-activa {
   background: var(--azul);
   border-color: var(--azul);
   color: #fff;
 }
 
+/* Anterior en la primera página y Siguiente en la última quedan grisados */
 .controles-paginacion button:disabled {
   background: #f8f9fc;
   color: #a0a6b4;
   cursor: not-allowed;
 }
 
+/* Los "…" entre los números */
 .controles-paginacion span {
   color: var(--suave);
   padding: 0 3px;
@@ -618,6 +700,7 @@ td.sin-datos {
 
 /* ---------- Modal de agregar alumno ---------- */
 
+/* Capa oscura que tapa toda la pantalla (position: fixed + inset: 0) y deja el modal en el medio. Si se hace clic acá, el JSX cierra el modal. El z-index alto la pone arriba de todo */
 .fondo-modal {
   position: fixed;
   inset: 0;
@@ -629,6 +712,7 @@ td.sin-datos {
   background: rgb(20 28 55 / 50%);
 }
 
+/* La ventanita blanca (el JSX frena el clic para que no se cierre al tocarla). Si el contenido es muy alto, tiene su propio scroll (max-height + overflow-y) */
 .modal {
   width: 100%;
   max-width: 480px;
@@ -640,18 +724,21 @@ td.sin-datos {
   box-shadow: 0 16px 50px rgb(20 28 55 / 20%);
 }
 
+/* Título "Agregar alumno" */
 .modal h2 {
   margin: 0 0 8px;
   color: var(--azul-sidebar);
   font-size: 24px;
 }
 
+/* La frase "Completá los datos...". El > evita tocar los párrafos de mensaje que están más adentro */
 .modal > p {
   margin: 0 0 22px;
   color: var(--suave);
   font-size: 14px;
 }
 
+/* Un campo del formulario: etiqueta arriba y input abajo (nombre y apellido, DNI y curso) */
 .campo {
   display: flex;
   flex-direction: column;
@@ -664,6 +751,7 @@ td.sin-datos {
   font-weight: 600;
 }
 
+/* Estilo de los inputs y del select del modal */
 .entrada {
   width: 100%;
   min-height: 44px;
@@ -674,11 +762,13 @@ td.sin-datos {
   outline: none;
 }
 
+/* Al hacer clic en un campo se marca con borde azul y un halo suave */
 .entrada:focus {
   border-color: var(--azul);
   box-shadow: 0 0 0 3px rgb(27 63 179 / 10%);
 }
 
+/* Cancelar y Guardar, alineados a la derecha */
 .botones {
   display: flex;
   justify-content: flex-end;
@@ -687,17 +777,20 @@ td.sin-datos {
   margin-top: 22px;
 }
 
+/* Caja de aviso dentro del modal (el JSX le suma la clase del tipo: error o exito) */
 .mensaje {
   padding: 10px 12px;
   border-radius: 8px;
   font-size: 13px;
 }
 
+/* Rojo: validaciones o error de Firebase */
 .mensaje.error {
   background: #fff0f0;
   color: #b83232;
 }
 
+/* Verde: todavía no se usa, el JSX solo manda el tipo "error" (cuando guarda bien, cierra el modal) */
 .mensaje.exito {
   background: #e8f8ee;
   color: #187644;
@@ -705,6 +798,7 @@ td.sin-datos {
 
 /* ---------- Responsive ---------- */
 
+/* Pantallas medianas: barra lateral más angosta y las tarjetas de estadísticas pasan a 2 por fila */
 @media (max-width: 1200px) {
   .panel {
     grid-template-columns: 230px minmax(0, 1fr);
@@ -731,6 +825,7 @@ td.sin-datos {
   }
 }
 
+/* Pantallas más chicas: menos margen y los filtros y botones se estiran para ocupar todo el ancho */
 @media (max-width: 900px) {
   .contenido {
     padding: 18px;
@@ -752,6 +847,7 @@ td.sin-datos {
   }
 }
 
+/* Celulares: una sola columna, el menú pasa a ser una fila de botoncitos arriba, las tarjetas de estadísticas se apilan y la paginación baja a dos líneas */
 @media (max-width: 760px) {
   .panel {
     grid-template-columns: 1fr;
