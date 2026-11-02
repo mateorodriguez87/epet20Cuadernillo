@@ -1,5 +1,8 @@
+// Hooks de React: useState para los datos de la pantalla y useEffect para escuchar Firebase y manejar la fecha
 import { useEffect, useState } from "react";
+// NavLink arma los links del menú y marca cuál es el activo
 import { NavLink } from "react-router-dom";
+// Funciones de Firestore: onSnapshot escucha en tiempo real, addDoc crea, updateDoc edita, deleteDoc borra y doc arma la referencia a un documento
 import {
   collection,
   onSnapshot,
@@ -8,35 +11,51 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+// Conexión a la base de datos
 import { db } from "../firebase";
+// Estilos de la pantalla y de sus ventanas
 import "../estilos/cursospreceptor.css";
 import "../estilos/modalcursospreceptor.css";
 
+// Pantalla de cursos del preceptor: lista con buscador y ventanas para agregar, editar, eliminar y notificar
 function CursosPreceptor() {
+  // fecha: la de hoy, para el encabezado
+  // cursos: la lista que viene de Firebase
+  // busqueda: texto del buscador
+  // cargando y error: para avisar mientras se cargan los cursos o si algo falla
   const [fecha, setFecha] = useState(new Date());
   const [cursos, setCursos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
+  // mostrarModal: abre o cierra la ventana
+  // tipoModal: cuál ventana es (agregar, editar, eliminar o notificar)
+  // cursoActual: el curso que se está editando o eliminando
   const [mostrarModal, setMostrarModal] = useState(false);
   const [tipoModal, setTipoModal] = useState("");
   const [cursoActual, setCursoActual] = useState(null);
 
+  // Lo que se escribe en el formulario de agregar o editar un curso
   const [formulario, setFormulario] = useState({
     curso: "",
     division: "",
   });
 
+  // cursoSeleccionado: el curso elegido en la ventana de notificar
+  // mensaje: avisos dentro de la ventana
+  // guardando: bloquea los botones mientras se guarda o se elimina
   const [cursoSeleccionado, setCursoSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [guardando, setGuardando] = useState(false);
 
   // Obtener los cursos de Firebase en tiempo real.
   useEffect(() => {
+    // onSnapshot escucha la colección: si algo cambia en Firebase, la lista se actualiza sola, sin recargar la página
     const cancelar = onSnapshot(
       collection(db, "Cursos"),
       (snapshot) => {
+        // Cada curso se guarda junto con el id de su documento
         setCursos(
           snapshot.docs.map((documento) => ({
             id: documento.id,
@@ -46,6 +65,7 @@ function CursosPreceptor() {
         setCargando(false);
         setError("");
       },
+      // Si falla la lectura, se muestra el error
       (error) => {
         console.error("Error al obtener cursos:", error);
         setError("No se pudieron cargar los cursos.");
@@ -53,18 +73,22 @@ function CursosPreceptor() {
       }
     );
 
+    // Al salir de la pantalla se deja de escuchar, para no gastar recursos
     return () => cancelar();
   }, []);
 
   // Actualizar la fecha.
   useEffect(() => {
+    // Cada 60000 milisegundos (un minuto) se vuelve a leer la fecha
     const intervalo = setInterval(() => {
       setFecha(new Date());
     }, 60000);
 
+    // Al salir de la pantalla se frena el temporizador
     return () => clearInterval(intervalo);
   }, []);
 
+  // Fecha lista para mostrar, en español de Argentina (con día de la semana, día, mes y año)
   const fechaFormateada = fecha.toLocaleDateString("es-AR", {
     weekday: "long",
     day: "numeric",
@@ -72,12 +96,14 @@ function CursosPreceptor() {
     year: "numeric",
   });
 
+  // Arma el nombre del curso juntando año y división; el trim() saca espacios sobrantes
   function nombreCurso(curso) {
     return `${curso.curso || ""} ${curso.division || ""}`.trim();
   }
 
   // Abrir el formulario para agregar un curso.
   function abrirAgregar() {
+    // Se deja todo limpio y después se elige el tipo de ventana (tipoModal) y se muestra
     setFormulario({ curso: "", division: "" });
     setCursoActual(null);
     setMensaje("");
@@ -87,10 +113,12 @@ function CursosPreceptor() {
 
   // Abrir el formulario para editar un curso.
   function abrirEditar(curso) {
+    // Se carga el formulario con los datos del curso, para poder modificarlos
     setFormulario({
       curso: curso.curso || "",
       division: curso.division || "",
     });
+    // Guarda qué curso se va a editar
     setCursoActual(curso);
     setMensaje("");
     setTipoModal("editar");
@@ -99,6 +127,7 @@ function CursosPreceptor() {
 
   // Abrir la confirmación personalizada para eliminar.
   function abrirEliminar(curso) {
+    // Guarda qué curso se va a eliminar, para mostrarlo en la confirmación
     setCursoActual(curso);
     setMensaje("");
     setTipoModal("eliminar");
@@ -107,6 +136,7 @@ function CursosPreceptor() {
 
   // Abrir el formulario de notificación.
   function abrirNotificacion() {
+    // La ventana de notificar arranca sin ningún curso elegido
     setCursoSeleccionado("");
     setMensaje("");
     setTipoModal("notificar");
@@ -114,6 +144,7 @@ function CursosPreceptor() {
   }
 
   function cerrarModal() {
+    // No deja cerrar la ventana mientras se está guardando o eliminando
     if (guardando) return;
 
     setMostrarModal(false);
@@ -123,8 +154,10 @@ function CursosPreceptor() {
   }
 
   function manejarCambio(e) {
+    // Un solo manejador para los dos campos: el atributo name del input dice cuál cambió
     const { name, value } = e.target;
 
+    // Copia lo que había y pisa solo el campo que cambió
     setFormulario((anterior) => ({
       ...anterior,
       [name]: value,
@@ -136,56 +169,70 @@ function CursosPreceptor() {
     e.preventDefault();
     setMensaje("");
 
+    // trim() saca los espacios de los extremos
     const nombre = formulario.curso.trim();
     const division = formulario.division.trim();
 
+    // Validación: los dos campos son obligatorios
     if (!nombre || !division) {
       setMensaje("Completá todos los campos.");
       return;
     }
 
+    // Desde acá se bloquean los botones hasta terminar
     setGuardando(true);
 
     try {
       const datos = {
+        // Se guarda todo en minúsculas para que quede parejo ("Primero" y "primero" son lo mismo)
         curso: nombre.toLowerCase(),
         division: division.toLowerCase(),
       };
 
+      // Según la ventana: crea un curso nuevo o actualiza el que se está editando
       if (tipoModal === "agregar") {
+        // Crea el curso en la colección "Cursos"
         await addDoc(collection(db, "Cursos"), datos);
       } else {
+        // Actualiza el documento de ese curso, buscándolo por su id
         await updateDoc(doc(db, "Cursos", cursoActual.id), datos);
       }
 
+      // Si salió bien, se cierra la ventana (la lista se actualiza sola por el onSnapshot)
       setMostrarModal(false);
       setTipoModal("");
       setCursoActual(null);
       setMensaje("");
     } catch (error) {
+      // Si Firebase falla, se avisa dentro de la ventana
       console.error("Error al guardar el curso:", error);
       setMensaje("No se pudo guardar el curso. Intentá nuevamente.");
     } finally {
+      // Pase lo que pase, se desbloquean los botones
       setGuardando(false);
     }
   }
 
   // Eliminar un curso.
   async function confirmarEliminar() {
+    // Si no hay un curso elegido, no hace nada
     if (!cursoActual) return;
 
     setGuardando(true);
     setMensaje("");
 
     try {
+      // Borra el documento del curso (no se puede deshacer)
       await deleteDoc(doc(db, "Cursos", cursoActual.id));
       setMostrarModal(false);
       setTipoModal("");
       setCursoActual(null);
     } catch (error) {
+      // Si falla, se avisa dentro de la ventana
       console.error("Error al eliminar el curso:", error);
       setMensaje("No se pudo eliminar el curso. Intentá nuevamente.");
     } finally {
+      // Se desbloquean los botones
       setGuardando(false);
     }
   }
@@ -194,6 +241,7 @@ function CursosPreceptor() {
   function notificarCurso(e) {
     e.preventDefault();
 
+    // Validación: hay que elegir un curso
     if (!cursoSeleccionado) {
       setMensaje("Seleccioná un curso.");
       return;
@@ -204,14 +252,17 @@ function CursosPreceptor() {
     );
   }
 
+  // Lleva a /login recargando toda la página (no usa el router) y no cierra ninguna sesión de Firebase
   function iniciarSesion() {
     window.location.href = "/login";
   }
 
+  // Lista que se muestra: filtra por lo que se escribió en el buscador, sin importar mayúsculas o minúsculas
   const cursosFiltrados = cursos.filter((curso) =>
     nombreCurso(curso).toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  // Desde acá empieza lo que se dibuja en pantalla
   return (
     <div className="cursos-pagina">
       {/* PANEL LATERAL */}
@@ -222,6 +273,7 @@ function CursosPreceptor() {
           <span>DIGITAL</span>
         </div>
 
+        {/* Menú: NavLink pone la clase "activo" solo en la opción que coincide con la ruta actual (isActive); "end" pide que la ruta coincida exacta */}
         <nav className="cursos-menu">
           <NavLink
             to="/preceptor"
@@ -276,6 +328,7 @@ function CursosPreceptor() {
           </NavLink>
         </nav>
 
+        {/* Botón de abajo de la barra lateral: dice "Iniciar sesión" y lleva a /login */}
         <button
           type="button"
           className="cursos-cerrar-sesion"
@@ -288,6 +341,7 @@ function CursosPreceptor() {
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="cursos-contenido">
+        {/* Encabezado: título a la izquierda, fecha y botón de login a la derecha */}
         <header className="cursos-header">
           <div className="cursos-titulo">
             <h1>
@@ -298,11 +352,13 @@ function CursosPreceptor() {
           </div>
 
           <div className="cursos-header-derecha">
+            {/* Fecha de hoy (viene del estado fecha) */}
             <div className="cursos-fecha">
               <span>▦</span>
               <p>{fechaFormateada}</p>
             </div>
 
+            {/* Otro acceso al login, esta vez en el encabezado */}
             <button
               type="button"
               className="cursos-login"
@@ -326,6 +382,7 @@ function CursosPreceptor() {
             />
           </div>
 
+          {/* "Notificar al curso" abre la ventana de notificar y "Agregar cursos" la de agregar */}
           <div className="cursos-botones">
             <button
               type="button"
@@ -351,11 +408,13 @@ function CursosPreceptor() {
         <section className="cursos-panel">
           <div className="cursos-panel-titulo">
             <h2>Mis cursos asignados</h2>
+            {/* Cantidad total de cursos (sin tener en cuenta el buscador) */}
             <span className="cursos-contador">
               {cursos.length} cursos
             </span>
           </div>
 
+          {/* Cuatro casos: cargando, error, sin resultados (lista vacía) o la lista de cursos */}
           {cargando ? (
             <p>Cargando cursos...</p>
           ) : error ? (
@@ -364,6 +423,7 @@ function CursosPreceptor() {
             <div className="cursos-vacio">
               <div className="cursos-vacio-icono">▤</div>
               <h2>
+                {/* El mensaje cambia según haya una búsqueda sin resultados o directamente no haya cursos */}
                 {busqueda
                   ? "No se encontraron cursos"
                   : "No hay cursos asignados"}
@@ -374,6 +434,7 @@ function CursosPreceptor() {
                   : "Agregá un curso para comenzar a organizar tus alumnos y sus comunicaciones."}
               </p>
 
+              {/* El botón de agregar solo se ofrece cuando no hay una búsqueda activa */}
               {!busqueda && (
                 <button
                   type="button"
@@ -387,6 +448,7 @@ function CursosPreceptor() {
             </div>
           ) : (
             <div className="cursos-lista">
+              {/* Un renglón por cada curso: nombre y botones Editar y Eliminar */}
               {cursosFiltrados.map((curso) => (
                 <div className="cursos-elemento" key={curso.id}>
                   <div>
@@ -394,6 +456,7 @@ function CursosPreceptor() {
                     <p>Curso asignado</p>
                   </div>
 
+                  {/* Editar y Eliminar abren la ventana correspondiente con el curso elegido (el aria-label es para lectores de pantalla) */}
                   <div className="cursos-acciones-crud">
                     <button
                       type="button"
@@ -417,17 +480,20 @@ function CursosPreceptor() {
           )}
         </section>
 
+        {/* Pie de la pantalla */}
         <footer className="cursos-footer">
           Cuaderno de Comunicaciones Digital · EPET 20
         </footer>
       </main>
 
       {/* VENTANAS PERSONALIZADAS */}
+      {/* Una sola ventana para los 4 casos: lo que muestra depende de tipoModal */}
       {mostrarModal && (
         <div
           className="cursos-modal-fondo"
           onClick={cerrarModal}
         >
+          {/* La ventana. Hacer clic en el fondo oscuro la cierra, pero hacer clic adentro no (stopPropagation). El role y aria-modal ayudan a los lectores de pantalla */}
           <section
             className="cursos-modal"
             role="dialog"
@@ -435,6 +501,7 @@ function CursosPreceptor() {
             aria-labelledby="titulo-modal-cursos"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Encabezado de la ventana: el título y la frase cambian según tipoModal, y la × cierra (queda deshabilitada mientras se guarda) */}
             <div className="cursos-modal-header">
               <div>
                 <h2 id="titulo-modal-cursos">
@@ -467,8 +534,10 @@ function CursosPreceptor() {
               </button>
             </div>
 
+            {/* Casos 1 y 2: formulario de agregar o editar (es el mismo formulario) */}
             {(tipoModal === "agregar" || tipoModal === "editar") && (
               <form onSubmit={guardarCurso}>
+                {/* Año del curso */}
                 <div className="cursos-form-grupo">
                   <label htmlFor="curso">Año del curso</label>
                   <input
@@ -483,6 +552,7 @@ function CursosPreceptor() {
                   />
                 </div>
 
+                {/* División */}
                 <div className="cursos-form-grupo">
                   <label htmlFor="division">División</label>
                   <input
@@ -496,12 +566,14 @@ function CursosPreceptor() {
                   />
                 </div>
 
+                {/* Mensaje de error del formulario */}
                 {mensaje && (
                   <p className="cursos-modal-mensaje" role="alert">
                     {mensaje}
                   </p>
                 )}
 
+                {/* Cancelar y Guardar: el texto del botón cambia según se esté guardando y según sea agregar o editar */}
                 <div className="cursos-modal-botones">
                   <button
                     type="button"
@@ -527,20 +599,24 @@ function CursosPreceptor() {
               </form>
             )}
 
+            {/* Caso 3: confirmación para eliminar */}
             {tipoModal === "eliminar" && (
               <div>
+                {/* Pregunta de confirmación con el nombre del curso */}
                 <div className="cursos-modal-confirmacion">
                   ¿Seguro que querés eliminar el curso{" "}
                   <strong>{nombreCurso(cursoActual || {})}</strong>?
                   <p>Esta acción no se puede deshacer.</p>
                 </div>
 
+                {/* Mensaje de error si falla el borrado */}
                 {mensaje && (
                   <p className="cursos-modal-mensaje" role="alert">
                     {mensaje}
                   </p>
                 )}
 
+                {/* Cancelar y "Sí, eliminar" (el botón rojo) */}
                 <div className="cursos-modal-botones">
                   <button
                     type="button"
@@ -563,8 +639,10 @@ function CursosPreceptor() {
               </div>
             )}
 
+            {/* Caso 4: elegir un curso para notificarle. Todavía no envía nada (mirá notificarCurso) */}
             {tipoModal === "notificar" && (
               <form onSubmit={notificarCurso}>
+                {/* Select con todos los cursos; queda deshabilitado si no hay ninguno */}
                 <div className="cursos-form-grupo">
                   <label htmlFor="seleccionar-curso">Curso</label>
 
@@ -588,18 +666,21 @@ function CursosPreceptor() {
                   </select>
                 </div>
 
+                {/* Aviso si todavía no hay cursos cargados */}
                 {cursos.length === 0 && (
                   <p className="cursos-modal-mensaje">
                     Primero necesitás cargar un curso.
                   </p>
                 )}
 
+                {/* Mensaje informativo (role="status"): por ahora avisa que el envío no está conectado */}
                 {mensaje && (
                   <p className="cursos-modal-mensaje" role="status">
                     {mensaje}
                   </p>
                 )}
 
+                {/* "Continuar" se habilita cuando hay un curso elegido */}
                 <div className="cursos-modal-botones">
                   <button
                     type="button"
