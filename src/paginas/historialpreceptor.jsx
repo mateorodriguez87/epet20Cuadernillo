@@ -1,23 +1,32 @@
-
+// Hooks de React: useState para los datos de la pantalla y useEffect para el temporizador de la fecha
 import { useEffect, useState } from "react";
+// NavLink arma los links del menú y marca el activo; Link es un enlace común (el de cerrar sesión)
 import { NavLink, Link } from "react-router-dom";
+// Estilos de esta pantalla
 import "../estilos/historialpreceptor.css";
 
+// Pantalla de historial de comunicaciones del preceptor. Por ahora no lee datos de ninguna base: la tabla siempre se muestra vacía
 function HistorialPreceptor() {
+  // fecha: la de hoy, para el encabezado
+  // curso, alumno, fechaDesde y fechaHasta: lo que se elige en los filtros (por ahora no se usa para filtrar nada)
   const [fecha, setFecha] = useState(new Date());
   const [curso, setCurso] = useState("");
   const [alumno, setAlumno] = useState("");
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState("");
 
+  // Cada minuto se vuelve a leer la fecha, para que el encabezado no quede desactualizado
   useEffect(() => {
+    // Se ejecuta cada 60000 milisegundos (un minuto)
     const intervalo = setInterval(() => {
       setFecha(new Date());
     }, 60000);
 
+    // Al salir de la pantalla se frena el temporizador
     return () => clearInterval(intervalo);
   }, []);
 
+  // Fecha lista para mostrar, en español de Argentina (día de la semana, día, mes y año)
   const fechaFormateada = fecha.toLocaleDateString("es-AR", {
     weekday: "long",
     day: "numeric",
@@ -25,14 +34,17 @@ function HistorialPreceptor() {
     year: "numeric",
   });
 
+  // Lleva a /login recargando toda la página (no usa el router) y no cierra ninguna sesión
   function iniciarSesion() {
     window.location.href = "/login";
   }
 
+  // Por ahora solo muestra un aviso (alert): todavía no filtra nada porque no hay comunicaciones cargadas
   function filtrarHistorial() {
     alert("Todavía no hay comunicaciones para filtrar.");
   }
 
+  // Desde acá empieza lo que se dibuja en pantalla. Es una pantalla fija: todavía no lee comunicaciones de ninguna base
   return (
     <div className="historial-pagina">
       {/* PANEL LATERAL */}
@@ -43,6 +55,7 @@ function HistorialPreceptor() {
           <span>DIGITAL</span>
         </div>
 
+        {/* Menú: NavLink pone la clase "activo" solo en la opción que coincide con la ruta actual (isActive); "end" pide que la ruta coincida exacta */}
         <nav className="historial-menu">
           <NavLink
             to="/preceptor"
@@ -97,6 +110,7 @@ function HistorialPreceptor() {
           </NavLink>
         </nav>
 
+        {/* Cerrar sesión: por ahora solo lleva a /login */}
         <Link
           to="/login"
           className="historial-cerrar-sesion"
@@ -108,6 +122,7 @@ function HistorialPreceptor() {
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="historial-contenido">
+        {/* Encabezado: título a la izquierda, fecha y botón de login a la derecha */}
         <header className="historial-header">
           <div className="historial-titulo">
             <h1>
@@ -119,11 +134,13 @@ function HistorialPreceptor() {
           </div>
 
           <div className="historial-header-derecha">
+            {/* Fecha de hoy (viene del estado fecha) */}
             <div className="historial-fecha">
               <span>▦</span>
               <p>{fechaFormateada}</p>
             </div>
 
+            {/* Botón "Iniciar sesión": ejecuta iniciarSesion (lleva a /login) */}
             <button
               type="button"
               className="historial-login"
@@ -145,6 +162,7 @@ function HistorialPreceptor() {
 
         {/* FILTROS */}
         <section className="historial-filtros">
+          {/* Curso: las opciones son fijas (de 1.º a 6.º año) y no salen de la base de datos. Los 4 filtros guardan lo elegido en estados, pero todavía no filtran nada */}
           <div className="historial-campo">
             <label htmlFor="filtro-curso">Curso</label>
 
@@ -163,6 +181,7 @@ function HistorialPreceptor() {
             </select>
           </div>
 
+          {/* Alumno: por ahora solo tiene la opción "Todos los alumnos" */}
           <div className="historial-campo">
             <label htmlFor="filtro-alumno">Alumno</label>
 
@@ -175,6 +194,7 @@ function HistorialPreceptor() {
             </select>
           </div>
 
+          {/* Fecha desde */}
           <div className="historial-campo">
             <label htmlFor="fecha-desde">Fecha desde</label>
 
@@ -186,6 +206,7 @@ function HistorialPreceptor() {
             />
           </div>
 
+          {/* Fecha hasta (junto con la anterior forma el rango de fechas) */}
           <div className="historial-campo">
             <label htmlFor="fecha-hasta">Fecha hasta</label>
 
@@ -197,6 +218,7 @@ function HistorialPreceptor() {
             />
           </div>
 
+          {/* "Filtrar" ejecuta filtrarHistorial, que por ahora solo muestra un aviso */}
           <button
             type="button"
             className="historial-filtrar"
@@ -209,6 +231,7 @@ function HistorialPreceptor() {
 
         {/* TABLA DE HISTORIAL */}
         <section className="historial-tabla-panel">
+          {/* Si la tabla no entra en pantalla, el scroll horizontal aparece solo acá adentro */}
           <div className="historial-tabla-scroll">
             <table className="historial-tabla">
               <thead>
@@ -221,9 +244,11 @@ function HistorialPreceptor() {
                 </tr>
               </thead>
 
+              {/* Hoy tiene una sola fila que ocupa las 5 columnas (colSpan) con el mensaje de vacío. Cuando haya comunicaciones, acá irían sus filas */}
               <tbody>
                 <tr>
                   <td colSpan={5}>
+                    {/* Mensaje de "No hay comunicaciones registradas" */}
                     <div className="historial-vacio">
                       <div className="historial-vacio-icono">
                         ▤
@@ -245,6 +270,7 @@ function HistorialPreceptor() {
             </table>
           </div>
 
+          {/* Paginación de abajo de la tabla: por ahora es solo visual, con todos los botones deshabilitados */}
           <div className="historial-paginacion">
             <span>Mostrando 0 comunicaciones</span>
 
@@ -268,6 +294,7 @@ function HistorialPreceptor() {
           </div>
         </section>
 
+        {/* Pie de la pantalla */}
         <footer className="historial-footer">
           Cuaderno de Comunicaciones Digital · EPET 20
         </footer>
