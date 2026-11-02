@@ -1,4 +1,11 @@
+/* =====================================================================
+   MODAL DE CURSOS
+   Estiliza la ventana de los 4 casos (agregar, editar, eliminar y notificar):
+   fondo, ventana, encabezado, campos, botones y mensajes.
+   ===================================================================== */
+
 /* FONDO DEL MODAL */
+/* Capa oscura que tapa toda la pantalla (position: fixed + inset: 0) y deja la ventana en el medio. El blur desenfoca lo que hay detrás. Si se hace clic acá, el JSX cierra la ventana */
 .cursos-modal-fondo {
   position: fixed;
   inset: 0;
@@ -12,6 +19,7 @@
 }
 
 /* VENTANA */
+/* La ventana blanca (el JSX frena el clic para que no se cierre al tocarla): ancho máximo de 480px y, si el contenido es muy alto, scroll propio (max-height + overflow-y) */
 .cursos-modal {
   width: 100%;
   max-width: 480px;
@@ -25,6 +33,7 @@
   animation: aparecerModal 0.2s ease-out;
 }
 
+/* Animación de entrada: aparece de a poco mientras sube 12px. Como este archivo gana, es la que se usa (la cursos-modal-entrada del otro CSS queda sin usar) */
 @keyframes aparecerModal {
   from {
     opacity: 0;
@@ -37,6 +46,7 @@
 }
 
 /* ENCABEZADO */
+/* Encabezado de la ventana: título y frase a la izquierda y el botón × a la derecha */
 .cursos-modal-header {
   display: flex;
   justify-content: space-between;
@@ -45,12 +55,14 @@
   margin-bottom: 25px;
 }
 
+/* Título de la ventana (cambia según tipoModal: Agregar, Editar, Eliminar o Notificar) */
 .cursos-modal-header h2 {
   margin: 0 0 8px;
   color: #253783;
   font-size: 24px;
 }
 
+/* La frase de abajo del título (también cambia según tipoModal) */
 .cursos-modal-header p {
   margin: 0;
   color: #68738a;
@@ -59,6 +71,7 @@
 }
 
 /* BOTÓN CERRAR */
+/* El botón ×. El flex-shrink: 0 evita que se achique */
 .cursos-modal-cerrar {
   border: none;
   background: #f0f3fa;
@@ -71,11 +84,13 @@
   flex-shrink: 0;
 }
 
+/* Al pasar el mouse se oscurece un poco */
 .cursos-modal-cerrar:hover {
   background: #e0e6f5;
 }
 
 /* CAMPOS DEL FORMULARIO */
+/* Un campo del formulario: etiqueta arriba y input abajo. Lo usan Año del curso, División y el select de Curso (en notificar). */
 .cursos-form-grupo {
   display: flex;
   flex-direction: column;
@@ -83,12 +98,14 @@
   margin-bottom: 20px;
 }
 
+/* Etiqueta del campo */
 .cursos-form-grupo label {
   color: #29345d;
   font-size: 14px;
   font-weight: 600;
 }
 
+/* Estilo común de los inputs (año y división) y del select (curso). Sin outline propio: el foco se marca con el estilo de abajo */
 .cursos-form-grupo input,
 .cursos-form-grupo select {
   width: 100%;
@@ -103,17 +120,20 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+/* Al hacer clic en un campo, borde azul y un halo suave */
 .cursos-form-grupo input:focus,
 .cursos-form-grupo select:focus {
   border-color: #3158c9;
   box-shadow: 0 0 0 3px rgba(49, 88, 201, 0.12);
 }
 
+/* Color gris de los textos de ejemplo ("Ej.: primero o 1°") */
 .cursos-form-grupo input::placeholder {
   color: #9aa3b5;
 }
 
 /* BOTONES */
+/* Fila de botones de abajo, alineados a la derecha */
 .cursos-modal-botones {
   display: flex;
   justify-content: flex-end;
@@ -121,6 +141,7 @@
   margin-top: 28px;
 }
 
+/* Tamaño y forma que comparten todos los botones de la ventana (Cancelar, Guardar, Continuar y Sí, eliminar). Este selector tiene más peso que las clases sueltas de cursospreceptor.css, así que gana en las propiedades que repiten (por ejemplo border y padding) */
 .cursos-modal-botones button {
   border: none;
   border-radius: 9px;
@@ -131,15 +152,18 @@
   transition: background 0.2s, transform 0.2s;
 }
 
+/* Al pasar el mouse, el botón se levanta 1px (solo si está habilitado) */
 .cursos-modal-botones button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
+/* Botón apagado: mientras se guarda o se elimina, o si en notificar todavía no se eligió un curso */
 .cursos-modal-botones button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
+/* Cancelar o Cerrar: gris clarito */
 .cursos-modal-cancelar {
   background: #edf0f6;
   color: #47516a;
@@ -149,6 +173,7 @@
   background: #dfe4ee;
 }
 
+/* Guardar curso, Guardar cambios o Continuar: azul */
 .cursos-modal-enviar {
   background: #2458d3;
   color: #fff;
@@ -158,6 +183,7 @@
   background: #1946b5;
 }
 
+/* "Sí, eliminar": rojo. Esta clase solo está en este archivo */
 .cursos-modal-eliminar {
   background: #dc3545;
   color: #fff;
@@ -168,22 +194,26 @@
 }
 
 /* CONFIRMACIÓN Y MENSAJES */
+/* Texto de la ventana de eliminar: la pregunta "¿Seguro que querés eliminar el curso?". Solo está en este archivo */
 .cursos-modal-confirmacion {
   color: #34405b;
   font-size: 16px;
   line-height: 1.7;
 }
 
+/* El nombre del curso, resaltado en azul */
 .cursos-modal-confirmacion strong {
   color: #253783;
 }
 
+/* "Esta acción no se puede deshacer", en gris y más chico */
 .cursos-modal-confirmacion p {
   margin-bottom: 0;
   color: #788197;
   font-size: 14px;
 }
 
+/* Cajita naranja suave para avisos dentro de la ventana: errores del formulario o del borrado, "Primero necesitás cargar un curso" y el aviso de que el envío todavía no está conectado. Solo está en este archivo */
 .cursos-modal-mensaje {
   margin: 12px 0;
   padding: 12px;
@@ -195,6 +225,7 @@
 }
 
 /* ADAPTACIÓN A CELULARES */
+/* Celulares: menos padding, título más chico y botones apilados a lo ancho, con el principal arriba (column-reverse) */
 @media (max-width: 520px) {
   .cursos-modal {
     padding: 22px;
