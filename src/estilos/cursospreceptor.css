@@ -1,10 +1,18 @@
+/* =====================================================================
+   CURSOS (PRECEPTOR) 
+    barra lateral, encabezado, buscador,
+   panel con la lista de cursos y la ventana (modal) para agregar, editar,
+   eliminar y notificar. Va de arriba para abajo en ese mismo orden.
+   ===================================================================== */
 
 /* ===== ESTILOS GENERALES ===== */
 
+/* Reinicio básico: border-box hace que el padding y el borde cuenten dentro del ancho, así las medidas no se descuadran */
 * {
   box-sizing: border-box;
 }
 
+/* El <div className="cursos-pagina"> que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Acá también se define el fondo, el color de texto y la tipografía de toda la pantalla */
 .cursos-pagina {
   display: flex;
   width: 100%;
@@ -14,26 +22,31 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
+/* Botones, inputs y selects heredan la fuente (solo dentro de esta pantalla: por eso llevan el prefijo .cursos-pagina) */
 .cursos-pagina button,
 .cursos-pagina input,
 .cursos-pagina select {
   font: inherit;
 }
 
+/* Manito en todos los botones */
 .cursos-pagina button {
   cursor: pointer;
 }
 
+/* Botones deshabilitados con cursor de "prohibido" (por ejemplo, mientras se guarda) */
 .cursos-pagina button:disabled {
   cursor: not-allowed;
 }
 
+/* Los links del menú se ven sin subrayado */
 .cursos-pagina a {
   text-decoration: none;
 }
 
 /* ===== PANEL LATERAL ===== */
 
+/* El <aside> de la izquierda: columna azul de ancho fijo (220px). El flex-shrink: 0 evita que se achique cuando falta lugar y el min-height la estira hasta abajo */
 .cursos-sidebar {
   display: flex;
   flex-direction: column;
@@ -47,6 +60,7 @@
   color: white;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .cursos-logo {
   margin-bottom: 0;
   padding: 0 10px;
@@ -61,6 +75,7 @@
   line-height: 1.5;
 }
 
+/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
 .cursos-logo span {
   display: block;
   margin-top: 3px;
@@ -72,12 +87,14 @@
 
 /* ===== MENÚ LATERAL ===== */
 
+/* Los links del menú, uno abajo del otro */
 .cursos-menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Cada link: ícono + texto en fila, con esquinas redondeadas */
 .cursos-menu-item {
   display: flex;
   align-items: center;
@@ -93,15 +110,18 @@
   transition: background 0.2s;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .cursos-menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
 .cursos-menu-item.activo {
   background: #7099cc;
   color: white;
 }
 
+/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
 .cursos-icono {
   display: inline-flex;
   align-items: center;
@@ -113,6 +133,7 @@
   line-height: 1;
 }
 
+/* El botón de abajo de la barra (en el JSX dice "Iniciar sesión"). El margin-top: auto lo manda al fondo */
 .cursos-cerrar-sesion {
   display: flex;
   align-items: center;
@@ -134,6 +155,7 @@
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 
+/* El <main>: ocupa todo el ancho que queda (flex: 1) y apila sus partes en columna. El min-width: 0 evita que se desborde */
 .cursos-contenido {
   display: flex;
   flex: 1;
@@ -145,6 +167,7 @@
 
 /* ===== ENCABEZADO ===== */
 
+/* Encabezado blanco con una rayita abajo: título a la izquierda, fecha y botón de login a la derecha */
 .cursos-header {
   display: flex;
   align-items: center;
@@ -156,6 +179,7 @@
   background: white;
 }
 
+/* Título "Cursos" con su ícono al lado */
 .cursos-titulo h1 {
   display: flex;
   align-items: center;
@@ -165,23 +189,27 @@
   font-size: 22px;
 }
 
+/* El ícono ▤ que va antes del título */
 .titulo-icono {
   color: #304795;
   font-size: 24px;
 }
 
+/* El "Inicio › Cursos" de abajo del título */
 .cursos-titulo p {
   margin: 7px 0 0;
   color: #7c8496;
   font-size: 12px;
 }
 
+/* Grupo de la derecha: fecha + botón de login */
 .cursos-header-derecha {
   display: flex;
   align-items: center;
   gap: 18px;
 }
 
+/* Fecha de hoy con su ícono de calendario */
 .cursos-fecha {
   display: flex;
   align-items: center;
@@ -193,6 +221,7 @@
   font-size: 21px;
 }
 
+/* La fecha tiene un ancho máximo y text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
 .cursos-fecha p {
   max-width: 190px;
   margin: 0;
@@ -200,6 +229,7 @@
   text-transform: capitalize;
 }
 
+/* Botón "Iniciar sesión ↗" del encabezado: blanco con borde */
 .cursos-login {
   display: flex;
   align-items: center;
@@ -219,6 +249,7 @@
 
 /* ===== BUSCADOR Y BOTONES ===== */
 
+/* La fila del buscador y los botones: buscador a la izquierda y botones a la derecha */
 .cursos-acciones {
   display: flex;
   align-items: center;
@@ -227,6 +258,7 @@
   padding: 20px 0;
 }
 
+/* Caja del buscador: la lupa y el input van adentro de la misma caja con borde */
 .cursos-buscador {
   display: flex;
   align-items: center;
@@ -245,6 +277,7 @@
   font-size: 22px;
 }
 
+/* El input no tiene borde ni fondo propios, así se ve como parte de la caja */
 .cursos-buscador input {
   width: 100%;
   min-width: 0;
@@ -259,6 +292,7 @@
   color: #8c94a5;
 }
 
+/* Agrupa "Notificar al curso" y "Agregar cursos" (con flex-wrap bajan de línea si no entran) */
 .cursos-botones {
   display: flex;
   align-items: center;
@@ -267,6 +301,7 @@
   gap: 10px;
 }
 
+/* Tamaño y forma que comparten los dos botones */
 .cursos-agregar,
 .cursos-notificar {
   display: inline-flex;
@@ -283,6 +318,7 @@
   transition: background 0.2s;
 }
 
+/* "Agregar cursos": azul fuerte */
 .cursos-agregar {
   background: #1558cb;
 }
@@ -291,6 +327,7 @@
   background: #1047a6;
 }
 
+/* "Notificar al curso": azul oscuro, igual que la barra lateral */
 .cursos-notificar {
   background: #303d91;
 }
@@ -299,18 +336,21 @@
   background: #243078;
 }
 
+/* El ícono (＋ o ✉) un poco más grande que el texto */
 .cursos-agregar > span,
 .cursos-notificar > span {
   font-size: 18px;
   line-height: 1;
 }
 
+/* Variante del botón "Agregar cursos" que aparece en el medio del mensaje de "No hay cursos asignados" */
 .cursos-agregar-centro {
   min-height: 42px;
 }
 
 /* ===== PANEL DE CURSOS ===== */
 
+/* La tarjeta blanca grande que contiene la lista (o el mensaje de vacío). El flex: 1 la estira para ocupar el alto que sobra */
 .cursos-panel {
   display: flex;
   flex-direction: column;
@@ -323,6 +363,7 @@
   box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
 }
 
+/* "Mis cursos asignados" a la izquierda y el contador a la derecha, con una rayita abajo */
 .cursos-panel-titulo {
   display: flex;
   align-items: center;
@@ -338,6 +379,7 @@
   font-weight: 700;
 }
 
+/* Pastillita con la cantidad de cursos */
 .cursos-contador {
   padding: 6px 12px;
   border-radius: 20px;
@@ -348,6 +390,7 @@
 
 /* ===== MENSAJE SIN CURSOS ===== */
 
+/* Mensaje de cuando no hay cursos (o la búsqueda no encontró ninguno): todo centrado dentro del panel */
 .cursos-vacio {
   display: flex;
   flex-direction: column;
@@ -359,6 +402,7 @@
   text-align: center;
 }
 
+/* Círculo con el ícono ▤ */
 .cursos-vacio-icono {
   display: flex;
   align-items: center;
@@ -378,6 +422,7 @@
   font-size: 20px;
 }
 
+/* Texto de apoyo con un ancho máximo, para que no quede demasiado estirado */
 .cursos-vacio p {
   max-width: 400px;
   margin: 0 0 22px;
@@ -386,6 +431,7 @@
   line-height: 1.7;
 }
 
+/* Los cursos en una grilla de 3 columnas iguales (en celulares pasa a 1) */
 .cursos-lista {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -393,6 +439,7 @@
   padding-top: 18px;
 }
 
+/* Cada curso es una cajita con borde. Ojo: su título, su texto y los botones Editar y Eliminar (.cursos-acciones-crud) no tienen estilos en este archivo */
 .cursos-elemento {
   padding: 14px;
   border: 1px solid #e5e9f1;
@@ -401,6 +448,7 @@
 
 /* ===== VENTANA MODAL ===== */
 
+/* Capa oscura que tapa toda la pantalla (position: fixed + inset: 0) y deja la ventana en el medio. Si se hace clic acá, el JSX cierra la ventana. El overflow-y: auto permite scrollear si la ventana no entra */
 .cursos-modal-fondo {
   position: fixed;
   inset: 0;
@@ -413,6 +461,7 @@
   background: rgba(20, 29, 59, 0.48);
 }
 
+/* La ventana blanca (el JSX frena el clic para que no se cierre al tocarla): ancho máximo de 460px y animación de entrada */
 .cursos-modal {
   width: 100%;
   max-width: 460px;
@@ -424,6 +473,7 @@
   animation: cursos-modal-entrada 0.18s ease-out;
 }
 
+/* Animación de entrada: aparece de a poco mientras sube 8px */
 @keyframes cursos-modal-entrada {
   from {
     opacity: 0;
@@ -436,6 +486,7 @@
   }
 }
 
+/* Encabezado de la ventana: título y frase a la izquierda y el botón × a la derecha */
 .cursos-modal-header {
   display: flex;
   align-items: flex-start;
@@ -444,6 +495,7 @@
   margin-bottom: 24px;
 }
 
+/* Título de la ventana (cambia según tipoModal: Agregar, Editar, Eliminar o Notificar) */
 .cursos-modal-header h2 {
   margin: 0 0 8px;
   color: #303d91;
@@ -457,6 +509,7 @@
   line-height: 1.6;
 }
 
+/* El botón × para cerrar. El flex-shrink: 0 evita que se achique */
 .cursos-modal-cerrar {
   display: flex;
   align-items: center;
@@ -476,18 +529,21 @@
   background: #e3e9f5;
 }
 
+/* Los formularios de la ventana (agregar/editar y notificar): campos en columna con espacio entre sí */
 .cursos-modal form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+/* Etiquetas de los campos (año, división y curso) */
 .cursos-modal label {
   color: #26334d;
   font-size: 13px;
   font-weight: 600;
 }
 
+/* Estilo del select de "Notificar al curso". Los inputs de año y división no se estilizan acá */
 .cursos-modal select {
   width: 100%;
   min-height: 42px;
@@ -504,6 +560,7 @@
   border-color: #3956a6;
 }
 
+/* Cuando todavía no hay cursos, el select queda apagado */
 .cursos-modal select:disabled {
   background: #f5f7fb;
   color: #8991a2;
@@ -512,6 +569,7 @@
 
 /* AVISO DE CURSOS NO DISPONIBLES */
 
+/* Caja de aviso celeste con ícono y texto (hasta .cursos-modal-vacio p)."Primero necesitás cargar un curso" usa un <p> con la clase cursos-modal-mensaje */
 .cursos-modal-vacio {
   display: flex;
   align-items: flex-start;
@@ -551,6 +609,7 @@
 
 /* BOTONES DEL MODAL */
 
+/* Fila de botones de abajo, alineados a la derecha */
 .cursos-modal-botones {
   display: flex;
   justify-content: flex-end;
@@ -558,6 +617,7 @@
   margin-top: 18px;
 }
 
+/* Tamaño y forma que comparten Cancelar (o Cerrar) y el botón de enviar */
 .cursos-modal-cancelar,
 .cursos-modal-enviar {
   min-height: 38px;
@@ -567,6 +627,7 @@
   font-weight: 600;
 }
 
+/* Cancelar o Cerrar: blanco con borde */
 .cursos-modal-cancelar {
   border: 1px solid #dfe4ee;
   background: white;
@@ -577,6 +638,7 @@
   background: #f5f7fb;
 }
 
+/* Guardar curso, Guardar cambios o Continuar: azul */
 .cursos-modal-enviar {
   border: none;
   background: #1558cb;
@@ -587,6 +649,7 @@
   background: #1047a6;
 }
 
+/* Apagado mientras se guarda o, en la ventana de notificar, si todavía no se eligió un curso.El botón rojo de eliminar (.cursos-modal-eliminar) */
 .cursos-modal-enviar:disabled {
   background: #b9c5df;
   color: #f8f9fc;
@@ -594,6 +657,7 @@
 
 /* ===== PIE DE PÁGINA ===== */
 
+/* Pie de la pantalla: texto chico, gris y centrado */
 .cursos-footer {
   padding: 20px 5px 0;
   color: #8b93a3;
@@ -603,6 +667,7 @@
 
 /* ===== TABLETS ===== */
 
+/* Tablets: barra lateral un poco más angosta, el encabezado puede bajar de línea y el buscador y los botones pasan uno debajo del otro */
 @media (max-width: 900px) {
   .cursos-sidebar {
     width: 200px;
@@ -619,6 +684,7 @@
     gap: 10px;
   }
 
+  /* Buscador y botones en columna (el buscador ocupa todo el ancho por la regla de abajo) */
   .cursos-acciones {
     align-items: stretch;
     flex-direction: column;
@@ -635,6 +701,7 @@
 
 /* ===== CELULARES ===== */
 
+/* Celulares: barra lateral más angosta con letras más chicas, botones a lo ancho y los cursos de a uno por fila */
 @media (max-width: 600px) {
   .cursos-sidebar {
     width: 165px;
@@ -687,6 +754,7 @@
     font-size: 11px;
   }
 
+  /* Los botones en una sola columna, a todo el ancho */
   .cursos-botones {
     display: grid;
     grid-template-columns: 1fr;
@@ -718,6 +786,7 @@
     font-size: 13px;
   }
 
+  /* Un curso por fila */
   .cursos-lista {
     grid-template-columns: 1fr;
   }
@@ -725,6 +794,7 @@
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
+/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
   .cursos-sidebar {
     width: 64px;
@@ -732,6 +802,7 @@
     padding: 15px 6px;
   }
 
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
   .cursos-logo h2,
   .cursos-logo span,
   .cursos-menu-item > span:last-child,
