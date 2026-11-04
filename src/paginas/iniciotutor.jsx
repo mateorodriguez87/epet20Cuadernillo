@@ -1,9 +1,14 @@
-
+// Se importa useState, pero esta pantalla todavía no lo usa (los datos salen de un objeto fijo)
 import { useState } from "react";
+// NavLink arma los links del menú y marca el activo; Link es un enlace común
 import { NavLink, Link } from "react-router-dom";
+// Estilos de esta pantalla
 import "../estilos/iniciotutor.css";
 
+// Pantalla de inicio del tutor: saludo, tarjeta del alumno, últimas notificaciones, datos del alumno y un mensaje final
 function InicioTutor() {
+  // Datos de la pantalla: por ahora vacíos, se completan con la base de datos
+  // Tiene el nombre del tutor, la fecha, los datos del alumno y la lista de notificaciones
   const datos = {
     nombre: "",
     fecha: "",
@@ -19,26 +24,32 @@ function InicioTutor() {
 
   /* Estilo visual de cada tipo de notificación */
   const tipos = {
+    // En cada tipo, el "color" es el nombre de la clase CSS (rojo, naranja, azul o verde)
     inasistencia: { icono: "!", color: "rojo" },
     conducta: { icono: "▤", color: "naranja" },
     nota: { icono: "✎", color: "azul" },
     aviso: { icono: "♧", color: "verde" }
   };
 
+  // Cantidad de notificaciones sin leer: las que no tienen leida en true
   const sinLeer = datos.notificaciones.filter(
     (n) => !n.leida
   ).length;
 
+  // Solo las 4 primeras notificaciones, para la tarjeta de "Últimas notificaciones"
   const ultimas = datos.notificaciones.slice(0, 4);
 
+  // Saca las iniciales del alumno, para mostrarlas cuando no tiene foto
   const iniciales = (nombre = "") =>
     nombre
       .split(" ")
       .filter(Boolean)
       .map((p) => p[0])
       .join("")
+      // Se queda con las dos primeras letras (ejemplo: "Tomás Rojas" queda "TR")
       .slice(0, 2);
 
+  // Desde acá empieza lo que se dibuja en pantalla
   return (
     <div className="panel">
 
@@ -51,6 +62,7 @@ function InicioTutor() {
           <span>DIGITAL</span>
         </div>
 
+        {/* Menú del tutor: NavLink pone la clase "activo" solo en la opción que coincide con la ruta actual (isActive); "end" pide que la ruta coincida exacta */}
         <nav className="menu">
           <NavLink
             to="/iniciotutor"
@@ -84,6 +96,7 @@ function InicioTutor() {
           </NavLink>
         </nav>
 
+        {/* Cerrar sesión: por ahora solo lleva a /login */}
         <Link to="/login" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
           <span>Cerrar Sesion</span>
@@ -95,6 +108,7 @@ function InicioTutor() {
       <main className="contenido">
 
         {/* ENCABEZADO */}
+        {/* Saludo (el ", nombre" solo se agrega si hay uno; el texto "Bienvenida" es fijo) y la fecha */}
         <header className="encabezado">
           <h1>
             Bienvenida{datos.nombre ? `, ${datos.nombre}` : ""}
@@ -106,9 +120,11 @@ function InicioTutor() {
         {/* TARJETA DEL ALUMNO */}
         <section className="tarjeta-alumno">
 
+          {/* Foto (o iniciales) y datos básicos del alumno */}
           <div className="alumno-info">
 
             <div className="foto-alumno">
+              {/* Si el alumno tiene foto la muestra; si no, sus iniciales */}
               {datos.alumno.foto ? (
                 <img
                   src={datos.alumno.foto}
@@ -119,6 +135,7 @@ function InicioTutor() {
               )}
             </div>
 
+            {/* Los "—" aparecen mientras todavía no hay datos cargados */}
             <div className="alumno-datos">
               <span>Alumno</span>
               <strong>{datos.alumno.nombre || "—"}</strong>
@@ -128,6 +145,7 @@ function InicioTutor() {
 
           </div>
 
+          {/* Tarjeta con la cantidad de notificaciones sin leer */}
           <div className="tarjeta sin-leer">
 
             <div className="icono-card rojo">
@@ -138,6 +156,7 @@ function InicioTutor() {
               <span>Notificaciones sin leer</span>
 
               <strong className="numero-rojo">
+                {/* Si no hay notificaciones, muestra "—" en vez de 0 */}
                 {datos.notificaciones.length > 0 ? sinLeer : "—"}
               </strong>
 
@@ -165,12 +184,15 @@ function InicioTutor() {
               </Link>
             </div>
 
+            {/* Si no hay notificaciones, muestra un mensaje de vacío; si hay, una fila por cada una */}
             {ultimas.length === 0 ? (
               <div className="sin-datos">
                 No hay notificaciones
               </div>
             ) : (
+              // Una fila por cada una de las últimas notificaciones
               ultimas.map((notificacion, index) => {
+                // El tipo de la notificación (inasistencia, conducta, nota o aviso) define el ícono y el color; si el tipo no existe, usa el de aviso
                 const tipo =
                   tipos[notificacion.tipo] || tipos.aviso;
 
@@ -193,6 +215,7 @@ function InicioTutor() {
                       {notificacion.fecha}
                     </div>
 
+                    {/* El puntito y la flecha de abajo solo aparecen si la notificación no está leída */}
                     <span className="punto">
                       {!notificacion.leida && <i></i>}
                     </span>
@@ -205,6 +228,7 @@ function InicioTutor() {
               })
             )}
 
+            {/* Link del final de la tarjeta, a la pantalla de notificaciones recibidas */}
             <Link
               to="/notificacionesrecibidas"
               className="ver-notificaciones"
@@ -221,6 +245,7 @@ function InicioTutor() {
               <h2>Datos del alumno</h2>
             </div>
 
+            {/* Cada dato del alumno: ícono y texto. Los "—" aparecen mientras no haya datos. Primero: nombre completo */}
             <div className="dato">
 
               <div className="icono-card azul">
@@ -234,6 +259,7 @@ function InicioTutor() {
 
             </div>
 
+            {/* Curso */}
             <div className="dato">
 
               <div className="icono-card azul">
@@ -247,6 +273,7 @@ function InicioTutor() {
 
             </div>
 
+            {/* Legajo */}
             <div className="dato">
 
               <div className="icono-card azul">
@@ -260,6 +287,7 @@ function InicioTutor() {
 
             </div>
 
+            {/* Preceptor */}
             <div className="dato">
 
               <div className="icono-card azul">
@@ -273,6 +301,7 @@ function InicioTutor() {
 
             </div>
 
+            {/* Lleva a la pantalla de Datos del alumno */}
             <Link to="/datosalumno" className="ver-mas">
               Ver más información
               <span>›</span>
@@ -300,6 +329,7 @@ function InicioTutor() {
             </span>
           </div>
 
+          {/* Emoji de la escuela */}
           <div className="mensaje-escuela">
             🏫
           </div>
