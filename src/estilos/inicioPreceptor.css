@@ -1,31 +1,39 @@
+/* =====================================================================
+   INICIO DEL PRECEPTOR - 
+    barra lateral, saludo con la fecha,
+   tarjetas de estadísticas, notificaciones, acciones rápidas y lista de
+   cursos. Va de arriba para abajo en ese mismo orden.
+   ===================================================================== */
 
 /* ===== VARIABLES ===== */
 
+/* Variables de color: se definen una sola vez y se usan en todo el archivo con var(--nombre).*/
 :root {
-  --azul-oscuro: #303d91;
-  --azul-activo: #7099cc;
-  --azul-texto: #1f2a6b;
-  --fondo: #f5f7fc;
-  --blanco: #ffffff;
-  --borde: #e5e9f1;
-  --gris-texto: #7b8496;
-  --texto: #202b43;
+  --azul-oscuro: #303d91;  /* Azul oscuro de la barra lateral y del saludo */
+  --azul-activo: #7099cc;  /* Celeste de la opción de menú activa */
+  --azul-texto: #1f2a6b;  /* Azul de los links y de los números */
+  --fondo: #f5f7fc;  /* Gris clarito de fondo de la página */
+  --blanco: #ffffff;  /* Blanco de las tarjetas */
+  --borde: #e5e9f1;  /* Bordes y rayitas separadoras */
+  --gris-texto: #7b8496;  /* Gris para textos secundarios */
+  --texto: #202b43;  /* Texto normal */
 
-  --azul-suave: #e8efff;
-  --azul-icono: #2f6fb5;
-  --verde-suave: #e4f5e8;
-  --verde-icono: #2e8b43;
-  --naranja-suave: #fdebd3;
-  --naranja-icono: #e08a1e;
-  --violeta-suave: #ece8f8;
-  --violeta-icono: #5b3fa8;
-  --rojo: #b3261e;
+  --azul-suave: #e8efff;  /* Fondos suaves de los íconos (azul, verde, naranja y violeta) */
+  --azul-icono: #2f6fb5;  /* Color del ícono azul */
+  --verde-suave: #e4f5e8;  /* Fondo suave verde */
+  --verde-icono: #2e8b43;  /* Color del ícono verde */
+  --naranja-suave: #fdebd3;  /* Fondo suave naranja */
+  --naranja-icono: #e08a1e;  /* Color del ícono naranja */
+  --violeta-suave: #ece8f8;  /* Fondo suave violeta */
+  --violeta-icono: #5b3fa8;  /* Color del ícono violeta */
+  --rojo: #b3261e;  /* Rojo del número de notificaciones pendientes */
 
-  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;  /* Si no tiene Inter, usa la siguiente de la lista */
 }
 
 /* ===== ESTILOS GENERALES ===== */
 
+/* Reset de la página entera (html, body y el #root donde React dibuja la app): sin márgenes y a todo el ancho.Es global, afecta a todas las pantallas */
 html,
 body,
 #root {
@@ -36,11 +44,13 @@ body,
   min-height: 100vh;
 }
 
+/* Fondo y color de texto de toda la pantalla */
 body {
   background: var(--fondo);
   color: var(--texto);
 }
 
+/* border-box para el panel y todo lo que tiene adentro (incluidos los pseudo-elementos ::before y ::after): el padding y el borde cuentan dentro del ancho */
 .panel,
 .panel *,
 .panel *::before,
@@ -48,6 +58,7 @@ body {
   box-sizing: border-box;
 }
 
+/* El <div className="panel"> que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Repite varias propiedades (margin, padding, max-width) para anular estilos por defecto que puedan venir de otros CSS */
 .panel {
   display: flex;
   align-items: stretch;
@@ -63,22 +74,26 @@ body {
   text-align: left;
 }
 
+/* Títulos y párrafos sin margen de fábrica: el espacio se maneja con gap y margin donde hace falta */
 .panel h1,
 .panel h2,
 .panel p {
   margin: 0;
 }
 
+/* Interlineado más ajustado en los títulos */
 .panel h1,
 .panel h2 {
   line-height: 1.3;
 }
 
+/* Los links (Link y NavLink del JSX) heredan el color y no se subrayan */
 .panel a {
   color: inherit;
   text-decoration: none;
 }
 
+/* Botones con la fuente heredada y manito.Queda por si se agregan */
 .panel button {
   font: inherit;
   cursor: pointer;
@@ -86,6 +101,7 @@ body {
 
 /* ===== PANEL LATERAL ===== */
 
+/* El <aside> de la izquierda: columna azul de ancho fijo (220px). El flex-shrink: 0 evita que se achique y el align-self: stretch la estira hasta abajo */
 .panel .sidebar {
   display: flex;
   flex-direction: column;
@@ -101,6 +117,7 @@ body {
   color: white;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .panel .logo {
   margin: 0;
   padding: 0 10px;
@@ -115,6 +132,7 @@ body {
   letter-spacing: 0;
 }
 
+/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
 .panel .logo span {
   display: block;
   margin-top: 3px;
@@ -126,12 +144,14 @@ body {
 
 /* ===== MENÚ LATERAL ===== */
 
+/* Los links del menú, uno abajo del otro */
 .panel .menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Estado normal y activo comparten la base, así .activo no pierde las propiedades: ícono + texto en fila, con esquinas redondeadas y sin subrayado */
 .panel .menu-item,
 .panel .menu-item.activo {
   display: flex;
@@ -151,15 +171,18 @@ body {
   transition: background 0.2s ease;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .panel .menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
 .panel .menu-item.activo {
   background: var(--azul-activo);
   color: white;
 }
 
+/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
 .panel .menu-icon {
   display: inline-flex;
   align-items: center;
@@ -171,6 +194,7 @@ body {
   line-height: 1;
 }
 
+/*Este JSX no tiene botón de cerrar sesión, así que esta regla (y .logout-icon de abajo) hoy no se usa. El margin-top: auto lo mandaría al fondo de la barra */
 .panel .cerrar-sesion {
   display: flex;
   align-items: center;
@@ -190,6 +214,7 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* Ícono del botón de cerrar sesión (tampoco se usa en este JSX) */
 .panel .logout-icon {
   display: inline-flex;
   align-items: center;
@@ -202,6 +227,7 @@ body {
 
 /* ===== CONTENIDO ===== */
 
+/* El <main>: ocupa todo el ancho que queda (flex: 1) y apila sus partes en columna con espacio entre sí (gap). El min-width: 0 evita que se desborde */
 .panel .contenido {
   display: flex;
   flex: 1;
@@ -219,6 +245,7 @@ body {
 
 /* ===== ENCABEZADO Y FECHA ===== */
 
+/* Encabezado: el saludo y la fecha (con flex-wrap bajan de línea si no entran) */
 .panel .encabezado {
   display: flex;
   align-items: center;
@@ -228,12 +255,14 @@ body {
   padding: 2px 0 8px;
 }
 
+/* El saludo "¡Bienvenida, nombre!" */
 .panel .encabezado h1 {
   color: var(--azul-oscuro);
   font-size: 28px;
   font-weight: 700;
 }
 
+/* La fecha de hoy, en azul clarito. El text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
 .panel .encabezado .fecha-actual {
   margin-top: 6px;
   color: #5878b5;
@@ -241,6 +270,7 @@ body {
   text-transform: capitalize;
 }
 
+/* Es un botón de login que el JSX actual no tiene (el encabezado solo tiene el saludo y la fecha) */
 .panel .boton-login {
   display: flex;
   align-items: center;
@@ -261,6 +291,7 @@ body {
 
 /* ===== TARJETAS GENERALES ===== */
 
+/* Cajita blanca con borde, esquinas redondeadas y sombra suave: la usan las estadísticas, las notificaciones, las acciones y los cursos */
 .panel .tarjeta {
   min-width: 0;
   height: auto;
@@ -274,6 +305,7 @@ body {
 
 /* ===== ESTADÍSTICAS ===== */
 
+/* La <section> de las 4 tarjetas de arriba: grilla de 4 columnas iguales (2 en tablets y 1 en celulares) */
 .panel .estadisticas {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -283,6 +315,7 @@ body {
   height: auto;
 }
 
+/* Cada tarjeta: ícono a la izquierda y texto a la derecha (grilla de 2 columnas). El link de abajo ocupa las dos columnas */
 .panel .estadistica {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -294,6 +327,7 @@ body {
   padding: 15px;
 }
 
+/* Círculo para el ícono de cada tarjeta */
 .panel .icono-card {
   display: flex;
   align-items: center;
@@ -304,6 +338,7 @@ body {
   font-size: 20px;
 }
 
+/* Un color por tipo: azul, verde, naranja y violeta. Cada clase pone un fondo suave y el color del ícono. Se usan en los íconos de las estadísticas, de las notificaciones y de las acciones rápidas */
 .panel .azul {
   background: var(--azul-suave);
   color: var(--azul-icono);
@@ -324,6 +359,7 @@ body {
   color: var(--violeta-icono);
 }
 
+/* Texto de cada tarjeta: título chico arriba y número grande abajo */
 .panel .info-card {
   display: flex;
   flex-direction: column;
@@ -331,6 +367,7 @@ body {
   min-width: 0;
 }
 
+/* El título ("Cursos a cargo", "Alumnos a cargo"...) */
 .panel .info-card span {
   color: var(--texto);
   font-size: 12px;
@@ -338,6 +375,7 @@ body {
   line-height: 1.4;
 }
 
+/* El número grande (o el "—" cuando no hay datos) */
 .panel .info-card strong {
   color: var(--azul-texto);
   font-size: 23px;
@@ -345,10 +383,12 @@ body {
   line-height: 1.2;
 }
 
+/* El número en rojo: el de "Notificaciones pendientes" */
 .panel .info-card strong.numero-rojo {
   color: var(--rojo);
 }
 
+/* El link de abajo de cada tarjeta ("Ver cursos ›"): el grid-column: 1 / -1 hace que ocupe las dos columnas, con una rayita arriba */
 .panel .enlace-estadistica {
   display: flex;
   grid-column: 1 / -1;
@@ -361,6 +401,7 @@ body {
   font-size: 12px;
 }
 
+/* La flechita › */
 .panel .enlace-estadistica span {
   font-size: 20px;
   line-height: 1;
@@ -368,6 +409,7 @@ body {
 
 /* ===== ZONA CENTRAL ===== */
 
+/* Notificaciones a la izquierda (un poco más ancha) y acciones rápidas a la derecha. En pantallas medianas pasan a una sola columna */
 .panel .zona-central {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -378,6 +420,7 @@ body {
   height: auto;
 }
 
+/* Las dos tarjetas de la zona central: columna con espacio interno */
 .panel .notificaciones,
 .panel .acciones {
   display: flex;
@@ -387,6 +430,7 @@ body {
 
 /* ===== TÍTULOS DE SECCIÓN ===== */
 
+/* Título de cada tarjeta ("Notificaciones pendientes", "Acciones rápidas", "Mis cursos"): el título a la izquierda y el link ("Ver todas") a la derecha, con una rayita abajo */
 .panel .titulo-seccion {
   display: flex;
   align-items: center;
@@ -403,12 +447,14 @@ body {
   font-weight: 600;
 }
 
+/* El link "Ver todas" o "Ver todos" (el flex-shrink: 0 evita que se achique) */
 .panel .titulo-seccion a {
   flex-shrink: 0;
   color: var(--azul-texto);
   font-size: 12px;
 }
 
+/* Estos links se subrayan al pasar el mouse: los del título, los de las estadísticas y "Ir a notificaciones" */
 .panel .titulo-seccion a:hover,
 .panel .enlace-estadistica:hover,
 .panel .ver-notificaciones:hover {
@@ -417,6 +463,7 @@ body {
 
 /* ===== NOTIFICACIONES VACÍAS ===== */
 
+/* Mensajes de vacío ("No hay notificaciones pendientes" y "No hay cursos cargados"): caja con borde punteado y todo centrado */
 .panel .sin-datos,
 .panel .sin-cursos {
   display: flex;
@@ -434,6 +481,7 @@ body {
   text-align: center;
 }
 
+/* El link "Ir a notificaciones": el margin-top: auto lo manda al fondo de la tarjeta, con una rayita arriba */
 .panel .ver-notificaciones {
   margin-top: auto;
   padding-top: 13px;
@@ -446,6 +494,7 @@ body {
 
 /* ===== NOTIFICACIONES CON DATOS ===== */
 
+/* Cada notificación (cuando haya datos): ícono, texto y fecha en una grilla de 3 columnas. Hoy no se ve porque la lista está vacía */
 .panel .notificacion {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -455,6 +504,7 @@ body {
   border-top: 1px solid var(--borde);
 }
 
+/* Círculo con el "!" */
 .panel .notificacion-icon {
   display: flex;
   align-items: center;
@@ -466,6 +516,7 @@ body {
   font-weight: 700;
 }
 
+/* Título y descripción de la notificación, uno abajo del otro */
 .panel .notificacion-texto {
   display: flex;
   flex-direction: column;
@@ -478,7 +529,9 @@ body {
   font-weight: 600;
 }
 
+/* La descripción y la fecha, en gris y letra chica */
 .panel .notificacion-texto span,
+/* La fecha no se parte en dos líneas (nowrap) */
 .panel .notificacion-fecha {
   color: var(--gris-texto);
   font-size: 11px;
@@ -491,15 +544,18 @@ body {
 
 /* ===== ACCIONES RÁPIDAS ===== */
 
+/* Tarjeta de acciones rápidas: gap: 0 para que los tres atajos queden pegados, formando un solo bloque */
 .panel .acciones {
   gap: 0;
 }
 
+/* En esta tarjeta el título va centrado */
 .panel .acciones .titulo-seccion {
   justify-content: center;
   margin-bottom: 12px;
 }
 
+/* Cada atajo (los Link del JSX): ícono, texto y flecha en 3 columnas, con borde. No tiene borde abajo: lo da el atajo siguiente, así la línea no se duplica */
 .panel .accion {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -512,20 +568,24 @@ body {
   transition: background 0.2s ease;
 }
 
+/* El primer atajo tiene las esquinas de arriba redondeadas. Es first-of-type porque antes hay un <div> (el título) y el primer <a> es el primer atajo */
 .panel .accion:first-of-type {
   border-radius: 9px 9px 0 0;
   border-top: 1px solid var(--borde);
 }
 
+/* El último tiene las esquinas de abajo redondeadas y recupera el borde de abajo */
 .panel .accion:last-child {
   border-bottom: 1px solid var(--borde);
   border-radius: 0 0 9px 9px;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .panel .accion:hover {
   background: #fafbff;
 }
 
+/* Cuadradito redondeado para el ícono del atajo */
 .panel .accion-icon {
   display: flex;
   align-items: center;
@@ -536,6 +596,7 @@ body {
   font-size: 18px;
 }
 
+/* Título y descripción del atajo, uno abajo del otro */
 .panel .accion-texto {
   display: flex;
   flex-direction: column;
@@ -543,18 +604,21 @@ body {
   min-width: 0;
 }
 
+/* Título del atajo ("Nueva comunicación") */
 .panel .accion strong {
   color: var(--texto);
   font-size: 12px;
   font-weight: 600;
 }
 
+/* Descripción del atajo, en gris y letra chica */
 .panel .accion-texto span {
   color: var(--gris-texto);
   font-size: 11px;
   line-height: 1.5;
 }
 
+/* La flechita › de la derecha */
 .panel .accion b {
   color: var(--gris-texto);
   font-size: 20px;
@@ -564,10 +628,12 @@ body {
 
 /* ===== MIS CURSOS ===== */
 
+/* La tarjeta "Mis cursos" (la <section> con las clases tarjeta y cursos) */
 .panel .cursos {
   padding: 18px;
 }
 
+/* Un poco menos de espacio abajo del título en esta tarjeta */
 .panel .cursos .titulo-seccion {
   margin-bottom: 14px;
 }
@@ -576,12 +642,14 @@ body {
   font-size: 15px;
 }
 
+/* Versión del mensaje de vacío para esta tarjeta: más alta (min-height) y sin margen */
 .panel .sin-cursos {
   min-height: 160px;
   margin: 0;
   padding: 24px 16px;
 }
 
+/* Círculo con el ícono 🎓 */
 .panel .sin-cursos-icono {
   display: grid;
   place-items: center;
@@ -592,17 +660,20 @@ body {
   font-size: 20px;
 }
 
+/* "No hay cursos cargados" */
 .panel .sin-cursos strong {
   color: var(--texto);
   font-size: 13px;
 }
 
+/* Texto de apoyo con un ancho máximo, para que no quede demasiado estirado */
 .panel .sin-cursos p {
   max-width: 380px;
   color: var(--gris-texto);
   font-size: 12px;
 }
 
+/* El link "Consultar cursos", con forma de botón azul */
 .panel .boton-agregar {
   display: inline-flex;
   align-items: center;
@@ -620,6 +691,7 @@ body {
   background: #3349a0;
 }
 
+/* Los cursos en una grilla de 3 columnas (2 en tablets y 1 en celulares) */
 .panel .lista-cursos {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -629,6 +701,7 @@ body {
   height: auto;
 }
 
+/* Cada cajita de curso: usa grid-template-areas con nombres. El nombre y el texto van a la izquierda (en dos filas) y el ícono a la derecha, ocupando las dos filas */
 .panel .curso {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -643,18 +716,21 @@ body {
   background: white;
 }
 
+/* Área "nombre": el nombre del curso */
 .panel .curso strong {
   grid-area: nombre;
   font-size: 13px;
   font-weight: 700;
 }
 
+/* Área "alumnos": el texto de abajo (el área se llama así, pero en el JSX dice "Curso registrado") */
 .panel .curso span {
   grid-area: alumnos;
   color: var(--gris-texto);
   font-size: 11px;
 }
 
+/* Área "icono": el ícono ♧ */
 .panel .curso b {
   grid-area: icono;
   color: var(--azul-oscuro);
@@ -663,26 +739,31 @@ body {
 
 /* ===== TABLETS Y PANTALLAS MEDIANAS ===== */
 
+/* Tablets y pantallas medianas: barra lateral un poco más angosta, y las estadísticas y los cursos de a 2 por fila */
 @media (max-width: 1200px) {
   .panel .sidebar {
     width: 210px;
     min-width: 210px;
   }
 
+  /* Las 4 tarjetas de estadísticas en 2 columnas */
   .panel .estadisticas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* Los cursos en 2 columnas */
   .panel .lista-cursos {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+/* Pantallas más chicas: menos margen, y la zona central pasa a una sola columna (notificaciones arriba y acciones abajo) */
 @media (max-width: 900px) {
   .panel .contenido {
     padding: 20px 16px;
   }
 
+  /* Una sola columna */
   .panel .zona-central {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -695,6 +776,7 @@ body {
 
 /* ===== CELULARES ===== */
 
+/* Celulares: barra lateral más angosta con letras más chicas, y todo en una sola columna */
 @media (max-width: 600px) {
   .panel .sidebar {
     width: 165px;
@@ -745,6 +827,7 @@ body {
     font-size: 23px;
   }
 
+  /* Estadísticas y cursos en una sola columna */
   .panel .estadisticas,
   .panel .lista-cursos {
     grid-template-columns: minmax(0, 1fr);
@@ -763,6 +846,7 @@ body {
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
+/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
   .panel .sidebar {
     width: 64px;
@@ -770,6 +854,7 @@ body {
     padding: 15px 6px;
   }
 
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
   .panel .logo h2,
   .panel .logo span,
   .panel .menu-item > span:last-child,
