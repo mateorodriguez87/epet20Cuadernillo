@@ -1,38 +1,54 @@
+// Hooks de React: useState para los datos de la pantalla y useEffect para escuchar Firebase y la fecha
 import { useEffect, useState } from "react";
+// Link arma enlaces comunes y NavLink los del menú (marca cuál es el activo)
 import { Link, NavLink } from "react-router-dom";
+// Avisa cada vez que cambia el usuario que tiene la sesión iniciada
 import { onAuthStateChanged } from "firebase/auth";
+// onSnapshot escucha una colección de Firestore en tiempo real
 import { collection, onSnapshot } from "firebase/firestore";
+// auth: la autenticación de Firebase / db: la base de datos
 import { auth, db } from "../firebase";
+// Estilos de esta pantalla
 import "../estilos/inicioPreceptor.css";
 
+// Pantalla de inicio del preceptor: saludo, tarjetas con totales, notificaciones, acciones rápidas y lista de cursos
 function InicioPreceptor() {
+  // fechaActual: la de hoy, para el encabezado
+  // nombre: el del usuario que inició sesión, para el saludo
   const [fechaActual, setFechaActual] = useState(new Date());
   const [nombre, setNombre] = useState("");
 
   // son los datos obtenidos de Firebase
   const [cursos, setCursos] = useState([]);
+  // Ojo: hoy solo los cursos se cargan desde Firebase. Alumnos, notificaciones y comunicaciones quedan siempre vacíos (nadie llama a sus setters), por eso sus tarjetas muestran "—" y no hay lista de notificaciones
   const [alumnos, setAlumnos] = useState([]);
   const [notificaciones, setNotificaciones] = useState([]);
   const [comunicaciones, setComunicaciones] = useState([]);
 
   // obtener el usuario que inició sesión
   useEffect(() => {
+    // Firebase avisa cada vez que alguien inicia o cierra sesión
     const cancelarEscucha = onAuthStateChanged(auth, (usuario) => {
       if (usuario) {
+        // Para el saludo usa el nombre del usuario y, si no tiene, su correo
         setNombre(usuario.displayName || usuario.email || "");
       } else {
+        // Si no hay nadie con la sesión iniciada, el saludo queda sin nombre
         setNombre("");
       }
     });
 
+    // Al salir de la pantalla se deja de escuchar, para no gastar recursos
     return () => cancelarEscucha();
   }, []);
 
   // se obtienen los cursos de Firebase en tiempo real
   useEffect(() => {
+    // onSnapshot escucha la colección: si algo cambia en Firebase, la lista se actualiza sola, sin recargar la página
     const cancelar = onSnapshot(
       collection(db, "Cursos"),
       (snapshot) => {
+        // Cada curso se guarda junto con el id de su documento
         setCursos(
           snapshot.docs.map((documento) => ({
             id: documento.id,
@@ -40,25 +56,31 @@ function InicioPreceptor() {
           }))
         );
       },
+      // Si falla la lectura, solo se registra en la consola (no se muestra nada en pantalla)
       (error) => {
         console.error("Error al cargar cursos:", error);
       }
     );
 
+    // Al salir de la pantalla se deja de escuchar
     return () => cancelar();
   }, []);
 
   // esto actualiza la fecha
   useEffect(() => {
+    // Vuelve a leer la fecha actual
     const actualizarFecha = () => {
       setFechaActual(new Date());
     };
 
+    // La ejecuta cada 60000 milisegundos (un minuto)
     const intervalo = setInterval(actualizarFecha, 60000);
 
+    // Al salir de la pantalla se frena el temporizador
     return () => clearInterval(intervalo);
   }, []);
 
+  // Fecha lista para mostrar, en español de Argentina (día de la semana, día, mes y año)
   const fechaFormateada = fechaActual.toLocaleDateString("es-AR", {
     weekday: "long",
     day: "numeric",
@@ -66,8 +88,10 @@ function InicioPreceptor() {
     year: "numeric",
   });
 
+  // Desde acá empieza lo que se dibuja en pantalla
   return (
     <div className="panel">
+      {/* Barra lateral con el menú (esta pantalla no tiene botón de cerrar sesión) */}
       <aside className="sidebar">
         <div className="logo">
           <h2>CUADERNO DE</h2>
@@ -75,6 +99,7 @@ function InicioPreceptor() {
           <span>DIGITAL</span>
         </div>
 
+        {/* Menú: NavLink pone la clase "activo" solo en la opción que coincide con la ruta actual (isActive); "end" pide que la ruta coincida exacta */}
         <nav className="menu">
           <NavLink
             to="/preceptor"
@@ -130,8 +155,10 @@ function InicioPreceptor() {
       </aside>
 
       <main className="contenido">
+        {/* Encabezado: saludo con el nombre y la fecha de hoy */}
         <header className="encabezado">
           <div>
+            {/* Saludo: el ", nombre" solo se agrega si hay un usuario con la sesión iniciada */}
             <h1>
               ¡Bienvenida{nombre ? `, ${nombre}` : ""}!
             </h1>
@@ -142,6 +169,7 @@ function InicioPreceptor() {
 
         {/* ESTADÍSTICAS */}
         <section className="estadisticas">
+          {/* Cursos a cargo: cuenta los cursos que vienen de Firebase (si no hay ninguno, muestra 0) */}
           <article className="tarjeta estadistica">
             <div className="icono-card azul">🎓</div>
 
@@ -158,6 +186,7 @@ function InicioPreceptor() {
             </Link>
           </article>
 
+          {/* Alumnos a cargo: si la cantidad es 0, el || "—" muestra un guion. Hoy siempre se ve así porque los alumnos no se cargan */}
           <article className="tarjeta estadistica">
             <div className="icono-card verde">👥</div>
 
@@ -174,6 +203,7 @@ function InicioPreceptor() {
             </Link>
           </article>
 
+          {/* Notificaciones pendientes (número en rojo): hoy muestra "—" porque no se cargan */}
           <article className="tarjeta estadistica">
             <div className="icono-card naranja">✉</div>
 
@@ -192,6 +222,7 @@ function InicioPreceptor() {
             </Link>
           </article>
 
+          {/* Comunicaciones enviadas: hoy muestra "—" porque no se cargan. El texto dice "este mes", pero no hay ningún filtro por mes */}
           <article className="tarjeta estadistica">
             <div className="icono-card violeta">▤</div>
 
@@ -211,12 +242,14 @@ function InicioPreceptor() {
 
         {/* ZONA CENTRAL */}
         <section className="zona-central">
+          {/* Lista de notificaciones pendientes */}
           <article className="tarjeta notificaciones">
             <div className="titulo-seccion">
               <h2>Notificaciones pendientes</h2>
               <Link to="/notificacionpreceptor">Ver todas</Link>
             </div>
 
+            {/* Si no hay, muestra el mensaje de vacío; si hay, una fila por cada notificación */}
             {notificaciones.length === 0 ? (
               <div className="sin-datos">
                 No hay notificaciones pendientes
@@ -249,6 +282,7 @@ function InicioPreceptor() {
             </Link>
           </article>
 
+          {/* Acciones rápidas: tres atajos a otras pantallas */}
           <article className="tarjeta acciones">
             <div className="titulo-seccion">
               <h2>Acciones rápidas</h2>
@@ -305,6 +339,7 @@ function InicioPreceptor() {
             <Link to="/cursospreceptor">Ver todos</Link>
           </div>
 
+          {/* Si no hay cursos, muestra un mensaje con un botón que lleva a Cursos; si hay, una cajita por cada curso */}
           {cursos.length === 0 ? (
             <div className="sin-cursos">
               <span className="sin-cursos-icono">🎓</span>
@@ -325,6 +360,7 @@ function InicioPreceptor() {
             </div>
           ) : (
             <div className="lista-cursos">
+              {/* Una cajita por curso, con el nombre armado juntando año y división */}
               {cursos.map((curso) => (
                 <div className="curso" key={curso.id}>
                   <strong>
