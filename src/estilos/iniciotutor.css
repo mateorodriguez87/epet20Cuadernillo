@@ -1,136 +1,201 @@
+/* =====================================================================
+   INICIO DEL TUTOR -
+  barra lateral, saludo, tarjeta del alumno,
+   últimas notificaciones, datos del alumno y mensaje final. Va de arriba
+   para abajo en ese mismo orden.
+   ===================================================================== */
+
+/* Variables globales: se definen una vez y se usan en todo el archivo con var(--nombre).  */
 :root {
-  --azul-sidebar: #2c3a96;
-  --azul-activo: #6f98c9;
-  --azul: #1b3fb3;
-  --fondo: #f5f6fa;
-  --borde: #e5e8f0;
-  --texto: #1f2430;
-  --suave: #6b7280;
-  --rojo: #d93a3a;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  --azul-sidebar: #2c3a96;  /* Azul oscuro de la barra lateral y del saludo */
+  --azul-activo: #6f98c9;  /* Celeste de la opción de menú activa */
+  --azul: #1b3fb3;  /* Azul principal: links e íconos */
+  --fondo: #f5f6fa;  /* Gris clarito de fondo de la página */
+  --borde: #e5e8f0;  /* Bordes y rayitas separadoras */
+  --texto: #1f2430;  /* Texto normal */
+  --suave: #6b7280;  /* Gris para textos secundarios */
+  --rojo: #d93a3a;  /* Rojo de las notificaciones sin leer */
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;  /* Si no tiene Inter, usa la siguiente de la lista */
 }
 
+/* Reinicio básico: border-box hace que el padding y el borde cuenten dentro del ancho, así las medidas no se descuadran */
 * { box-sizing: border-box; }
+/* Sin margen de fábrica, con el fondo y el color de texto de arriba */
 body { margin: 0; background: var(--fondo); color: var(--texto); }
+/* Los links (Link y NavLink del JSX) heredan el color y no se subrayan */
 a { text-decoration: none; color: inherit; }
 
 /* ---------- Layout ---------- */
+/* El <div className="panel"> que envuelve todo: grilla de 2 columnas, la barra lateral (290px) y el contenido (el resto). El min-height hace que ocupe como mínimo toda la pantalla */
 .panel { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
 
 /* ---------- Sidebar ---------- */
+/* El <aside> de la izquierda: columna azul con espacio entre logo, menú y cerrar sesión */
 .sidebar {
   background: var(--azul-sidebar); color: #fff;
   padding: 36px 0 28px; display: flex; flex-direction: column; gap: 36px;
 }
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .logo { padding: 0 48px; }
 .logo h2 { margin: 0; font-size: 19px; line-height: 1.4; }
+/* "DIGITAL" va en celeste y en negrita */
 .logo span { color: #9fb0e8; font-weight: 700; font-size: 19px; }
 
+/* Los links del menú del tutor, uno abajo del otro */
 .menu { display: flex; flex-direction: column; gap: 10px; padding-right: 8px; }
+/* Cada link (los NavLink del JSX): ícono + texto en fila */
 .menu-item {
   display: flex; align-items: center; gap: 14px;
   font-size: 23px; line-height: 1.2; padding: 14px 24px; color: #fff;
 }
+/* Ancho fijo para que los textos queden alineados (el flex-shrink: 0 evita que se achique) */
 .menu-icon { width: 34px; text-align: center; flex-shrink: 0; }
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: acá es una pastilla completa (border-radius: 40px), con margen a la izquierda */
 .menu-item.activo { background: var(--azul-activo); border-radius: 40px; margin-left: 14px; padding-left: 10px; }
+/* El <Link> de abajo de la barra: el margin-top: auto lo manda al fondo */
 .cerrar-sesion {
   margin-top: auto; display: flex; align-items: center; gap: 12px;
   padding: 0 40px; font-size: 18px;
 }
 
 /* ---------- Contenido ---------- */
+/* El <main>: apila sus partes en columna con espacio entre sí. El min-width: 0 evita que la grilla ensanche la columna */
 .contenido { padding: 0 26px 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 
+/* Encabezado: el saludo a la izquierda y la fecha a la derecha (con flex-wrap bajan de línea si no entran) */
 .encabezado { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding: 14px 0 0; }
+/* El saludo "Bienvenida, nombre" */
 .encabezado h1 { margin: 0; font-size: 30px; color: var(--azul-sidebar); }
+/* La fecha (viene de datos.fecha) */
 .encabezado p { margin: 0; font-size: 16px; color: var(--azul-sidebar); }
 
+/* Caja blanca con borde y esquinas redondeadas: la usan la de sin leer, la de notificaciones y la de datos del alumno */
 .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 10px; }
 
+/* Círculo para los íconos de las tarjetas (el flex-shrink: 0 evita que se achique) */
 .icono-card { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+/* Ícono azul: el de cada dato del alumno */
 .icono-card.azul { background: #e5ecfb; color: var(--azul); }
+/* Ícono rojo y más grande: el de "Notificaciones sin leer" */
 .icono-card.rojo { background: #fbdcdc; color: var(--rojo); width: 56px; height: 56px; font-size: 22px; }
 
 /* ---------- Tarjeta del alumno ---------- */
+/* La <section> celeste de arriba: la info del alumno a la izquierda y la tarjeta de sin leer a la derecha (con flex-wrap baja de línea si no entran) */
 .tarjeta-alumno {
   display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap;
   background: #e5eefb; border-radius: 12px; padding: 18px 20px;
 }
+/* Foto (o iniciales) y datos básicos del alumno, uno al lado del otro */
 .alumno-info { display: flex; align-items: center; gap: 22px; }
+/* Círculo con borde blanco para la foto. Si no hay foto, el JSX muestra las iniciales. El overflow: hidden recorta la foto para que quede redonda */
 .foto-alumno {
   width: 96px; height: 96px; border-radius: 50%; background: #9aa7d1; color: #fff;
   border: 3px solid #fff; display: grid; place-items: center; font-size: 26px; font-weight: 700; overflow: hidden;
 }
+/* La foto llena todo el círculo sin deformarse */
 .foto-alumno img { width: 100%; height: 100%; object-fit: cover; }
+/* Texto del alumno: "Alumno", nombre, curso y legajo, uno abajo del otro */
 .alumno-datos { display: flex; flex-direction: column; gap: 2px; }
+/* La palabra "Alumno" en azul chiquito */
 .alumno-datos > span { font-size: 12px; color: var(--azul); }
+/* El nombre del alumno, en grande */
 .alumno-datos strong { font-size: 22px; }
+/* Curso y legajo */
 .alumno-datos p { margin: 0; font-size: 13px; }
 
+/* La tarjeta blanca de "Notificaciones sin leer": ícono a la izquierda y texto a la derecha */
 .sin-leer { display: flex; align-items: center; gap: 16px; padding: 16px 22px; min-width: 240px; }
+/* Texto de la tarjeta: título, número y link, uno abajo del otro */
 .info-card { display: flex; flex-direction: column; gap: 2px; }
+/* El título "Notificaciones sin leer" */
 .info-card > span { font-size: 12px; font-weight: 600; }
+/* El link "ver todas ›" */
 .info-card a { font-size: 11px; color: var(--azul); font-weight: 600; }
+/* El número en rojo y grande */
 .numero-rojo { font-size: 28px; color: var(--rojo); }
 
 /* ---------- Zona central ---------- */
+/* Últimas notificaciones a la izquierda (más ancha) y datos del alumno a la derecha. En pantallas medianas pasan a una sola columna */
 .zona-central { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; }
+/* Las dos tarjetas de la zona central: columna con espacio interno */
 .notificaciones, .datos-alumno { padding: 18px 20px; display: flex; flex-direction: column; }
 
+/* Título de cada tarjeta ("Últimas notificaciones", "Datos del alumno"): el título a la izquierda y el link "Ver todas" a la derecha, con una rayita abajo */
 .titulo-seccion { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--borde); padding-bottom: 12px; margin-bottom: 4px; }
 .titulo-seccion h2 { margin: 0; font-size: 15px; }
+/* El link "Ver todas" */
 .titulo-seccion a { font-size: 11px; font-weight: 600; color: var(--azul); }
 
+/* Mensaje "No hay notificaciones" cuando la lista está vacía */
 .sin-datos { text-align: center; color: var(--suave); padding: 30px 0; font-size: 13px; }
 
+/* Cada notificación (cuando haya datos): grilla de 5 columnas, en el mismo orden del JSX: ícono, texto, fecha, puntito y flecha. Hoy no se ve porque la lista está vacía */
 .notificacion {
   display: grid; grid-template-columns: 38px 1fr auto 14px 14px; align-items: center; gap: 12px;
   padding: 12px 0; border-bottom: 1px solid var(--borde);
 }
+/* Círculo del ícono de la notificación */
 .notificacion-icon { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+/* Un color por tipo de notificación, en el mismo orden que "tipos" del JSX: inasistencia (rojo), conducta (naranja), nota (azul) y aviso (verde) */
 .notificacion-icon.rojo { background: #fbdcdc; color: var(--rojo); }
 .notificacion-icon.naranja { background: #fdeccf; color: #d98a12; }
 .notificacion-icon.azul { background: #e5ecfb; color: var(--azul); }
 .notificacion-icon.verde { background: #dff5e7; color: #1b9a52; }
+/* Título y descripción de la notificación, uno abajo del otro */
 .notificacion-texto { display: flex; flex-direction: column; gap: 2px; }
 .notificacion-texto strong { font-size: 12px; }
 .notificacion-texto span { font-size: 10px; color: var(--suave); }
+/* La fecha no se parte en dos líneas (nowrap) */
 .notificacion-fecha { font-size: 11px; color: var(--suave); white-space: nowrap; }
+/* El puntito rojo de "no leída" (el JSX lo dibuja solo si la notificación no está leída) */
 .punto i { display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--rojo); }
+/* La flechita › de la derecha (también solo en las no leídas) */
 .flecha { font-size: 16px; color: var(--suave); }
 
+/* Los links de abajo de cada tarjeta ("Ver todas las notificaciones" y "Ver más información"): el margin-top: auto los manda al fondo de la tarjeta */
 .ver-notificaciones, .ver-mas {
   text-align: center; font-size: 11px; font-weight: 600; color: var(--azul); padding-top: 16px; margin-top: auto;
 }
+/* El "Ver más información ›": con una rayita arriba y la flecha a la derecha */
 .ver-mas { display: flex; justify-content: space-between; border-top: 1px solid var(--borde); margin-top: 12px; }
 
 /* ---------- Datos del alumno ---------- */
+/* Cada dato del alumno: ícono a la izquierda y texto a la derecha, con una rayita abajo */
 .dato { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--borde); }
+/* El texto del dato: título chico arriba y valor abajo (el :not() deja afuera al ícono, que también es un div) */
 .dato div:not(.icono-card) { display: flex; flex-direction: column; gap: 2px; }
+/* El título chico ("Nombre completo", "Curso"...) */
 .dato span { font-size: 10px; font-weight: 600; }
+/* El valor (o el "—" cuando todavía no hay datos) */
 .dato strong { font-size: 13px; font-weight: 500; color: #3b4252; }
 
 /* ---------- Mensaje final ---------- */
+/* La <section> verde de abajo: ícono, texto y emoji de la escuela en fila */
 .mensaje-final {
   display: flex; align-items: center; gap: 16px;
   background: #dff3e4; border: 1px solid #c5e8cd; border-radius: 10px; padding: 18px 22px;
 }
+/* Círculo verde con la tilde */
 .check-verde {
   width: 36px; height: 36px; border-radius: 50%; background: #22a45d; color: #fff;
   display: grid; place-items: center; font-weight: 700; flex-shrink: 0;
 }
+/* Frase de agradecimiento: el flex: 1 hace que ocupe el espacio que sobra */
 .mensaje-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .mensaje-texto strong { font-size: 13px; }
 .mensaje-texto span { font-size: 11px; }
+/* El emoji de la escuela, en grande */
 .mensaje-escuela { font-size: 38px; }
 
 /* ---------- Responsive ---------- */
+/* Tablets: barra lateral más angosta, menú con letra más chica y la zona central en una sola columna */
 @media (max-width: 1100px) {
   .panel { grid-template-columns: 230px 1fr; }
   .logo { padding: 0 24px; }
   .menu-item { font-size: 18px; }
   .zona-central { grid-template-columns: 1fr; }
 }
+/* Celulares: una sola columna, el menú pasa a ser una fila de botoncitos arriba y la info del alumno se apila */
 @media (max-width: 760px) {
   .panel { grid-template-columns: 1fr; }
   .sidebar { padding: 16px; gap: 14px; }
