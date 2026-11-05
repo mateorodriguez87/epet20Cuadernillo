@@ -1,6 +1,13 @@
+/* =====================================================================
+   NOTIFICACIONES RECIBIDAS (TUTOR) 
+    barra lateral, encabezado,
+   introducción con el contador, tarjeta con el estado vacío, aviso y pie.
+   Va de arriba para abajo en ese mismo orden.
+   ===================================================================== */
 
 /* ===== ESTILOS GENERALES ===== */
 
+/* El <div className="recibidas-pagina"> que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Acá también se define el fondo, el color de texto y la tipografía de toda la pantalla */
 .recibidas-pagina {
   display: flex;
   width: 100%;
@@ -10,12 +17,14 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
+/* border-box para todo lo que está adentro: el padding y el borde cuentan dentro del ancho. Está limitado a esta pantalla (no es un reset global) */
 .recibidas-pagina * {
   box-sizing: border-box;
 }
 
 /* ===== PANEL LATERAL ===== */
 
+/* El <aside> de la izquierda: columna azul de ancho fijo (220px). El min-height la estira hasta abajo */
 .recibidas-sidebar {
   display: flex;
   flex-direction: column;
@@ -28,6 +37,7 @@
   color: white;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .recibidas-logo {
   padding: 0 10px;
 }
@@ -40,6 +50,7 @@
   font-weight: 700;
 }
 
+/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
 .recibidas-logo span {
   display: block;
   margin-top: 3px;
@@ -51,12 +62,14 @@
 
 /* ===== MENÚ LATERAL ===== */
 
+/* Los links del menú del tutor, uno abajo del otro */
 .recibidas-menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Cada link (los NavLink del JSX): ícono + texto en fila, con esquinas redondeadas y sin subrayado */
 .recibidas-menu-item {
   display: flex;
   align-items: center;
@@ -71,15 +84,18 @@
   transition: background 0.2s;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .recibidas-menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
 .recibidas-menu-item.activo {
   background: #7099cc;
   color: white;
 }
 
+/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
 .recibidas-icono {
   display: inline-flex;
   align-items: center;
@@ -90,6 +106,7 @@
   line-height: 1;
 }
 
+/* El <Link> de abajo de la barra: el margin-top: auto lo manda al fondo.No tiene text-decoration: none ni hay una regla global para los links, así que puede verse subrayado */
 .recibidas-cerrar {
   display: flex;
   align-items: center;
@@ -111,6 +128,7 @@
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 
+/* El <main>: ocupa todo el ancho que queda (flex: 1). El min-width: 0 evita que se desborde */
 .recibidas-contenido {
   flex: 1;
   min-width: 0;
@@ -119,6 +137,7 @@
 
 /* ===== ENCABEZADO Y FECHA ===== */
 
+/* Encabezado blanco con una rayita abajo: título a la izquierda y fecha a la derecha */
 .recibidas-header {
   display: flex;
   align-items: center;
@@ -130,6 +149,7 @@
   background: white;
 }
 
+/* Título "Notificaciones recibidas" */
 .recibidas-titulo h1 {
   margin: 0;
   color: #303d91;
@@ -137,12 +157,14 @@
   font-weight: 700;
 }
 
+/* El "Inicio > Notificaciones recibidas" de abajo del título */
 .recibidas-titulo p {
   margin: 7px 0 0;
   color: #5078b8;
   font-size: 12px;
 }
 
+/* Fecha de hoy con su ícono de calendario */
 .recibidas-fecha {
   display: flex;
   align-items: center;
@@ -150,10 +172,12 @@
   color: #535d71;
 }
 
+/* El ícono de calendario ▦ */
 .recibidas-fecha > span {
   font-size: 21px;
 }
 
+/* La fecha: text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
 .recibidas-fecha p {
   margin: 0;
   font-size: 12px;
@@ -162,6 +186,7 @@
 
 /* ===== INTRODUCCIÓN Y CONTADOR ===== */
 
+/* La <section> de arriba de la tarjeta: el título y la frase a la izquierda y el contador a la derecha */
 .recibidas-introduccion {
   display: flex;
   align-items: center;
@@ -170,12 +195,14 @@
   margin: 22px 0 18px;
 }
 
+/* Título "Tus comunicaciones" */
 .recibidas-introduccion h2 {
   margin: 0 0 6px;
   color: #25314a;
   font-size: 18px;
 }
 
+/* La frase "Consultá las comunicaciones enviadas por la escuela" */
 .recibidas-introduccion p {
   margin: 0;
   color: #7b8496;
@@ -183,6 +210,7 @@
   line-height: 1.6;
 }
 
+/* Caja blanca del contador de sin leer: el número en un círculo y el texto al lado */
 .recibidas-contador {
   display: flex;
   align-items: center;
@@ -193,6 +221,7 @@
   background: white;
 }
 
+/* El círculo con el número (hoy es un 0 escrito a mano en el JSX) */
 .recibidas-contador > span {
   display: grid;
   place-items: center;
@@ -205,6 +234,7 @@
   font-weight: 700;
 }
 
+/* El texto "Notificaciones sin leer" */
 .recibidas-contador p {
   color: #535d71;
   font-size: 12px;
@@ -212,6 +242,7 @@
 
 /* ===== TARJETA VACÍA ===== */
 
+/* La tarjeta blanca grande que contiene el mensaje de vacío y el aviso. El overflow: hidden recorta lo que sobre en las esquinas redondeadas */
 .recibidas-lista {
   overflow: hidden;
   border: 1px solid #e5e9f1;
@@ -220,6 +251,7 @@
   box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
 }
 
+/* Mensaje de "No recibiste notificaciones": todo centrado dentro de la tarjeta */
 .recibidas-vacio {
   display: flex;
   flex-direction: column;
@@ -230,6 +262,7 @@
   text-align: center;
 }
 
+/* Círculo con el ícono ♧ */
 .recibidas-vacio-icono {
   display: grid;
   place-items: center;
@@ -248,6 +281,7 @@
   font-size: 20px;
 }
 
+/* Texto de apoyo con un ancho máximo, para que no quede demasiado estirado */
 .recibidas-vacio p {
   max-width: 420px;
   margin: 0;
@@ -258,6 +292,7 @@
 
 /* ===== AVISO INFERIOR ===== */
 
+/* Caja celeste informativa de abajo de la tarjeta: ícono "i" + texto. El margin la separa de los bordes de la tarjeta */
 .recibidas-aviso {
   display: flex;
   align-items: flex-start;
@@ -269,6 +304,7 @@
   color: #244a9c;
 }
 
+/* El circulito azul con la "i" (el flex-shrink: 0 evita que se achique) */
 .recibidas-aviso > span {
   display: grid;
   place-items: center;
@@ -282,6 +318,7 @@
   font-weight: 700;
 }
 
+/* El texto del aviso ("Importante: revisá esta sección...") */
 .recibidas-aviso p {
   margin: 0;
   font-size: 11px;
@@ -290,6 +327,7 @@
 
 /* ===== PIE DE PÁGINA ===== */
 
+/* Pie de la pantalla: texto chico, gris y centrado */
 .recibidas-footer {
   padding: 20px 5px 0;
   color: #8b93a3;
@@ -299,6 +337,7 @@
 
 /* ===== TABLETS ===== */
 
+/* Pantallas chicas (el título dice "Tablets", pero 760px ya es tablet chica o celular): barra lateral más angosta con letras más chicas, encabezado en columna y la introducción apilada */
 @media (max-width: 760px) {
   .recibidas-sidebar {
     width: 165px;
@@ -341,6 +380,7 @@
     padding: 0 12px 15px;
   }
 
+  /* El título y la fecha uno debajo del otro */
   .recibidas-header {
     align-items: flex-start;
     flex-direction: column;
@@ -351,6 +391,7 @@
     font-size: 20px;
   }
 
+  /* La introducción y el contador pasan uno debajo del otro */
   .recibidas-introduccion {
     align-items: flex-start;
     flex-direction: column;
@@ -363,6 +404,7 @@
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
+/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
   .recibidas-sidebar {
     width: 64px;
@@ -370,6 +412,7 @@
     padding: 15px 6px;
   }
 
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
   .recibidas-logo h2,
   .recibidas-logo span,
   .recibidas-menu-item > span:last-child,
@@ -391,6 +434,7 @@
     font-size: 18px;
   }
 
+  /* El contador ocupa todo el ancho */
   .recibidas-contador {
     width: 100%;
   }
