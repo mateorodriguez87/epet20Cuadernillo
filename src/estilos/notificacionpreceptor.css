@@ -1,28 +1,38 @@
+/* =====================================================================
+   NOTIFICACIONES (PRECEPTOR) 
+    barra lateral, encabezado,
+   formulario para crear la notificación y tarjeta de resumen. Va de arriba
+   para abajo en ese mismo orden.
+   ===================================================================== */
 
 /* ===== VARIABLES Y ESTILOS GENERALES ===== */
 
+/* Variables de color: se definen una sola vez y se usan en todo el archivo con var(--nombre). Para cambiar un color de toda la pantalla, se toca solo acá */
 :root {
-  --azul-sidebar: #303d91;
-  --azul-activo: #7099cc;
-  --azul: #1558cb;
-  --fondo: #f5f7fc;
-  --borde: #e5e9f1;
-  --texto: #202b43;
-  --suave: #7b8496;
-  --verde: #22a45d;
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  --azul-sidebar: #303d91;  /* Azul oscuro de la barra lateral */
+  --azul-activo: #7099cc;  /* Celeste de la opción de menú activa */
+  --azul: #1558cb;  /* Azul principal: botones, foco de los campos y link del encabezado */
+  --fondo: #f5f7fc;  /* Gris clarito de fondo de la página */
+  --borde: #e5e9f1;  /* Bordes y rayitas separadoras */
+  --texto: #202b43;  /* Texto normal */
+  --suave: #7b8496;  /* Gris para textos secundarios */
+  --verde: #22a45d;  /* Hoy no se usa en este archivo */
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;  /* Si no tiene Inter, usa la siguiente de la lista */
 }
 
+/* Reinicio básico: border-box hace que el padding y el borde cuenten dentro del ancho, así las medidas no se descuadran */
 * {
   box-sizing: border-box;
 }
 
+/* Sin margen de fábrica, con el fondo y el color de texto de arriba */
 body {
   margin: 0;
   background: var(--fondo);
   color: var(--texto);
 }
 
+/* Botones, inputs, selects y textareas heredan la fuente (si no, usan la del navegador) */
 button,
 input,
 select,
@@ -30,10 +40,12 @@ textarea {
   font: inherit;
 }
 
+/* Manito en todos los botones */
 button {
   cursor: pointer;
 }
 
+/* Los links (Link y NavLink del JSX) heredan el color y no se subrayan */
 a {
   color: inherit;
   text-decoration: none;
@@ -41,6 +53,7 @@ a {
 
 /* ===== DISTRIBUCIÓN GENERAL ===== */
 
+/* El <div className="panel"> que envuelve todo: grilla de 2 columnas, la barra lateral (220px) y el contenido (el resto). El minmax(0, 1fr) evita que el contenido ensanche la columna */
 .panel {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -49,6 +62,7 @@ a {
 
 /* ===== PANEL LATERAL ===== */
 
+/* El <aside> de la izquierda: columna azul con espacio entre logo, menú y cerrar sesión. El min-height la estira hasta abajo */
 .sidebar {
   min-height: 100vh;
   padding: 25px 12px 18px;
@@ -59,6 +73,7 @@ a {
   color: white;
 }
 
+/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
 .logo {
   padding: 0 10px;
 }
@@ -70,6 +85,7 @@ a {
   font-weight: 700;
 }
 
+/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
 .logo span {
   display: block;
   margin-top: 3px;
@@ -81,12 +97,14 @@ a {
 
 /* ===== MENÚ ===== */
 
+/* Los links del menú, uno abajo del otro */
 .menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Cada link (los NavLink del JSX): ícono + texto en fila, con esquinas redondeadas */
 .menu-item {
   display: flex;
   align-items: center;
@@ -100,15 +118,18 @@ a {
   transition: background 0.2s ease;
 }
 
+/* Al pasar el mouse se aclara un poquito */
 .menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
 .menu-item.activo {
   background: var(--azul-activo);
   color: white;
 }
 
+/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
 .menu-icon {
   display: inline-flex;
   align-items: center;
@@ -121,6 +142,7 @@ a {
 
 /* ===== INICIAR SESIÓN ===== */
 
+/* El <Link> de abajo de la barra (el título de la sección dice "Iniciar sesión", pero en el JSX el texto es "Cerrar sesión"). El margin-top: auto lo manda al fondo */
 .cerrar-sesion {
   display: flex;
   align-items: center;
@@ -140,6 +162,7 @@ a {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* Ícono del link de cerrar sesión */
 .logout-icon {
   display: inline-flex;
   align-items: center;
@@ -151,6 +174,7 @@ a {
 
 /* ===== CONTENIDO ===== */
 
+/* El <main>: apila sus partes en columna con espacio entre sí. El min-width: 0 evita que se desborde */
 .contenido {
   display: flex;
   flex-direction: column;
@@ -161,6 +185,7 @@ a {
 
 /* ===== ENCABEZADO ===== */
 
+/* El <header> tiene las clases "encabezado" y "encabezado-alumnos" (nombre heredado de la pantalla de alumnos): este bloque le da fondo blanco y una rayita abajo, con el título a la izquierda y fecha y login a la derecha */
 .encabezado-alumnos {
   display: flex;
   align-items: center;
@@ -172,30 +197,35 @@ a {
   background: white;
 }
 
+/* Título "Notificaciones" */
 .encabezado h1 {
   margin: 0;
   color: var(--texto);
   font-size: 22px;
 }
 
+/* El "Inicio > Notificaciones > Nueva notificación" de abajo del título */
 .encabezado p {
   margin: 7px 0 0;
   color: var(--azul);
   font-size: 12px;
 }
 
+/* Grupo de la derecha: fecha + botón de login */
 .encabezado-derecha {
   display: flex;
   align-items: center;
   gap: 18px;
 }
 
+/* La fecha de hoy (en el JSX es solo un texto, sin ícono) */
 .fecha {
   display: flex;
   flex-direction: column;
   line-height: 1.5;
 }
 
+/* El text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
 .fecha span {
   color: #535d71;
   font-size: 12px;
@@ -204,6 +234,7 @@ a {
 
 /* Botón de inicio de sesión del encabezado */
 
+/* Botón "Iniciar sesión ↗": blanco con borde */
 .boton-login {
   display: flex;
   align-items: center;
@@ -224,6 +255,7 @@ a {
 
 /* ===== SUBTÍTULO ===== */
 
+/* La frase "Crear y enviar comunicaciones a padres y tutores" */
 .subtitulo {
   margin: 0;
   color: var(--suave);
@@ -233,6 +265,7 @@ a {
 
 /* ===== TARJETAS ===== */
 
+/* Cajita blanca con borde, esquinas redondeadas y sombra suave: la usan el formulario y el resumen */
 .tarjeta {
   min-width: 0;
   border: 1px solid var(--borde);
@@ -241,6 +274,7 @@ a {
   box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
 }
 
+/* Círculo para los íconos del resumen (el flex-shrink: 0 evita que se achique) */
 .icono-card {
   display: grid;
   place-items: center;
@@ -250,6 +284,7 @@ a {
   border-radius: 50%;
 }
 
+/* Ícono azul clarito: el de cada dato del resumen */
 .icono-card.azul {
   background: #edf2ff;
   color: #304795;
@@ -258,6 +293,7 @@ a {
 
 /* ===== FORMULARIO Y RESUMEN ===== */
 
+/* La <section> con dos columnas: formulario (lo que sobra) y resumen (290px fijos). El align-items: start evita que las dos tarjetas se estiren a la misma altura */
 .zona-formulario {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 290px;
@@ -265,6 +301,7 @@ a {
   gap: 18px;
 }
 
+/* El <form>: campos en columna con espacio entre sí */
 .formulario {
   display: flex;
   flex-direction: column;
@@ -272,6 +309,7 @@ a {
   padding: 24px;
 }
 
+/* Un campo del formulario: etiqueta arriba y el control abajo (alumno, asunto, mensaje, fecha y prioridad) */
 .campo {
   display: flex;
   flex-direction: column;
@@ -280,12 +318,14 @@ a {
   min-width: 0;
 }
 
+/* Estilo de la etiqueta principal de cada campo. Es first-child para que no afecte a las etiquetas de las opciones de prioridad (.opcion), que también son <label> pero no son la primera */
 .campo > label:first-child {
   color: #30384b;
   font-size: 13px;
   font-weight: 600;
 }
 
+/* Estilo común del select, el input y el textarea del formulario */
 .entrada {
   display: block;
   width: 100%;
@@ -299,27 +339,32 @@ a {
   font-size: 13px;
 }
 
+/* Al hacer clic en un campo se marca con contorno azulito */
 .entrada:focus {
   outline: 2px solid #b9c8f0;
   border-color: var(--azul);
 }
 
+/* El campo "Mensaje": más alto y con el tamaño ajustable solo hacia abajo (resize: vertical) */
 textarea.entrada {
   min-height: 110px;
   resize: vertical;
   line-height: 1.5;
 }
 
+/* El select de alumno: sin padding arriba y abajo, porque la altura la da el min-height */
 select.entrada {
   padding-top: 0;
   padding-bottom: 0;
 }
 
+/* El campo de fecha no ocupa todo el ancho: tiene un máximo de 220px */
 .campo-fecha .entrada {
   max-width: 220px;
   min-height: 40px;
 }
 
+/* El texto chico "No hay alumnos disponibles para seleccionar" (aparece solo si la lista de alumnos está vacía) */
 .campo-ayuda {
   color: var(--suave);
   font-size: 11px;
@@ -328,6 +373,7 @@ select.entrada {
 
 /* ===== PRIORIDAD ===== */
 
+/* Cada opción de prioridad (Normal e Importante): botón de opción y texto en fila. Al ser un <label>, se puede hacer clic en cualquier parte */
 .opcion {
   display: flex;
   align-items: center;
@@ -338,6 +384,7 @@ select.entrada {
   cursor: pointer;
 }
 
+/* El accent-color pinta el botón de opción de azul */
 .opcion input {
   width: 15px;
   height: 15px;
@@ -346,6 +393,7 @@ select.entrada {
 
 /* ===== BOTONES DEL FORMULARIO ===== */
 
+/* Fila de botones de abajo (Cancelar y Enviar), alineados a la derecha */
 .botones {
   display: flex;
   justify-content: flex-end;
@@ -354,6 +402,7 @@ select.entrada {
   padding-top: 5px;
 }
 
+/* Tamaño y forma que comparten los dos botones */
 .boton-primario,
 .boton-secundario {
   min-height: 39px;
@@ -363,21 +412,25 @@ select.entrada {
   font-weight: 600;
 }
 
+/* "➤ Enviar": azul */
 .boton-primario {
   border: none;
   background: var(--azul);
   color: white;
 }
 
+/* Hover solo si el botón no está deshabilitado */
 .boton-primario:hover:not(:disabled) {
   background: #1047a6;
 }
 
+/* Mientras falten datos (listoParaEnviar es false), se ve apagado y con cursor de "prohibido" */
 .boton-primario:disabled {
   background: #a9b6dc;
   cursor: not-allowed;
 }
 
+/* "Cancelar": blanco con borde */
 .boton-secundario {
   border: 1px solid var(--borde);
   background: white;
@@ -390,6 +443,7 @@ select.entrada {
 
 /* ===== RESUMEN ===== */
 
+/* La tarjeta de la derecha: se va llenando mientras se completa el formulario */
 .resumen {
   display: flex;
   flex-direction: column;
@@ -397,6 +451,7 @@ select.entrada {
   padding: 20px;
 }
 
+/* Título "Resumen", centrado y con una rayita abajo */
 .titulo-seccion {
   padding-bottom: 13px;
   border-bottom: 1px solid var(--borde);
@@ -409,12 +464,14 @@ select.entrada {
   font-size: 17px;
 }
 
+/* Cada dato del resumen: ícono a la izquierda y texto a la derecha */
 .resumen-item {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+/* El texto: título chico arriba y valor abajo (el :not() deja afuera al ícono, que también es un div) */
 .resumen-item > div:not(.icono-card) {
   display: flex;
   flex-direction: column;
@@ -432,6 +489,7 @@ select.entrada {
   font-size: 13px;
 }
 
+/* Etiqueta de estado. El !important hace que el tamaño de letra le gane a la regla de .resumen-item span de arriba */
 .estado-etiqueta {
   align-self: flex-start;
   padding: 6px 10px;
@@ -440,11 +498,13 @@ select.entrada {
   font-weight: 600;
 }
 
+/* Verde: "Listo para enviar" (cuando listoParaEnviar es true) */
 .estado-etiqueta.listo {
   background: #dff5e7;
   color: #1b7a45;
 }
 
+/* Naranja: "Faltan datos" */
 .estado-etiqueta.incompleto {
   background: #fdeccf;
   color: #9a6208;
@@ -452,6 +512,7 @@ select.entrada {
 
 /* ===== AVISO ===== */
 
+/* Caja celeste informativa con un ícono "i" y un texto */
 .aviso {
   display: flex;
   align-items: flex-start;
@@ -468,6 +529,7 @@ select.entrada {
   line-height: 1.6;
 }
 
+/* Circulito azul con la "i" */
 .aviso-icono {
   display: grid;
   place-items: center;
@@ -484,7 +546,9 @@ select.entrada {
 
 /* ===== TABLETS ===== */
 
+/* Tablets: el resumen pasa debajo del formulario */
 @media (max-width: 1050px) {
+  /* Una sola columna */
   .zona-formulario {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -496,6 +560,7 @@ select.entrada {
 
 /* ===== CELULARES ===== */
 
+/* Celulares: la barra lateral se angosta a 165px (sigue al lado del contenido, no se apila), con letras más chicas, y el encabezado pasa a columna */
 @media (max-width: 760px) {
   .panel {
     grid-template-columns: 165px minmax(0, 1fr);
@@ -546,6 +611,7 @@ select.entrada {
     padding: 0 12px 18px;
   }
 
+  /* El título y la fecha con el login uno debajo del otro */
   .encabezado-alumnos {
     align-items: flex-start;
     flex-direction: column;
@@ -570,6 +636,7 @@ select.entrada {
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
+/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
   .panel {
     grid-template-columns: 64px minmax(0, 1fr);
@@ -584,6 +651,7 @@ select.entrada {
     padding: 0;
   }
 
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
   .logo h2,
   .logo span,
   .menu-item > span:last-child,
@@ -618,6 +686,7 @@ select.entrada {
     padding: 14px;
   }
 
+  /* Los botones del formulario ocupan todo el ancho (con flex: 1 se reparten el espacio) */
   .botones {
     justify-content: stretch;
   }
@@ -630,8 +699,7 @@ select.entrada {
 }
 
 /* ===== CORRECCIÓN DEL PANEL LATERAL ===== */
-/* . */
-
+/* Repite la grilla del panel, ahora con !important (así gana si otro CSS define .panel distinto) */
 .panel {
   display: grid !important;
   grid-template-columns: 220px minmax(0, 1fr) !important;
@@ -639,6 +707,7 @@ select.entrada {
   min-height: 100vh;
 }
 
+/* Repite el estilo de la barra lateral, pero solo cuando es hija directa de .panel */
 .panel > .sidebar {
   width: 220px;
   min-width: 220px;
@@ -651,6 +720,7 @@ select.entrada {
   color: #fff;
 }
 
+/* Repite el estilo del logo */
 .panel .logo {
   padding: 0 10px;
   margin: 0;
@@ -673,12 +743,14 @@ select.entrada {
   letter-spacing: 1px;
 }
 
+/* Repite el estilo del menú */
 .panel .menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
+/* Repite el estilo de las opciones del menú (normales y activa) */
 .panel .menu-item,
 .panel .menu-item.activo {
   display: flex;
@@ -713,6 +785,7 @@ select.entrada {
   font-size: 22px;
 }
 
+/* Repite el estilo del link de cerrar sesión */
 .panel .cerrar-sesion {
   display: flex;
   align-items: center;
@@ -733,6 +806,7 @@ select.entrada {
 
 /* ===== ADAPTACIÓN A PANTALLAS PEQUEÑAS ===== */
 
+/* Repite los ajustes de la barra lateral para celulares (con !important en la grilla) */
 @media (max-width: 760px) {
   .panel {
     grid-template-columns: 165px minmax(0, 1fr) !important;
@@ -760,6 +834,7 @@ select.entrada {
   }
 }
 
+/* Repite los ajustes de la barra lateral para celulares chicos (solo íconos) */
 @media (max-width: 420px) {
   .panel {
     grid-template-columns: 64px minmax(0, 1fr) !important;
