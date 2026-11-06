@@ -1,9 +1,19 @@
+/* =====================================================================
+   REGISTRO (CREAR CUENTA)
+    fondo con la foto del edificio, tarjeta con el
+   formulario, campos en cajitas redondeadas, selects con flecha propia,
+   botón, separador, link para volver al login y pie. Va de arriba para
+   abajo en ese mismo orden.
+   ===================================================================== */
+
+/* Reinicio total: se sacan los márgenes y espacios de fábrica del navegador y border-box hace que el padding y el borde cuenten dentro del ancho.Es global, afecta a toda la aplicación */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* El <div className="registro-page"> que envuelve todo: ocupa toda la pantalla y centra la tarjeta (con flex). El padding de abajo (55px) deja lugar para el pie */
 .registro-page {
   min-height: 100vh;
   width: 100%;
@@ -12,6 +22,7 @@
   align-items: center;
   padding: 30px 15px 55px;
 
+  /* Dos fondos apilados: primero una capa blanca al 75% de opacidad (el linear-gradient) y debajo la foto del edificio. La ruta de la foto es relativa a este archivo CSS */
   background-image:
     linear-gradient(
       rgba(255, 255, 255, 0.75),
@@ -22,6 +33,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  /* Necesario para que el pie (que es position: absolute) se ubique respecto de esta caja */
   position: relative;
 
   font-family: Arial, Helvetica, sans-serif;
@@ -29,6 +41,7 @@
 
 /* TARJETA */
 
+/* La tarjeta blanca semitransparente del medio: 420px de ancho como máximo (max-width: 100% la achica en pantallas chicas), con esquinas redondeadas y sombra suave */
 .registro-card {
   width: 420px;
   max-width: 100%;
@@ -40,6 +53,7 @@
 
 /* TITULO */
 
+/* Título "Crear cuenta" */
 .registro-card h1 {
   text-align: center;
   font-size: 32px;
@@ -48,6 +62,7 @@
   margin-bottom: 5px;
 }
 
+/* La frase "Registrate para comenzar" */
 .registro-subtitulo {
   text-align: center;
   font-size: 12px;
@@ -57,10 +72,12 @@
 
 /* CAMPOS */
 
+/* Cada campo del formulario: etiqueta arriba y caja abajo, con espacio entre uno y otro */
 .registro-campo {
   margin-bottom: 14px;
 }
 
+/* Etiqueta del campo (display: block para que quede arriba de la caja) */
 .registro-campo label {
   display: block;
   font-size: 12px;
@@ -69,6 +86,7 @@
   margin-bottom: 7px;
 }
 
+/* La cajita redondeada que agrupa el ícono y el input (o el select): el borde y la sombra los tiene este contenedor, no el control de adentro */
 .registro-input-container {
   min-height: 42px;
   width: 100%;
@@ -82,6 +100,7 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+/* El ícono de la izquierda, en gris azulado (el flex-shrink: 0 evita que se achique). Los dos selects del JSX no llevan ícono */
 .registro-icon {
   font-size: 15px;
   color: #8a94b8;
@@ -89,6 +108,7 @@
   flex-shrink: 0;
 }
 
+/* El input no tiene borde, contorno ni fondo propios, así se ve como parte de la cajita */
 .registro-input-container input {
   width: 100%;
   min-width: 0;
@@ -99,12 +119,14 @@
   color: #333;
 }
 
+/* Color gris clarito de los textos de ejemplo ("Ingresa tu nombre completo") */
 .registro-input-container input::placeholder {
   color: #bcbcbc;
 }
 
 /* ESTILO DE LOS SELECTORES */
 
+/* Los selects (Tipo de cuenta y Tratamiento) con el mismo aspecto: sin borde ni fondo propios, a todo el ancho de la cajita. El padding derecho deja lugar para la flechita */
 .registro-input-container select {
   width: 100%;
   min-width: 0;
@@ -117,21 +139,25 @@
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   cursor: pointer;
+  /* Saca la flecha que trae el navegador por defecto, para dibujar la propia (la de más abajo) */
   appearance: none;
   -webkit-appearance: none;
 
+  /* La flechita del select: un SVG chiquito escrito directo en el CSS (data:image/svg+xml), azul, ubicada a la derecha */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c3a96' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 4px center;
   background-size: 16px;
 }
 
+/* Las opciones de la lista desplegable */
 .registro-input-container select option {
   background: #fff;
   color: #333;
   font-size: 14px;
 }
 
+/* Cuando el input o el select de adentro tienen el foco, la cajita se marca con borde celeste y un halo suave */
 .registro-input-container:focus-within {
   border-color: #719bc5;
   box-shadow: 0 0 0 3px rgba(113, 155, 197, 0.15);
@@ -139,6 +165,7 @@
 
 /* ERROR */
 
+/* El mensaje de error del JSX (<p className="registro-error">): rojo y centrado. A diferencia del login, acá sí tiene estilo */
 .registro-error {
   margin: 0 0 12px;
   color: #c62828;
@@ -149,6 +176,7 @@
 
 /* BOTÓN */
 
+/* Botón "Crear cuenta": ocupa todo el ancho, con esquinas muy redondeadas */
 .registro-boton {
   width: 100%;
   min-height: 42px;
@@ -163,10 +191,12 @@
   transition: background 0.2s, transform 0.2s;
 }
 
+/* Al pasar el mouse se oscurece un poco */
 .registro-boton:hover {
   background: #5f8dbb;
 }
 
+/* Mientras se crea la cuenta (cargando), el botón queda semitransparente y con cursor de "prohibido" */
 .registro-boton:disabled {
   opacity: 0.7;
   cursor: not-allowed;
@@ -174,6 +204,7 @@
 
 /* SEPARADOR */
 
+/* La línea con una "o" en el medio: línea, texto y línea en fila */
 .registro-separador {
   display: flex;
   align-items: center;
@@ -181,12 +212,14 @@
   margin: 20px 0 16px;
 }
 
+/* Las dos líneas de los costados (el flex: 1 las estira para ocupar el espacio) */
 .registro-separador span {
   flex: 1;
   height: 1px;
   background: #e0e0e0;
 }
 
+/* La "o" del medio */
 .registro-separador p {
   font-size: 11px;
   color: #999;
@@ -194,6 +227,7 @@
 
 /* VOLVER AL LOGIN */
 
+/* La frase "¿Ya tienes una cuenta? Inicia sesión aquí" */
 .registro-volver {
   text-align: center;
   color: #555;
@@ -201,18 +235,21 @@
   line-height: 1.6;
 }
 
+/* El link "Inicia sesión aquí": en negrita y sin subrayado */
 .registro-volver a {
   color: #25206d;
   font-weight: bold;
   text-decoration: none;
 }
 
+/* Al pasar el mouse se subraya */
 .registro-volver a:hover {
   text-decoration: underline;
 }
 
 /* FOOTER */
 
+/* Pie pegado abajo de la pantalla (position: absolute + bottom) y a todo el ancho. El text-shadow blanco ayuda a leerlo sobre la foto */
 .registro-footer {
   position: absolute;
   bottom: 10px;
@@ -227,6 +264,7 @@
 
 /* RESPONSIVE */
 
+/* Celulares: menos espacio alrededor, tarjeta con menos padding y esquinas menos redondeadas, y el título y el pie se achican */
 @media (max-width: 500px) {
   .registro-page {
     padding: 20px 15px 55px;
