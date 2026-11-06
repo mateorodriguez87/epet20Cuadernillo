@@ -17,6 +17,7 @@ import Registro from "./paginas/registro.jsx";
 import AltaBajaAlumnos from "./paginas/altaybajaalumnos.jsx";
 import AltaBajaPreceptores from "./paginas/altaybajapreceptores.jsx";
 import AltaBajaCurso from "./paginas/altaybajacursos.jsx";
+import Ayuda  from "./paginas/ayuda.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/altabajaalumnos" element={<AltaBajaAlumnos />} />
                  <Route path="/altabajapreceptores" element={<AltaBajaPreceptores />} />
                  <Route path="/altabajacursos" element={<AltaBajaCurso />} />
+                 <Route path="/ayuda" element={<Ayuda/>}/>
 
       </Routes>
     </BrowserRouter>
