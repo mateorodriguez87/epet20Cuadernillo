@@ -1,87 +1,85 @@
 
-/* =========================================
-   ESTILOS GENERALES
-========================================= */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --azul-sidebar: #2c3a96;
+  --azul-activo: #6f98c9;
+  --azul: #1b3fb3;
+  --fondo: #f5f6fa;
+  --borde: #e5e8f0;
+  --texto: #1f2430;
+  --texto-suave: #747b8b;
+  --blanco: #ffffff;
 }
 
+/* ESTRUCTURA GENERAL */
 .admin-page {
   display: flex;
   min-height: 100vh;
-  width: 100%;
-  background: #f5f6fa;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #1f2430;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
 }
 
-
-/* =========================================
-   MENÚ LATERAL
-========================================= */
-
+/* MENÚ LATERAL */
 .admin-sidebar {
-  width: 260px;
-  min-height: 100vh;
-  background: #2c3a96;
-  color: white;
   display: flex;
   flex-direction: column;
+  width: 250px;
+  min-width: 250px;
+  min-height: 100vh;
   padding: 25px 18px;
-  flex-shrink: 0;
-  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  background: var(--azul-sidebar);
+  color: var(--blanco);
 }
 
-
-/* LOGO Y NOMBRE DEL SISTEMA */
-
+/* LOGO */
 .admin-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 5px 8px 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.admin-logo svg {
-  flex-shrink: 0;
-  color: white;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 38px;
 }
 
 .admin-logo h2 {
-  font-size: 14px;
-  line-height: 1.4;
+  margin: 0;
+  font-size: 16px;
   font-weight: 700;
-  color: white;
+  letter-spacing: 0.5px;
 }
 
-
-/* PERFIL DEL ADMINISTRADOR */
-
+/* PERFIL */
 .admin-perfil {
-  margin: 28px 5px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.10);
-  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 10px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.admin-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .admin-perfil h3 {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 6px;
+  margin: 0 0 5px;
+  font-size: 14px;
 }
 
-.admin-perfil span {
-  font-size: 11px;
-  color: #d8defc;
+.admin-perfil p {
+  margin: 0;
+  color: #d6defb;
+  font-size: 12px;
 }
 
-
-/* OPCIONES DEL MENÚ */
-
+/* NAVEGACIÓN */
 .admin-menu {
   display: flex;
   flex-direction: column;
@@ -89,417 +87,301 @@
 }
 
 .admin-menu button {
-  width: 100%;
-  min-height: 46px;
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 0 15px;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
   border: none;
   border-radius: 9px;
   background: transparent;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
+  color: #ffffff;
+  font-size: 14px;
   text-align: left;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: 0.2s;
 }
 
 .admin-menu button:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .admin-menu button.activo {
-  background: #719bc5;
-  color: white;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  background: var(--azul-activo);
+  font-weight: 600;
 }
 
-.admin-menu button svg {
-  flex-shrink: 0;
-}
-
-
-/* BOTÓN CERRAR SESIÓN */
-
+/* CERRAR SESIÓN */
 .admin-cerrar {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   width: 100%;
-  min-height: 45px;
   margin-top: auto;
-  padding: 0 15px;
+  padding: 13px 14px;
   border: none;
   border-radius: 9px;
-  background: transparent;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 14px;
+  text-align: left;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: 0.2s;
 }
 
 .admin-cerrar:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.22);
 }
 
-
-/* =========================================
-   CONTENIDO PRINCIPAL
-========================================= */
-
+/* CONTENIDO PRINCIPAL */
 .admin-contenido {
   flex: 1;
   min-width: 0;
-  padding: 35px 40px;
+  padding: 35px;
 }
 
-
-/* =========================================
-   ENCABEZADO
-========================================= */
-
+/* ENCABEZADO */
 .admin-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  gap: 20px;
   margin-bottom: 30px;
 }
 
 .admin-header h1 {
+  margin: 0 0 8px;
+  color: var(--texto);
   font-size: 27px;
-  font-weight: 700;
-  color: #1f2430;
-  margin-bottom: 8px;
 }
 
 .admin-header p {
-  font-size: 13px;
-  color: #777;
-  line-height: 1.5;
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 14px;
 }
 
-
-/* FECHA DINÁMICA */
-
-.admin-header .admin-fecha {
-  margin-top: 10px;
-  color: #2c3a96;
+.admin-fecha {
+  color: var(--texto-suave);
   font-size: 13px;
-  font-weight: 600;
   text-transform: capitalize;
 }
 
-
-/* =========================================
-   TARJETAS DE RESUMEN
-========================================= */
-
+/* TARJETAS */
 .admin-tarjetas {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
+  gap: 20px;
   margin-bottom: 30px;
 }
 
 .admin-tarjeta {
-  min-height: 145px;
-  padding: 22px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  background: white;
-  border-radius: 15px;
-  border: 1px solid #e8eaf1;
-  box-shadow: 0 4px 15px rgba(44, 58, 150, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 15px;
+  padding: 23px;
+  border: 1px solid var(--borde);
+  border-radius: 13px;
+  background: var(--blanco);
+  box-shadow: 0 3px 12px rgba(20, 30, 70, 0.04);
 }
 
-.admin-tarjeta:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 7px 20px rgba(44, 58, 150, 0.10);
-}
-
-.admin-tarjeta svg {
-  color: #719bc5;
-}
-
-.admin-tarjeta h3 {
+.admin-tarjeta p {
+  margin: 0 0 10px;
+  color: var(--texto-suave);
   font-size: 13px;
-  font-weight: 600;
-  color: #626879;
 }
 
-.admin-tarjeta strong {
+.admin-tarjeta h2 {
+  margin: 0;
+  color: var(--azul-sidebar);
   font-size: 28px;
-  color: #2c3a96;
-  font-weight: 700;
 }
 
-
-/* =========================================
-   LISTADO DE USUARIOS
-========================================= */
-
+/* LISTADO */
 .admin-listado {
-  width: 100%;
   padding: 25px;
-  background: white;
-  border-radius: 16px;
-  border: 1px solid #e8eaf1;
-  box-shadow: 0 4px 15px rgba(44, 58, 150, 0.05);
+  border: 1px solid var(--borde);
+  border-radius: 13px;
+  background: var(--blanco);
+  box-shadow: 0 3px 12px rgba(20, 30, 70, 0.04);
 }
 
 .admin-listado-titulo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
   margin-bottom: 22px;
 }
 
 .admin-listado-titulo h2 {
-  font-size: 18px;
-  color: #1f2430;
-  font-weight: 700;
+  margin: 0 0 7px;
+  font-size: 19px;
 }
 
-.admin-listado-titulo span {
-  padding: 7px 12px;
-  background: #edf2fa;
-  border-radius: 20px;
-  color: #2c3a96;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
+.admin-listado-titulo p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 13px;
 }
 
-
-/* =========================================
-   BUSCADOR Y FILTROS
-========================================= */
-
+/* BUSCADOR Y FILTROS */
 .admin-filtros {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 22px;
 }
 
 .admin-buscador {
-  flex: 1;
-  min-width: 220px;
-  min-height: 42px;
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 10px;
-  padding: 0 14px;
-  border: 1px solid #e5e8f0;
-  border-radius: 9px;
-  background: #fff;
-  transition: border-color 0.2s ease;
-}
-
-.admin-buscador:focus-within {
-  border-color: #719bc5;
-  box-shadow: 0 0 0 3px rgba(113, 155, 197, 0.12);
-}
-
-.admin-buscador svg {
-  color: #8a94b8;
-  flex-shrink: 0;
+  min-width: 220px;
+  padding: 0 13px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  color: var(--texto-suave);
 }
 
 .admin-buscador input {
   width: 100%;
-  min-width: 0;
+  padding: 12px 0;
   border: none;
   outline: none;
   background: transparent;
-  color: #333;
-  font-size: 12px;
+  color: var(--texto);
+  font-size: 13px;
 }
-
-.admin-buscador input::placeholder {
-  color: #aaa;
-}
-
-
-/* SELECTORES DE CURSO Y TURNO */
 
 .admin-filtros select {
-  min-height: 42px;
   min-width: 145px;
-  padding: 0 12px;
-  border: 1px solid #e5e8f0;
-  border-radius: 9px;
-  background: white;
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
   outline: none;
-  cursor: pointer;
+  background: var(--blanco);
+  color: var(--texto);
+  font-size: 13px;
 }
 
-.admin-filtros select:focus {
-  border-color: #719bc5;
-}
-
-
-/* =========================================
-   TABLA DE USUARIOS
-========================================= */
-
+/* TABLA */
 .admin-tabla-contenedor {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #edf0f5;
-  border-radius: 10px;
 }
 
 .admin-tabla {
   width: 100%;
-  min-width: 700px;
   border-collapse: collapse;
-  background: white;
-}
-
-.admin-tabla thead {
-  background: #f2f4fa;
+  text-align: left;
 }
 
 .admin-tabla th {
-  padding: 15px 13px;
-  color: #2c3a96;
-  font-size: 11px;
+  padding: 15px 12px;
+  border-bottom: 1px solid var(--borde);
+  background: #f8f9fc;
+  color: #596174;
+  font-size: 12px;
   font-weight: 700;
-  text-align: left;
   white-space: nowrap;
 }
 
 .admin-tabla td {
-  padding: 15px 13px;
-  border-top: 1px solid #edf0f5;
-  color: #505565;
-  font-size: 12px;
-}
-
-.admin-tabla tbody tr {
-  transition: background 0.2s ease;
+  padding: 15px 12px;
+  border-bottom: 1px solid var(--borde);
+  color: #42495a;
+  font-size: 13px;
 }
 
 .admin-tabla tbody tr:hover {
-  background: #f8f9fc;
+  background: #fafbff;
 }
 
-.admin-tabla tbody tr td[colspan] {
-  padding: 30px;
-  text-align: center;
-  color: #999;
+.admin-tabla tbody tr:last-child td {
+  border-bottom: none;
 }
 
-
-/* =========================================
-   ETIQUETAS DE ROLES
-========================================= */
-
+/* ETIQUETA DEL ROL */
 .admin-rol {
   display: inline-block;
-  padding: 6px 11px;
+  padding: 6px 10px;
   border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
+  background: #e8edff;
+  color: var(--azul-sidebar);
+  font-size: 12px;
+  font-weight: 600;
   text-transform: capitalize;
-  white-space: nowrap;
 }
 
-.admin-rol.tutor {
-  background: #e8f2fc;
-  color: #356b9d;
-}
-
-.admin-rol.preceptor {
-  background: #e8f5ed;
-  color: #328052;
-}
-
-.admin-rol.administrador {
-  background: #eeeafd;
-  color: #6551a5;
-}
-
-
-/* =========================================
-   MENSAJES DE CARGA Y ERROR
-========================================= */
-
-.admin-cargando,
-.admin-error {
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
+/* BOTÓN EDITAR */
+.admin-editar {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 15px;
+  gap: 7px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 7px;
+  background: #e8edff;
+  color: var(--azul-sidebar);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.admin-editar:hover {
+  background: #d7e0ff;
+}
+
+/* CARGANDO */
+.admin-cargando {
+  padding: 30px;
+  color: var(--texto-suave);
   text-align: center;
 }
 
-.admin-cargando {
-  background: #f5f6fa;
-  color: #2c3a96;
-}
-
+/* ERROR */
 .admin-error {
-  background: #fff;
-  color: #c62828;
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border-radius: 8px;
+  background: #fff0f0;
+  color: #c03939;
+  font-size: 14px;
 }
 
-
-/* =========================================
-   RESPONSIVE
-========================================= */
-
+/* RESPONSIVE */
 @media (max-width: 1000px) {
-
-  .admin-sidebar {
-    width: 225px;
-  }
-
   .admin-contenido {
-    padding: 30px 22px;
+    padding: 25px;
   }
 
   .admin-tarjetas {
-    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
 }
 
-@media (max-width: 750px) {
-
+@media (max-width: 700px) {
   .admin-page {
     flex-direction: column;
   }
 
   .admin-sidebar {
     width: 100%;
+    min-width: 0;
     min-height: auto;
     padding: 18px;
   }
 
   .admin-logo {
-    padding-bottom: 15px;
+    margin-bottom: 15px;
   }
 
   .admin-perfil {
-    margin: 15px 0;
+    margin-bottom: 15px;
   }
 
   .admin-menu {
@@ -508,10 +390,8 @@
   }
 
   .admin-menu button {
+    width: auto;
     flex: 1;
-    justify-content: center;
-    min-width: 120px;
-    padding: 10px;
   }
 
   .admin-cerrar {
@@ -519,12 +399,13 @@
   }
 
   .admin-contenido {
-    padding: 25px 18px;
+    padding: 20px;
   }
 
-}
-
-@media (max-width: 550px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
   .admin-tarjetas {
     grid-template-columns: 1fr;
@@ -533,27 +414,18 @@
   .admin-listado {
     padding: 17px;
   }
+}
 
-  .admin-listado-titulo {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
+@media (max-width: 450px) {
   .admin-filtros {
     flex-direction: column;
-    align-items: stretch;
   }
 
   .admin-buscador {
-    width: 100%;
+    min-width: 0;
   }
 
   .admin-filtros select {
     width: 100%;
   }
-
-  .admin-header h1 {
-    font-size: 23px;
-  }
-
 }
