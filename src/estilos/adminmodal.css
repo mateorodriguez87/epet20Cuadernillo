@@ -15,7 +15,7 @@
 /* CONTENEDOR */
 .admin-modal {
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
@@ -60,7 +60,7 @@
   line-height: 1.5;
 }
 
-/* CERRAR */
+/* BOTÓN CERRAR */
 .admin-modal-cerrar {
   display: flex;
   align-items: center;
@@ -117,12 +117,169 @@
   box-shadow: 0 0 0 3px rgba(44, 58, 150, 0.1);
 }
 
-/* CAMPOS DESHABILITADOS */
 .admin-modal-campo input:disabled,
 .admin-modal-campo select:disabled {
   background: #f4f5f8;
   color: #858b99;
   cursor: not-allowed;
+}
+
+/* SECCIÓN DE ASIGNACIONES */
+.admin-modal-asignaciones {
+  margin-top: 25px;
+  margin-bottom: 22px;
+}
+
+/* SUBTÍTULOS */
+.admin-modal-subtitulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 17px;
+  color: #2c3a96;
+}
+
+.admin-modal-subtitulo h3 {
+  margin: 0 0 5px;
+  color: #1f2430;
+  font-size: 17px;
+}
+
+.admin-modal-subtitulo p {
+  margin: 0;
+  color: #747b8b;
+  font-size: 13px;
+}
+
+/* BUSCADOR DE ALUMNOS */
+.admin-modal-busqueda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  margin-bottom: 13px;
+  border: 1px solid #dfe3ed;
+  border-radius: 9px;
+  color: #747b8b;
+}
+
+.admin-modal-busqueda:focus-within {
+  border-color: #2c3a96;
+  box-shadow: 0 0 0 3px rgba(44, 58, 150, 0.1);
+}
+
+.admin-modal-busqueda input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #252b3a;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* LISTA DE ALUMNOS Y CURSOS */
+.admin-modal-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  max-height: 230px;
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid #e5e8f0;
+  border-radius: 10px;
+  background: #fafbfe;
+}
+
+/* CADA OPCIÓN */
+.admin-modal-opcion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5e8f0;
+  border-radius: 9px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.admin-modal-opcion:hover {
+  border-color: #aab8ed;
+  background: #f6f8ff;
+}
+
+.admin-modal-opcion.seleccionado {
+  border-color: #2c3a96;
+  background: #eef1ff;
+}
+
+/* OCULTAR CHECKBOX ORIGINAL */
+.admin-modal-opcion input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* CHECK PERSONALIZADO */
+.admin-modal-check {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #c8cedc;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #ffffff;
+}
+
+.admin-modal-opcion.seleccionado .admin-modal-check {
+  border-color: #2c3a96;
+  background: #2c3a96;
+}
+
+/* DATOS DEL ALUMNO O CURSO */
+.admin-modal-opcion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-modal-opcion-info strong {
+  color: #252b3a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-modal-opcion-info small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #747b8b;
+  font-size: 12px;
+}
+
+/* CONTADOR */
+.admin-modal-contador {
+  margin: 12px 2px 0;
+  color: #2c3a96;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* LISTA VACÍA */
+.admin-modal-vacio {
+  padding: 18px;
+  margin: 0;
+  color: #747b8b;
+  font-size: 13px;
+  text-align: center;
 }
 
 /* ERROR */
