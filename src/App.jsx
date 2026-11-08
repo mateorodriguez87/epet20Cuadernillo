@@ -18,6 +18,7 @@ import AltaBajaAlumnos from "./paginas/altaybajaalumnos.jsx";
 import AltaBajaPreceptores from "./paginas/altaybajapreceptores.jsx";
 import AltaBajaCurso from "./paginas/altaybajacursos.jsx";
 import Ayuda  from "./paginas/ayuda.jsx";
+import Administrador from "./paginas/administrador.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 
@@ -28,7 +29,7 @@ function App() {
         {/* Ruta para la página principal/raíz */}
         <Route path="/" element={<Bienvenida />} />
 
-        {/* Rutas adicionales de tu app */}
+        {/* Rutas adicionales de nuestra app */}
         <Route path="/bienvenida" element={<Bienvenida />} />
         <Route path="/login" element={<Login />} />
         <Route path="/preceptor" element={<InicioPreceptor />} />
@@ -50,6 +51,7 @@ function App() {
                  <Route path="/altabajapreceptores" element={<AltaBajaPreceptores />} />
                  <Route path="/altabajacursos" element={<AltaBajaCurso />} />
                  <Route path="/ayuda" element={<Ayuda/>}/>
+                 <Route path="/administrador" element={<Administrador/>}/>
 
       </Routes>
     </BrowserRouter>
