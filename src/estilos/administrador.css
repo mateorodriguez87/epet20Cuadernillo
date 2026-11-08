@@ -1,0 +1,559 @@
+
+/* =========================================
+   ESTILOS GENERALES
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.admin-page {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: #f5f6fa;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2430;
+}
+
+
+/* =========================================
+   MENÚ LATERAL
+========================================= */
+
+.admin-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #2c3a96;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 18px;
+  flex-shrink: 0;
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.08);
+}
+
+
+/* LOGO Y NOMBRE DEL SISTEMA */
+
+.admin-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 8px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.admin-logo svg {
+  flex-shrink: 0;
+  color: white;
+}
+
+.admin-logo h2 {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: white;
+}
+
+
+/* PERFIL DEL ADMINISTRADOR */
+
+.admin-perfil {
+  margin: 28px 5px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 12px;
+}
+
+.admin-perfil h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.admin-perfil span {
+  font-size: 11px;
+  color: #d8defc;
+}
+
+
+/* OPCIONES DEL MENÚ */
+
+.admin-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.admin-menu button {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 15px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.admin-menu button:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.admin-menu button.activo {
+  background: #719bc5;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.admin-menu button svg {
+  flex-shrink: 0;
+}
+
+
+/* BOTÓN CERRAR SESIÓN */
+
+.admin-cerrar {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  min-height: 45px;
+  margin-top: auto;
+  padding: 0 15px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.admin-cerrar:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+
+/* =========================================
+   CONTENIDO PRINCIPAL
+========================================= */
+
+.admin-contenido {
+  flex: 1;
+  min-width: 0;
+  padding: 35px 40px;
+}
+
+
+/* =========================================
+   ENCABEZADO
+========================================= */
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.admin-header h1 {
+  font-size: 27px;
+  font-weight: 700;
+  color: #1f2430;
+  margin-bottom: 8px;
+}
+
+.admin-header p {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.5;
+}
+
+
+/* FECHA DINÁMICA */
+
+.admin-header .admin-fecha {
+  margin-top: 10px;
+  color: #2c3a96;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+
+/* =========================================
+   TARJETAS DE RESUMEN
+========================================= */
+
+.admin-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-bottom: 30px;
+}
+
+.admin-tarjeta {
+  min-height: 145px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  background: white;
+  border-radius: 15px;
+  border: 1px solid #e8eaf1;
+  box-shadow: 0 4px 15px rgba(44, 58, 150, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-tarjeta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(44, 58, 150, 0.10);
+}
+
+.admin-tarjeta svg {
+  color: #719bc5;
+}
+
+.admin-tarjeta h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #626879;
+}
+
+.admin-tarjeta strong {
+  font-size: 28px;
+  color: #2c3a96;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   LISTADO DE USUARIOS
+========================================= */
+
+.admin-listado {
+  width: 100%;
+  padding: 25px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e8eaf1;
+  box-shadow: 0 4px 15px rgba(44, 58, 150, 0.05);
+}
+
+.admin-listado-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.admin-listado-titulo h2 {
+  font-size: 18px;
+  color: #1f2430;
+  font-weight: 700;
+}
+
+.admin-listado-titulo span {
+  padding: 7px 12px;
+  background: #edf2fa;
+  border-radius: 20px;
+  color: #2c3a96;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   BUSCADOR Y FILTROS
+========================================= */
+
+.admin-filtros {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.admin-buscador {
+  flex: 1;
+  min-width: 220px;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #e5e8f0;
+  border-radius: 9px;
+  background: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.admin-buscador:focus-within {
+  border-color: #719bc5;
+  box-shadow: 0 0 0 3px rgba(113, 155, 197, 0.12);
+}
+
+.admin-buscador svg {
+  color: #8a94b8;
+  flex-shrink: 0;
+}
+
+.admin-buscador input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #333;
+  font-size: 12px;
+}
+
+.admin-buscador input::placeholder {
+  color: #aaa;
+}
+
+
+/* SELECTORES DE CURSO Y TURNO */
+
+.admin-filtros select {
+  min-height: 42px;
+  min-width: 145px;
+  padding: 0 12px;
+  border: 1px solid #e5e8f0;
+  border-radius: 9px;
+  background: white;
+  color: #444;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.admin-filtros select:focus {
+  border-color: #719bc5;
+}
+
+
+/* =========================================
+   TABLA DE USUARIOS
+========================================= */
+
+.admin-tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #edf0f5;
+  border-radius: 10px;
+}
+
+.admin-tabla {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background: white;
+}
+
+.admin-tabla thead {
+  background: #f2f4fa;
+}
+
+.admin-tabla th {
+  padding: 15px 13px;
+  color: #2c3a96;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-tabla td {
+  padding: 15px 13px;
+  border-top: 1px solid #edf0f5;
+  color: #505565;
+  font-size: 12px;
+}
+
+.admin-tabla tbody tr {
+  transition: background 0.2s ease;
+}
+
+.admin-tabla tbody tr:hover {
+  background: #f8f9fc;
+}
+
+.admin-tabla tbody tr td[colspan] {
+  padding: 30px;
+  text-align: center;
+  color: #999;
+}
+
+
+/* =========================================
+   ETIQUETAS DE ROLES
+========================================= */
+
+.admin-rol {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.admin-rol.tutor {
+  background: #e8f2fc;
+  color: #356b9d;
+}
+
+.admin-rol.preceptor {
+  background: #e8f5ed;
+  color: #328052;
+}
+
+.admin-rol.administrador {
+  background: #eeeafd;
+  color: #6551a5;
+}
+
+
+/* =========================================
+   MENSAJES DE CARGA Y ERROR
+========================================= */
+
+.admin-cargando,
+.admin-error {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  text-align: center;
+}
+
+.admin-cargando {
+  background: #f5f6fa;
+  color: #2c3a96;
+}
+
+.admin-error {
+  background: #fff;
+  color: #c62828;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+  .admin-sidebar {
+    width: 225px;
+  }
+
+  .admin-contenido {
+    padding: 30px 22px;
+  }
+
+  .admin-tarjetas {
+    gap: 14px;
+  }
+
+}
+
+@media (max-width: 750px) {
+
+  .admin-page {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .admin-logo {
+    padding-bottom: 15px;
+  }
+
+  .admin-perfil {
+    margin: 15px 0;
+  }
+
+  .admin-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .admin-menu button {
+    flex: 1;
+    justify-content: center;
+    min-width: 120px;
+    padding: 10px;
+  }
+
+  .admin-cerrar {
+    margin-top: 15px;
+  }
+
+  .admin-contenido {
+    padding: 25px 18px;
+  }
+
+}
+
+@media (max-width: 550px) {
+
+  .admin-tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-listado {
+    padding: 17px;
+  }
+
+  .admin-listado-titulo {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-buscador {
+    width: 100%;
+  }
+
+  .admin-filtros select {
+    width: 100%;
+  }
+
+  .admin-header h1 {
+    font-size: 23px;
+  }
+
+}
