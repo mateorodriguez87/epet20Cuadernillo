@@ -19,7 +19,8 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-
+// Icono proveniente de la Biblioteca Lucide-React
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock, UserRoundCheck, UserRound} from 'lucide-react';
 // Estilos de esta pantalla
 import "../estilos/notificacionpreceptor.css";
 
@@ -378,7 +379,7 @@ function NotificacionPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">⌂</span>
+            <House className="menu-icon" size={20} />
             <span>Inicio</span>
           </NavLink>
 
@@ -388,7 +389,7 @@ function NotificacionPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+            <Presentation className="menu-icon" size={20}/>
             <span>Cursos</span>
           </NavLink>
 
@@ -398,7 +399,7 @@ function NotificacionPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♙</span>
+            <UserRoundGroup className="menu-icon" size={20}/>
             <span>Alumnos</span>
           </NavLink>
 
@@ -409,8 +410,8 @@ function NotificacionPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♧</span>
-            <span>Notificaciones</span>
+            <Bell className="menu-icon" size={20}/>
+           <span>Notificaciones</span>
           </NavLink>
 
           <NavLink
@@ -419,7 +420,7 @@ function NotificacionPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+            <RotateCcwClock className="menu-icon" size={20}/>
             <span>Historial</span>
           </NavLink>
         </nav>
@@ -652,7 +653,9 @@ function NotificacionPreceptor() {
 
             {/* Alumno seleccionado (o "—" si no hay ninguno) */}
             <div className="resumen-item">
-              <div className="icono-card azul">♙</div>
+              <div className="icono-card azul">
+                <UserRoundCheck size={18} />
+              </div>
 
               <div>
                 <span>Alumno seleccionado:</span>
@@ -666,7 +669,9 @@ function NotificacionPreceptor() {
 
             {/* Tutor: sale del usuario relacionado con el alumno */}
             <div className="resumen-item">
-              <div className="icono-card azul">♟</div>
+              <div className="icono-card azul">
+                <UserRound size={18}/>
+              </div>
 
               <div>
                 <span>Tutor:</span>
