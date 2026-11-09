@@ -1,38 +1,40 @@
+
 /* =====================================================================
-   NOTIFICACIONES (PRECEPTOR) 
-    barra lateral, encabezado,
-   formulario para crear la notificación y tarjeta de resumen. Va de arriba
-   para abajo en ese mismo orden.
+   NOTIFICACIONES RECIBIDAS (TUTOR)
+
+   Barra lateral, encabezado, contador de notificaciones,
+   selector de alumno, lista de comunicaciones y aviso informativo.
    ===================================================================== */
 
 /* ===== VARIABLES Y ESTILOS GENERALES ===== */
 
-/* Variables de color: se definen una sola vez y se usan en todo el archivo con var(--nombre). Para cambiar un color de toda la pantalla, se toca solo acá */
+/* Variables de color: se definen una sola vez y se usan en todo el archivo */
 :root {
-  --azul-sidebar: #303d91;  /* Azul oscuro de la barra lateral */
-  --azul-activo: #7099cc;  /* Celeste de la opción de menú activa */
-  --azul: #1558cb;  /* Azul principal: botones, foco de los campos y link del encabezado */
-  --fondo: #f5f7fc;  /* Gris clarito de fondo de la página */
-  --borde: #e5e9f1;  /* Bordes y rayitas separadoras */
-  --texto: #202b43;  /* Texto normal */
-  --suave: #7b8496;  /* Gris para textos secundarios */
-  --verde: #22a45d;  /* Hoy no se usa en este archivo */
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;  /* Si no tiene Inter, usa la siguiente de la lista */
+  --azul-sidebar: #303d91;
+  --azul-activo: #7099cc;
+  --azul: #1558cb;
+  --fondo: #f5f7fc;
+  --borde: #e5e9f1;
+  --texto: #202b43;
+  --suave: #7b8496;
+  --verde: #22a45d;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
-/* Reinicio básico: border-box hace que el padding y el borde cuenten dentro del ancho, así las medidas no se descuadran */
+/* Reinicio básico */
 * {
   box-sizing: border-box;
 }
 
-/* Sin margen de fábrica, con el fondo y el color de texto de arriba */
+/* Fondo y color general */
 body {
   margin: 0;
   background: var(--fondo);
   color: var(--texto);
 }
 
-/* Botones, inputs, selects y textareas heredan la fuente (si no, usan la del navegador) */
+/* Botones, inputs y selects heredan la fuente */
 button,
 input,
 select,
@@ -40,12 +42,12 @@ textarea {
   font: inherit;
 }
 
-/* Manito en todos los botones */
+/* Manito en los botones */
 button {
   cursor: pointer;
 }
 
-/* Los links (Link y NavLink del JSX) heredan el color y no se subrayan */
+/* Links sin subrayado */
 a {
   color: inherit;
   text-decoration: none;
@@ -53,40 +55,42 @@ a {
 
 /* ===== DISTRIBUCIÓN GENERAL ===== */
 
-/* El <div className="panel"> que envuelve todo: grilla de 2 columnas, la barra lateral (220px) y el contenido (el resto). El minmax(0, 1fr) evita que el contenido ensanche la columna */
-.panel {
+/* Contenedor principal de la página */
+.recibidas-pagina {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
+  width: 100%;
   min-height: 100vh;
 }
 
 /* ===== PANEL LATERAL ===== */
 
-/* El <aside> de la izquierda: columna azul con espacio entre logo, menú y cerrar sesión. El min-height la estira hasta abajo */
-.sidebar {
-  min-height: 100vh;
-  padding: 25px 12px 18px;
+/* Barra lateral azul */
+.recibidas-sidebar {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  min-height: 100vh;
+  padding: 25px 12px 18px;
   background: var(--azul-sidebar);
   color: white;
 }
 
-/* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
-.logo {
+/* Logo */
+.recibidas-logo {
   padding: 0 10px;
 }
 
-.logo h2 {
+.recibidas-logo h2 {
   margin: 0;
+  color: white;
   font-size: 15px;
   line-height: 1.5;
   font-weight: 700;
 }
 
-/* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
-.logo span {
+/* Texto DIGITAL */
+.recibidas-logo span {
   display: block;
   margin-top: 3px;
   color: #8db4e4;
@@ -97,15 +101,15 @@ a {
 
 /* ===== MENÚ ===== */
 
-/* Los links del menú, uno abajo del otro */
-.menu {
+/* Links del menú */
+.recibidas-menu {
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
 
-/* Cada link (los NavLink del JSX): ícono + texto en fila, con esquinas redondeadas */
-.menu-item {
+/* Cada opción del menú */
+.recibidas-menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -118,19 +122,19 @@ a {
   transition: background 0.2s ease;
 }
 
-/* Al pasar el mouse se aclara un poquito */
-.menu-item:hover {
+/* Efecto al pasar el mouse */
+.recibidas-menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
-/* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
-.menu-item.activo {
+/* Opción activa */
+.recibidas-menu-item.activo {
   background: var(--azul-activo);
   color: white;
 }
 
-/* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
-.menu-icon {
+/* Íconos del menú */
+.recibidas-icono {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -140,10 +144,10 @@ a {
   line-height: 1;
 }
 
-/* ===== INICIAR SESIÓN ===== */
+/* ===== CERRAR SESIÓN ===== */
 
-/* El <Link> de abajo de la barra (el título de la sección dice "Iniciar sesión", pero en el JSX el texto es "Cerrar sesión"). El margin-top: auto lo manda al fondo */
-.cerrar-sesion {
+/* Botón de cerrar sesión */
+.recibidas-cerrar {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -158,180 +162,159 @@ a {
   text-align: left;
 }
 
-.cerrar-sesion:hover {
+/* Efecto al pasar el mouse */
+.recibidas-cerrar:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
-/* Ícono del link de cerrar sesión */
-.logout-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 23px;
-  min-width: 23px;
-  font-size: 22px;
+/* Botón deshabilitado */
+.recibidas-cerrar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* ===== CONTENIDO ===== */
+/* ===== CONTENIDO PRINCIPAL ===== */
 
-/* El <main>: apila sus partes en columna con espacio entre sí. El min-width: 0 evita que se desborde */
-.contenido {
+/* Contenedor del contenido */
+.recibidas-contenido {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   min-width: 0;
-  padding: 0 20px 22px;
+  padding: 0 25px 22px;
 }
 
 /* ===== ENCABEZADO ===== */
 
-/* El <header> tiene las clases "encabezado" y "encabezado-alumnos" (nombre heredado de la pantalla de alumnos): este bloque le da fondo blanco y una rayita abajo, con el título a la izquierda y fecha y login a la derecha */
-.encabezado-alumnos {
+/* Título y fecha */
+.recibidas-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 80px;
+  min-height: 85px;
   padding: 15px 5px;
   border-bottom: 1px solid var(--borde);
   background: white;
 }
 
-/* Título "Notificaciones" */
-.encabezado h1 {
+/* Título principal */
+.recibidas-titulo h1 {
   margin: 0;
   color: var(--texto);
   font-size: 22px;
+  font-weight: 700;
 }
 
-/* El "Inicio > Notificaciones > Nueva notificación" de abajo del título */
-.encabezado p {
+/* Migas de pan */
+.recibidas-titulo p {
   margin: 7px 0 0;
   color: var(--azul);
   font-size: 12px;
 }
 
-/* Grupo de la derecha: fecha + botón de login */
-.encabezado-derecha {
+/* Fecha */
+.recibidas-fecha {
   display: flex;
   align-items: center;
-  gap: 18px;
-}
-
-/* La fecha de hoy (en el JSX es solo un texto, sin ícono) */
-.fecha {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.5;
-}
-
-/* El text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
-.fecha span {
+  gap: 9px;
   color: #535d71;
+}
+
+.recibidas-fecha span {
+  font-size: 19px;
+}
+
+.recibidas-fecha p {
+  margin: 0;
   font-size: 12px;
   text-transform: capitalize;
 }
 
-/* Botón de inicio de sesión del encabezado */
+/* ===== INTRODUCCIÓN Y CONTADOR ===== */
 
-/* Botón "Iniciar sesión ↗": blanco con borde */
-.boton-login {
+/* Título de la sección y contador */
+.recibidas-introduccion {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 12px;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* Título "Tus comunicaciones" */
+.recibidas-introduccion h2 {
+  margin: 0;
+  color: var(--texto);
+  font-size: 20px;
+}
+
+/* Descripción */
+.recibidas-introduccion p {
+  margin: 7px 0 0;
+  color: var(--suave);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Tarjeta del contador */
+.recibidas-contador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 170px;
+  padding: 12px 16px;
   border: 1px solid var(--borde);
-  border-radius: 8px;
+  border-radius: 10px;
   background: white;
-  color: #304795;
+}
+
+/* Número de notificaciones sin leer */
+.recibidas-contador span {
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  background: #fde8e8;
+  color: #d43d45;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Texto del contador */
+.recibidas-contador p {
+  margin: 0;
+  color: var(--texto);
   font-size: 12px;
   font-weight: 600;
 }
 
-.boton-login:hover {
-  background: #f0f4ff;
-}
+/* ===== SELECTOR DE ALUMNO ===== */
 
-/* ===== SUBTÍTULO ===== */
-
-/* La frase "Crear y enviar comunicaciones a padres y tutores" */
-.subtitulo {
-  margin: 0;
-  color: var(--suave);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* ===== TARJETAS ===== */
-
-/* Cajita blanca con borde, esquinas redondeadas y sombra suave: la usan el formulario y el resumen */
-.tarjeta {
-  min-width: 0;
+/* Contenedor del filtro */
+.recibidas-filtro {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 15px 18px;
   border: 1px solid var(--borde);
-  border-radius: 12px;
+  border-radius: 10px;
   background: white;
-  box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
 }
 
-/* Círculo para los íconos del resumen (el flex-shrink: 0 evita que se achique) */
-.icono-card {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-}
-
-/* Ícono azul clarito: el de cada dato del resumen */
-.icono-card.azul {
-  background: #edf2ff;
-  color: #304795;
-  font-size: 21px;
-}
-
-/* ===== FORMULARIO Y RESUMEN ===== */
-
-/* La <section> con dos columnas: formulario (lo que sobra) y resumen (290px fijos). El align-items: start evita que las dos tarjetas se estiren a la misma altura */
-.zona-formulario {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
-  align-items: start;
-  gap: 18px;
-}
-
-/* El <form>: campos en columna con espacio entre sí */
-.formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 24px;
-}
-
-/* Un campo del formulario: etiqueta arriba y el control abajo (alumno, asunto, mensaje, fecha y prioridad) */
-.campo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  min-width: 0;
-}
-
-/* Estilo de la etiqueta principal de cada campo. Es first-child para que no afecte a las etiquetas de las opciones de prioridad (.opcion), que también son <label> pero no son la primera */
-.campo > label:first-child {
-  color: #30384b;
+/* Etiqueta del selector */
+.recibidas-filtro label {
+  color: var(--texto);
   font-size: 13px;
   font-weight: 600;
 }
 
-/* Estilo común del select, el input y el textarea del formulario */
-.entrada {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-height: 40px;
-  padding: 10px 12px;
+/* Selector */
+.recibidas-filtro select {
+  min-width: 220px;
+  min-height: 39px;
+  padding: 8px 12px;
   border: 1px solid var(--borde);
   border-radius: 8px;
   background: white;
@@ -339,528 +322,494 @@ a {
   font-size: 13px;
 }
 
-/* Al hacer clic en un campo se marca con contorno azulito */
-.entrada:focus {
+/* Foco del selector */
+.recibidas-filtro select:focus {
   outline: 2px solid #b9c8f0;
   border-color: var(--azul);
 }
 
-/* El campo "Mensaje": más alto y con el tamaño ajustable solo hacia abajo (resize: vertical) */
-textarea.entrada {
-  min-height: 110px;
-  resize: vertical;
-  line-height: 1.5;
-}
+/* ===== LISTA DE NOTIFICACIONES ===== */
 
-/* El select de alumno: sin padding arriba y abajo, porque la altura la da el min-height */
-select.entrada {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* El campo de fecha no ocupa todo el ancho: tiene un máximo de 220px */
-.campo-fecha .entrada {
-  max-width: 220px;
-  min-height: 40px;
-}
-
-/* El texto chico "No hay alumnos disponibles para seleccionar" (aparece solo si la lista de alumnos está vacía) */
-.campo-ayuda {
-  color: var(--suave);
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-/* ===== PRIORIDAD ===== */
-
-/* Cada opción de prioridad (Normal e Importante): botón de opción y texto en fila. Al ser un <label>, se puede hacer clic en cualquier parte */
-.opcion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #4e586b;
-  font-size: 13px;
-  font-weight: 400;
-  cursor: pointer;
-}
-
-/* El accent-color pinta el botón de opción de azul */
-.opcion input {
-  width: 15px;
-  height: 15px;
-  accent-color: var(--azul);
-}
-
-/* ===== BOTONES DEL FORMULARIO ===== */
-
-/* Fila de botones de abajo (Cancelar y Enviar), alineados a la derecha */
-.botones {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding-top: 5px;
-}
-
-/* Tamaño y forma que comparten los dos botones */
-.boton-primario,
-.boton-secundario {
-  min-height: 39px;
-  padding: 0 18px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* "➤ Enviar": azul */
-.boton-primario {
-  border: none;
-  background: var(--azul);
-  color: white;
-}
-
-/* Hover solo si el botón no está deshabilitado */
-.boton-primario:hover:not(:disabled) {
-  background: #1047a6;
-}
-
-/* Mientras falten datos (listoParaEnviar es false), se ve apagado y con cursor de "prohibido" */
-.boton-primario:disabled {
-  background: #a9b6dc;
-  cursor: not-allowed;
-}
-
-/* "Cancelar": blanco con borde */
-.boton-secundario {
-  border: 1px solid var(--borde);
-  background: white;
-  color: #4e586b;
-}
-
-.boton-secundario:hover {
-  background: #f3f5fa;
-}
-
-/* ===== RESUMEN ===== */
-
-/* La tarjeta de la derecha: se va llenando mientras se completa el formulario */
-.resumen {
+/* Contenedor general de la lista */
+.recibidas-lista {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 20px;
+  gap: 14px;
+  min-width: 0;
 }
 
-/* Título "Resumen", centrado y con una rayita abajo */
-.titulo-seccion {
-  padding-bottom: 13px;
-  border-bottom: 1px solid var(--borde);
+/* ===== ESTADO VACÍO ===== */
+
+/* Tarjeta cuando no hay notificaciones */
+.recibidas-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 280px;
+  padding: 35px 25px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: white;
   text-align: center;
 }
 
-.titulo-seccion h2 {
-  margin: 0;
+/* Ícono del estado vacío */
+.recibidas-vacio-icono {
+  display: grid;
+  place-items: center;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: #edf2ff;
+  color: var(--azul);
+  font-size: 30px;
+}
+
+/* Título del estado vacío */
+.recibidas-vacio h2 {
+  margin: 5px 0 0;
   color: var(--texto);
-  font-size: 17px;
+  font-size: 18px;
 }
 
-/* Cada dato del resumen: ícono a la izquierda y texto a la derecha */
-.resumen-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* Descripción del estado vacío */
+.recibidas-vacio p {
+  max-width: 440px;
+  margin: 0;
+  color: var(--suave);
+  font-size: 13px;
+  line-height: 1.7;
 }
 
-/* El texto: título chico arriba y valor abajo (el :not() deja afuera al ícono, que también es un div) */
-.resumen-item > div:not(.icono-card) {
+/* ===== TARJETAS DE NOTIFICACIONES ===== */
+
+/* Cada comunicación */
+.recibidas-notificacion {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 11px;
+  background: white;
+  box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Efecto al pasar el mouse */
+.recibidas-notificacion:hover {
+  box-shadow: 0 4px 15px rgba(28, 42, 80, 0.08);
+}
+
+/* Notificación que todavía no fue leída */
+.recibidas-notificacion-pendiente {
+  border-left: 4px solid var(--azul);
+  background: #fbfcff;
+}
+
+/* Notificación que ya fue leída */
+.recibidas-notificacion-leida {
+  border-left: 4px solid #cbd3df;
+}
+
+/* ===== ENCABEZADO DE CADA NOTIFICACIÓN ===== */
+
+/* Fila con ícono, información, estado y botón */
+.recibidas-notificacion-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+
+/* Ícono de la comunicación */
+.recibidas-notificacion-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  background: #edf2ff;
+  color: var(--azul);
+  font-size: 23px;
+}
+
+/* Información de la comunicación */
+.recibidas-notificacion-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   gap: 5px;
   min-width: 0;
 }
 
-.resumen-item span {
+/* Asunto */
+.recibidas-notificacion-info strong {
+  overflow-wrap: anywhere;
+  color: var(--texto);
+  font-size: 14px;
+}
+
+/* Alumno y fecha */
+.recibidas-notificacion-info span {
+  color: var(--suave);
   font-size: 12px;
 }
 
-.resumen-item strong {
-  overflow-wrap: anywhere;
-  font-size: 13px;
+/* ===== ESTADOS Y PRIORIDAD ===== */
+
+/* Contenedor de estado y prioridad */
+.recibidas-notificacion-estado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
-/* Etiqueta de estado. El !important hace que el tamaño de letra le gane a la regla de .resumen-item span de arriba */
-.estado-etiqueta {
-  align-self: flex-start;
-  padding: 6px 10px;
+/* Etiquetas */
+.recibidas-notificacion-estado span {
+  padding: 5px 9px;
   border-radius: 7px;
-  font-size: 11px !important;
+  background: #edf2ff;
+  color: #304795;
+  font-size: 11px;
   font-weight: 600;
 }
 
-/* Verde: "Listo para enviar" (cuando listoParaEnviar es true) */
-.estado-etiqueta.listo {
-  background: #dff5e7;
-  color: #1b7a45;
-}
-
-/* Naranja: "Faltan datos" */
-.estado-etiqueta.incompleto {
+/* Primera etiqueta: estado de lectura */
+.recibidas-notificacion-pendiente
+.recibidas-notificacion-estado span:first-child {
   background: #fdeccf;
   color: #9a6208;
 }
 
-/* ===== AVISO ===== */
+.recibidas-notificacion-leida
+.recibidas-notificacion-estado span:first-child {
+  background: #dff5e7;
+  color: #1b7a45;
+}
 
-/* Caja celeste informativa con un ícono "i" y un texto */
-.aviso {
+/* Segunda etiqueta: prioridad importante */
+.recibidas-notificacion-estado span:last-child {
+  background: #edf2ff;
+  color: #304795;
+}
+
+/* ===== BOTÓN LEER ===== */
+
+/* Botón para abrir o cerrar la comunicación */
+.recibidas-notificacion-boton {
+  flex-shrink: 0;
+  min-width: 75px;
+  min-height: 36px;
+  padding: 7px 13px;
+  border: 1px solid var(--azul);
+  border-radius: 7px;
+  background: white;
+  color: var(--azul);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Efecto del botón */
+.recibidas-notificacion-boton:hover:not(:disabled) {
+  background: var(--azul);
+  color: white;
+}
+
+/* Botón mientras se actualiza la lectura */
+.recibidas-notificacion-boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== DETALLE DE LA NOTIFICACIÓN ===== */
+
+/* Contenido que aparece al tocar Leer */
+.recibidas-notificacion-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 17px;
+  margin-left: 60px;
+  padding: 16px;
+  border-top: 1px solid var(--borde);
+  border-radius: 0 0 8px 8px;
+  background: #f8faff;
+}
+
+/* Mensaje */
+.recibidas-notificacion-detalle p {
+  margin: 0;
+  color: #414b60;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Información del remitente */
+.recibidas-notificacion-detalle small {
+  color: var(--suave);
+  font-size: 11px;
+}
+
+/* ===== AVISO INFORMATIVO ===== */
+
+/* Caja celeste con el mensaje importante */
+.recibidas-aviso {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 13px;
+  padding: 14px;
   border-radius: 8px;
   background: #e8eefc;
   color: #1b2f7a;
 }
 
-.aviso p {
+/* Ícono de información */
+.recibidas-aviso > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 19px;
+  height: 19px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Texto del aviso */
+.recibidas-aviso p {
   margin: 0;
   font-size: 12px;
   line-height: 1.6;
 }
 
-/* Circulito azul con la "i" */
-.aviso-icono {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 17px;
-  height: 17px;
-  margin-top: 2px;
-  border-radius: 50%;
-  background: var(--azul);
-  color: white;
+/* ===== MENSAJES DE ERROR ===== */
+
+.recibidas-error {
+  margin: 0;
+  padding: 12px 15px;
+  border: 1px solid #f0caca;
+  border-radius: 8px;
+  background: #fff0f0;
+  color: #a52c35;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ===== PIE DE PÁGINA ===== */
+
+.recibidas-footer {
+  margin-top: auto;
+  padding: 15px 5px 0;
+  border-top: 1px solid var(--borde);
+  color: var(--suave);
   font-size: 11px;
-  font-weight: 700;
+  text-align: center;
 }
 
 /* ===== TABLETS ===== */
 
-/* Tablets: el resumen pasa debajo del formulario */
 @media (max-width: 1050px) {
-  /* Una sola columna */
-  .zona-formulario {
-    grid-template-columns: minmax(0, 1fr);
+  .recibidas-contenido {
+    padding-right: 18px;
+    padding-left: 18px;
   }
 
-  .resumen {
-    width: 100%;
+  .recibidas-notificacion-cabecera {
+    flex-wrap: wrap;
+  }
+
+  .recibidas-notificacion-info {
+    flex-basis: calc(100% - 65px);
+  }
+
+  .recibidas-notificacion-estado {
+    margin-left: 60px;
+    align-items: flex-start;
   }
 }
 
 /* ===== CELULARES ===== */
 
-/* Celulares: la barra lateral se angosta a 165px (sigue al lado del contenido, no se apila), con letras más chicas, y el encabezado pasa a columna */
 @media (max-width: 760px) {
-  .panel {
+  .recibidas-pagina {
     grid-template-columns: 165px minmax(0, 1fr);
   }
 
-  .sidebar {
+  .recibidas-sidebar {
     padding: 20px 8px;
     gap: 24px;
   }
 
-  .logo {
+  .recibidas-logo {
     padding: 0 7px;
   }
 
-  .logo h2 {
+  .recibidas-logo h2 {
     font-size: 12px;
   }
 
-  .logo span {
+  .recibidas-logo span {
     font-size: 12px;
   }
 
-  .menu {
+  .recibidas-menu {
     gap: 7px;
   }
 
-  .menu-item {
+  .recibidas-menu-item {
     gap: 7px;
     min-height: 40px;
     padding: 9px 7px;
     font-size: 12px;
   }
 
-  .menu-icon,
-  .logout-icon {
+  .recibidas-icono {
     width: 20px;
     min-width: 20px;
     font-size: 19px;
   }
 
-  .cerrar-sesion {
+  .recibidas-cerrar {
     gap: 7px;
     padding: 9px 7px;
     font-size: 12px;
   }
 
-  .contenido {
+  .recibidas-contenido {
+    gap: 16px;
     padding: 0 12px 18px;
   }
 
-  /* El título y la fecha con el login uno debajo del otro */
-  .encabezado-alumnos {
+  .recibidas-header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    padding: 15px 5px;
   }
 
-  .encabezado-derecha {
+  .recibidas-titulo h1 {
+    font-size: 19px;
+  }
+
+  .recibidas-fecha {
+    align-self: flex-start;
+  }
+
+  .recibidas-introduccion {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .recibidas-contador {
     width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  }
+
+  .recibidas-filtro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .recibidas-filtro select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .recibidas-notificacion {
+    padding: 14px;
+  }
+
+  .recibidas-notificacion-cabecera {
     gap: 10px;
   }
 
-  .formulario {
-    padding: 18px;
-  }
-
-  .resumen {
-    padding: 16px;
+  .recibidas-notificacion-detalle {
+    margin-left: 0;
   }
 }
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
-/* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
 @media (max-width: 420px) {
-  .panel {
+  .recibidas-pagina {
     grid-template-columns: 64px minmax(0, 1fr);
   }
 
-  .sidebar {
+  .recibidas-sidebar {
     padding: 15px 6px;
     gap: 22px;
   }
 
-  .logo {
-    padding: 0;
-  }
-
-  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
-  .logo h2,
-  .logo span,
-  .menu-item > span:last-child,
-  .cerrar-sesion > span:last-child {
+  /* Se ocultan el logo y el texto del menú: quedan solamente los íconos */
+  .recibidas-logo h2,
+  .recibidas-logo span,
+  .recibidas-menu-item span:last-child,
+  .recibidas-cerrar span:last-child {
     display: none;
   }
 
-  .menu-item {
+  .recibidas-menu-item {
     justify-content: center;
     padding: 11px 4px;
   }
 
-  .cerrar-sesion {
+  .recibidas-cerrar {
     justify-content: center;
     padding: 10px 4px;
   }
 
-  .encabezado h1 {
+  .recibidas-contenido {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .recibidas-titulo h1 {
+    font-size: 17px;
+  }
+
+  .recibidas-notificacion-cabecera {
+    align-items: flex-start;
+  }
+
+  .recibidas-notificacion-icono {
+    width: 38px;
+    height: 38px;
     font-size: 20px;
   }
 
-  .encabezado-derecha {
-    align-items: flex-start;
-    flex-direction: column;
+  .recibidas-notificacion-info {
+    flex-basis: calc(100% - 50px);
   }
 
-  .zona-formulario {
-    gap: 14px;
+  .recibidas-notificacion-estado {
+    margin-left: 48px;
   }
 
-  .formulario {
-    padding: 14px;
+  .recibidas-notificacion-boton {
+    margin-left: auto;
   }
 
-  /* Los botones del formulario ocupan todo el ancho (con flex: 1 se reparten el espacio) */
-  .botones {
-    justify-content: stretch;
+  .recibidas-vacio {
+    min-height: 240px;
+    padding: 25px 15px;
   }
 
-  .boton-primario,
-  .boton-secundario {
-    flex: 1;
-    padding: 0 12px;
-  }
-}
-
-/* ===== CORRECCIÓN DEL PANEL LATERAL ===== */
-/* Repite la grilla del panel, ahora con !important (así gana si otro CSS define .panel distinto) */
-.panel {
-  display: grid !important;
-  grid-template-columns: 220px minmax(0, 1fr) !important;
-  width: 100%;
-  min-height: 100vh;
-}
-
-/* Repite el estilo de la barra lateral, pero solo cuando es hija directa de .panel */
-.panel > .sidebar {
-  width: 220px;
-  min-width: 220px;
-  min-height: 100vh;
-  padding: 25px 12px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  background: #303d91;
-  color: #fff;
-}
-
-/* Repite el estilo del logo */
-.panel .logo {
-  padding: 0 10px;
-  margin: 0;
-}
-
-.panel .logo h2 {
-  margin: 0;
-  color: #fff;
-  font-size: 15px;
-  line-height: 1.5;
-  font-weight: 700;
-}
-
-.panel .logo span {
-  display: block;
-  margin-top: 3px;
-  color: #8db4e4;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-/* Repite el estilo del menú */
-.panel .menu {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-/* Repite el estilo de las opciones del menú (normales y activa) */
-.panel .menu-item,
-.panel .menu-item.activo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 43px;
-  margin: 0;
-  padding: 9px 10px;
-  border-radius: 12px;
-  color: #f4f5ff;
-  background: transparent;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.panel .menu-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.panel .menu-item.activo {
-  background: #7099cc;
-  color: #fff;
-}
-
-.panel .menu-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 23px;
-  min-width: 23px;
-  font-size: 22px;
-}
-
-/* Repite el estilo del link de cerrar sesión */
-.panel .cerrar-sesion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: auto;
-  padding: 10px;
-  border: none;
-  border-radius: 9px;
-  background: transparent;
-  color: #fff;
-  font-size: 13px;
-}
-
-.panel .cerrar-sesion:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* ===== ADAPTACIÓN A PANTALLAS PEQUEÑAS ===== */
-
-/* Repite los ajustes de la barra lateral para celulares (con !important en la grilla) */
-@media (max-width: 760px) {
-  .panel {
-    grid-template-columns: 165px minmax(0, 1fr) !important;
+  .recibidas-vacio h2 {
+    font-size: 16px;
   }
 
-  .panel > .sidebar {
-    width: 165px;
-    min-width: 165px;
-    padding: 20px 8px;
-  }
-
-  .panel .logo h2 {
+  .recibidas-vacio p {
     font-size: 12px;
-  }
-
-  .panel .logo span {
-    font-size: 12px;
-  }
-
-  .panel .menu-item,
-  .panel .menu-item.activo {
-    gap: 7px;
-    padding: 9px 7px;
-    font-size: 12px;
-  }
-}
-
-/* Repite los ajustes de la barra lateral para celulares chicos (solo íconos) */
-@media (max-width: 420px) {
-  .panel {
-    grid-template-columns: 64px minmax(0, 1fr) !important;
-  }
-
-  .panel > .sidebar {
-    width: 64px;
-    min-width: 64px;
-    padding: 15px 6px;
-  }
-
-  .panel .logo h2,
-  .panel .logo span,
-  .panel .menu-item > span:last-child,
-  .panel .cerrar-sesion > span:last-child {
-    display: none;
-  }
-
-  .panel .menu-item,
-  .panel .menu-item.activo {
-    justify-content: center;
-    padding: 11px 4px;
-  }
-
-  .panel .cerrar-sesion {
-    justify-content: center;
-    padding: 10px 4px;
   }
 }
