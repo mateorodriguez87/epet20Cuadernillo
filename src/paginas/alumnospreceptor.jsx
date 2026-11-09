@@ -13,7 +13,8 @@ import {
 
 // Conexión a la base de datos
 import { db } from "../firebase";
-
+// Icono proveniente de la Biblioteca Lucide-React
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock} from 'lucide-react';
 // Estilos de la pantalla y de su modal (son dos archivos CSS)
 import "../estilos/alumnospreceptor.css";
 import "../estilos/modalalumnospreceptor.css";
@@ -339,7 +340,7 @@ function AlumnosPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">⌂</span>
+            <House className="menu-icon" size={20} />
             <span>Inicio</span>
           </NavLink>
 
@@ -349,7 +350,7 @@ function AlumnosPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+           <Presentation className="menu-icon" size={20}/>
             <span>Cursos</span>
           </NavLink>
 
@@ -360,7 +361,7 @@ function AlumnosPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♙</span>
+            <UserRoundGroup className="menu-icon" size={20}/>
             <span>Alumnos</span>
           </NavLink>
 
@@ -370,8 +371,8 @@ function AlumnosPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♧</span>
-            <span>Notificaciones</span>
+            <Bell className="menu-icon" size={20}/>
+           <span>Notificaciones</span>
           </NavLink>
 
           <NavLink
@@ -380,7 +381,7 @@ function AlumnosPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+            <RotateCcwClock className="menu-icon" size={20}/>
             <span>Historial</span>
           </NavLink>
         </nav>
