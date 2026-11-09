@@ -1,5 +1,7 @@
+
 // Hooks de React: useState para los datos de la pantalla y useEffect para cargar al abrirla
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 // Funciones de Firestore para leer, crear, editar y borrar documentos
 import {
   collection,
@@ -10,14 +12,13 @@ import {
   doc,
   serverTimestamp
 } from "firebase/firestore";
-
 // Conexión a la base de datos (se configura en firebase.js)
 import { db } from "../firebase";
 // Estilos de esta pantalla
 import "../estilos/altaybajaalumnos.css";
-
 // Pantalla de alta y baja de alumnos (preceptor)
 function AltaBajaAlumnos() {
+  const location = useLocation();
   // Formulario en blanco: se usa al empezar y para limpiarlo después de guardar o cancelar
   const formularioVacio = {
     nombre: "",
@@ -30,7 +31,6 @@ function AltaBajaAlumnos() {
     tutorEmail: "",
     tutorTelefono: ""
   };
-
   // Estados de la pantalla:
   // - pestana: "alta" o "baja", define qué sección se ve
   // - form: lo que se va escribiendo en el formulario
@@ -50,21 +50,29 @@ function AltaBajaAlumnos() {
   const [alumnoBaja, setAlumnoBaja] = useState(null);
   const [motivo, setMotivo] = useState("");
   const [tipoBaja, setTipoBaja] = useState("temporal");
-  const [confirmacionDefinitiva, setConfirmacionDefinitiva] =
-    useState(false);
+  const [confirmacionDefinitiva, setConfirmacionDefinitiva] = useState(false);
   const [procesando, setProcesando] = useState(false);
-
+  // Si llegamos desde AlumnosPreceptor, abrir directamente la baja del alumno elegido.
+  useEffect(() => {
+    const alumnoSeleccionado = location.state?.alumno;
+    if (alumnoSeleccionado) {
+      setPestana("baja");
+      setAlumnoBaja(alumnoSeleccionado);
+      setMotivo("");
+      setTipoBaja("temporal");
+      setConfirmacionDefinitiva(false);
+      setError("");
+    }
+  }, [location.state]);
   // Cargar alumnos y cursos desde Firebase
   const cargarDatos = async () => {
     try {
       setError("");
-
       // Pide las dos colecciones al mismo tiempo (más rápido que una por una)
       const [alumnosSnapshot, cursosSnapshot] = await Promise.all([
         getDocs(collection(db, "Alumnos")),
         getDocs(collection(db, "Cursos"))
       ]);
-
       // Guarda cada alumno con su id, que es el id del documento en Firestore
       setAlumnos(
         alumnosSnapshot.docs.map((documento) => ({
@@ -72,7 +80,6 @@ function AltaBajaAlumnos() {
           ...documento.data()
         }))
       );
-
       setCursos(
         cursosSnapshot.docs.map((documento) => ({
           id: documento.id,
@@ -88,12 +95,10 @@ function AltaBajaAlumnos() {
       setCargando(false);
     }
   };
-
   // Al abrir la pantalla se cargan los datos una sola vez (por eso el [] del final)
   useEffect(() => {
     cargarDatos();
   }, []);
-
   // Actualizar campos del formulario
   const cambiarCampo = (campo, valor) => {
     // Copia lo que había y pisa solo el campo que cambió, así no se pierde el resto
@@ -102,7 +107,6 @@ function AltaBajaAlumnos() {
       [campo]: valor
     }));
   };
-
   // Validar formulario
   // Es true cuando están los datos obligatorios: habilita el botón Guardar y cambia el estado del resumen
   const altaLista =
@@ -111,23 +115,18 @@ function AltaBajaAlumnos() {
     form.dni.trim() !== "" &&
     form.curso !== "" &&
     form.tutorNombre.trim() !== "";
-
   // Registrar alumno en Firestore
   const guardarAlumno = async (e) => {
     e.preventDefault();
-
     // Si falta algo o ya se está guardando, no hace nada (evita guardar dos veces)
     if (!altaLista || procesando) return;
-
     try {
       setProcesando(true);
       setError("");
-
       // El select guarda el id del curso; acá se busca el curso completo para sacar su nombre
       const cursoSeleccionado = cursos.find(
         (curso) => curso.id === form.curso
       );
-
       // Crea el alumno en la colección "Alumnos"
       await addDoc(collection(db, "Alumnos"), {
         // En "nombre" se guarda el nombre completo y el apellido también va por separado
@@ -147,7 +146,6 @@ function AltaBajaAlumnos() {
         // La fecha de creación la pone el servidor de Firebase
         creadoEn: serverTimestamp()
       });
-
       // Vuelve a leer los datos para que el alumno nuevo aparezca en la lista
       await cargarDatos();
       setForm(formularioVacio);
@@ -159,21 +157,18 @@ function AltaBajaAlumnos() {
       setProcesando(false);
     }
   };
-
   // Buscar alumnos activos
   const alumnosFiltrados = alumnos.filter((alumno) => {
     const nombre = (alumno.nombre || "").toLowerCase();
     const dni = String(alumno.dni || "");
     // Todo en minúsculas para que no importe cómo se escriba la búsqueda
     const termino = busqueda.toLowerCase();
-
     return (
       // Los alumnos dados de baja temporalmente no se muestran
       alumno.estado !== "inactivo" &&
       (nombre.includes(termino) || dni.includes(busqueda))
     );
   });
-
   // Abrir ventana de baja
   const abrirModal = (alumno) => {
     // Guarda qué alumno se va a dar de baja; con eso se muestra el modal
@@ -183,24 +178,20 @@ function AltaBajaAlumnos() {
     setConfirmacionDefinitiva(false);
     setError("");
   };
-
   // Cerrar ventana de baja
   const cerrarModal = () => {
     // No deja cerrar el modal mientras se está procesando algo
     if (procesando) return;
-
     setAlumnoBaja(null);
     setMotivo("");
     setTipoBaja("temporal");
     setConfirmacionDefinitiva(false);
     setError("");
   };
-
   // Dar de baja o eliminar definitivamente
   const confirmarBaja = async () => {
     // Hace falta tener alumno y motivo, y que no haya otra operación en curso
     if (!alumnoBaja || !motivo || procesando) return;
-
     // Solicitar una segunda confirmación antes de eliminar
     if (
       tipoBaja === "definitiva" &&
@@ -210,18 +201,15 @@ function AltaBajaAlumnos() {
       setConfirmacionDefinitiva(true);
       return;
     }
-
     try {
       setProcesando(true);
       setError("");
-
       // Referencia al documento de este alumno dentro de Firestore
       const referenciaAlumno = doc(
         db,
         "Alumnos",
         alumnoBaja.id
       );
-
       // Dos caminos según el tipo de baja: temporal (se actualiza) o definitiva (se borra)
       if (tipoBaja === "temporal") {
         // Conservar el documento, pero marcarlo como inactivo
@@ -234,10 +222,8 @@ function AltaBajaAlumnos() {
         // Eliminar definitivamente el documento del alumno
         await deleteDoc(referenciaAlumno);
       }
-
       // Recarga la lista para reflejar el cambio
       await cargarDatos();
-
       setAlumnoBaja(null);
       setMotivo("");
       setTipoBaja("temporal");
@@ -249,7 +235,6 @@ function AltaBajaAlumnos() {
       setProcesando(false);
     }
   };
-
   // Obtener iniciales
   const iniciales = (nombre = "") =>
     nombre
@@ -260,7 +245,6 @@ function AltaBajaAlumnos() {
       // Se queda con las dos primeras letras (ejemplo: "Juan Pérez" queda "JP")
       .slice(0, 2)
       .toUpperCase();
-
   // Desde acá empieza lo que se dibuja en pantalla
   return (
     <div className="panel">
@@ -272,42 +256,35 @@ function AltaBajaAlumnos() {
           <h2>COMUNICACIONES</h2>
           <span>DIGITAL</span>
         </div>
-
         {/* Menú de navegación: la clase "activo" marca la pantalla actual (Alumnos) */}
         <nav className="menu">
           <a href="#" className="menu-item">
             <span className="menu-icon">⌂</span>
             <span>Inicio</span>
           </a>
-
           <a href="#" className="menu-item">
             <span className="menu-icon">♙</span>
             <span>Cursos</span>
           </a>
-
           <a href="#" className="menu-item activo">
             <span className="menu-icon">♙</span>
             <span>Alumnos</span>
           </a>
-
           <a href="#" className="menu-item">
             <span className="menu-icon">♧</span>
             <span>Notificaciones</span>
           </a>
-
           <a href="#" className="menu-item">
             <span className="menu-icon">▤</span>
             <span>Historial</span>
           </a>
         </nav>
-
         {/* Cerrar sesión (por ahora solo es el botón visual) */}
         <a href="#" className="cerrar-sesion">
           <span className="logout-icon">⇥</span>
           <span>Cerrar sesión</span>
         </a>
       </aside>
-
       {/* CONTENIDO */}
       <main className="contenido">
         {/* Encabezado: título a la izquierda, fecha y usuario a la derecha */}
@@ -316,7 +293,6 @@ function AltaBajaAlumnos() {
             <h1>Alumnos</h1>
             <p>Inicio &gt; Alumnos &gt; Alta y baja</p>
           </div>
-
           <div className="encabezado-derecha">
             {/* Fecha y día de la semana de hoy, tomados de la computadora */}
             <div className="fecha">
@@ -329,7 +305,6 @@ function AltaBajaAlumnos() {
                 })}
               </span>
             </div>
-
             {/* Datos del usuario (por ahora son fijos, no salen del login) */}
             <div className="usuario">
               <span className="usuario-avatar">P</span>
@@ -340,16 +315,13 @@ function AltaBajaAlumnos() {
             </div>
           </div>
         </header>
-
         <p className="subtitulo">
           Registrar nuevos alumnos o dar de baja alumnos existentes.
         </p>
-
         {/* Error general de la pantalla; si el modal está abierto, el error se muestra adentro del modal */}
         {error && !alumnoBaja && (
           <p role="alert">{error}</p>
         )}
-
         {/* PESTAÑAS */}
         {/* Al cambiar de pestaña también se borra cualquier error anterior */}
         <div className="pestanas">
@@ -363,7 +335,6 @@ function AltaBajaAlumnos() {
           >
             + Dar de alta
           </button>
-
           <button
             type="button"
             className={`pestana ${pestana === "baja" ? "activa" : ""}`}
@@ -375,7 +346,6 @@ function AltaBajaAlumnos() {
             − Dar de baja
           </button>
         </div>
-
         {/* ALTA DE ALUMNO */}
         {pestana === "alta" && (
           <section className="zona-formulario">
@@ -388,7 +358,6 @@ function AltaBajaAlumnos() {
               <div className="titulo-seccion">
                 <h2>Datos del alumno</h2>
               </div>
-
               {/* Nombre y apellido */}
               <div className="fila">
                 <div className="campo">
@@ -404,7 +373,6 @@ function AltaBajaAlumnos() {
                     required
                   />
                 </div>
-
                 <div className="campo">
                   <label htmlFor="apellido">Apellido</label>
                   <input
@@ -419,7 +387,6 @@ function AltaBajaAlumnos() {
                   />
                 </div>
               </div>
-
               {/* DNI y legajo */}
               <div className="fila">
                 <div className="campo">
@@ -435,7 +402,6 @@ function AltaBajaAlumnos() {
                     required
                   />
                 </div>
-
                 <div className="campo">
                   <label htmlFor="legajo">Legajo</label>
                   <input
@@ -449,7 +415,6 @@ function AltaBajaAlumnos() {
                   />
                 </div>
               </div>
-
               {/* Fecha de nacimiento y curso */}
               <div className="fila">
                 <div className="campo">
@@ -466,7 +431,6 @@ function AltaBajaAlumnos() {
                     }
                   />
                 </div>
-
                 <div className="campo">
                   <label htmlFor="curso">Curso</label>
                   <select
@@ -479,7 +443,6 @@ function AltaBajaAlumnos() {
                     required
                   >
                     <option value="">Seleccionar curso</option>
-
                     {/* Las opciones salen de la colección Cursos: se guarda el id y se muestra el nombre */}
                     {cursos.map((curso) => (
                       <option key={curso.id} value={curso.id}>
@@ -489,12 +452,10 @@ function AltaBajaAlumnos() {
                   </select>
                 </div>
               </div>
-
               {/* Datos del tutor */}
               <div className="titulo-seccion separado">
                 <h2>Datos del tutor</h2>
               </div>
-
               <div className="campo">
                 <label htmlFor="tutor-nombre">
                   Nombre completo del tutor
@@ -510,13 +471,9 @@ function AltaBajaAlumnos() {
                   required
                 />
               </div>
-
-              {/* Correo y teléfono del tutor (opcionales) */}
               <div className="fila">
                 <div className="campo">
-                  <label htmlFor="tutor-email">
-                    Correo electrónico
-                  </label>
+                  <label htmlFor="tutor-email">Correo electrónico</label>
                   <input
                     id="tutor-email"
                     type="email"
@@ -527,7 +484,6 @@ function AltaBajaAlumnos() {
                     }
                   />
                 </div>
-
                 <div className="campo">
                   <label htmlFor="tutor-telefono">Teléfono</label>
                   <input
@@ -541,34 +497,29 @@ function AltaBajaAlumnos() {
                   />
                 </div>
               </div>
-
-              {/* Cancelar limpia el formulario; Guardar se habilita cuando altaLista es true */}
+              {/* Botones del formulario */}
               <div className="botones">
                 <button
                   type="button"
                   className="boton-secundario"
                   onClick={() => setForm(formularioVacio)}
+                  disabled={procesando}
                 >
-                  Cancelar
+                  Limpiar
                 </button>
-
                 <button
                   type="submit"
-                  className="boton-primario"
+                  className="boton-principal"
                   disabled={!altaLista || procesando}
                 >
-                  {procesando ? "Guardando..." : "+ Guardar alumno"}
+                  {procesando ? "Guardando..." : "Registrar alumno"}
                 </button>
               </div>
             </form>
-
-            {/* RESUMEN */}
+            {/* Resumen del formulario */}
             <aside className="tarjeta resumen">
-              <div className="titulo-seccion">
-                <h2>Resumen</h2>
-              </div>
-
-              {/* Cada dato del resumen se actualiza mientras se escribe en el formulario */}
+              <h2>Resumen</h2>
+              {/* El resumen se actualiza mientras se escribe en el formulario */}
               <div className="resumen-item">
                 <div className="icono-card azul">♙</div>
                 <div>
@@ -580,7 +531,6 @@ function AltaBajaAlumnos() {
                   </strong>
                 </div>
               </div>
-
               <div className="resumen-item">
                 <div className="icono-card azul">🎓</div>
                 <div>
@@ -594,7 +544,6 @@ function AltaBajaAlumnos() {
                   </strong>
                 </div>
               </div>
-
               <div className="resumen-item">
                 <div className="icono-card azul">👥</div>
                 <div>
@@ -602,7 +551,6 @@ function AltaBajaAlumnos() {
                   <strong>{form.tutorNombre || "—"}</strong>
                 </div>
               </div>
-
               <div className="resumen-item">
                 <div className="icono-card azul">✉</div>
                 <div>
@@ -616,7 +564,6 @@ function AltaBajaAlumnos() {
                   </span>
                 </div>
               </div>
-
               {/* Aviso informativo */}
               <div className="aviso">
                 <span className="aviso-icono">i</span>
@@ -627,7 +574,6 @@ function AltaBajaAlumnos() {
             </aside>
           </section>
         )}
-
         {/* BAJA DE ALUMNOS */}
         {pestana === "baja" && (
           <section className="tarjeta tabla-alumnos">
@@ -641,7 +587,6 @@ function AltaBajaAlumnos() {
                 onChange={(e) => setBusqueda(e.target.value)}
               />
             </div>
-
             {/* Tabla de alumnos activos */}
             <div className="tabla-scroll">
               <table>
@@ -653,7 +598,6 @@ function AltaBajaAlumnos() {
                     <th className="centrado">Acciones</th>
                   </tr>
                 </thead>
-
                 {/* Tres casos: cargando, lista vacía o una fila por cada alumno */}
                 <tbody>
                   {cargando ? (
@@ -679,15 +623,12 @@ function AltaBajaAlumnos() {
                             <strong>{alumno.nombre}</strong>
                           </div>
                         </td>
-
                         <td>{alumno.dni || "—"}</td>
-
                         <td>
                           <span className="etiqueta-curso">
                             {alumno.curso || "—"}
                           </span>
                         </td>
-
                         <td>
                           <div className="acciones-fila">
                             <button
@@ -708,7 +649,6 @@ function AltaBajaAlumnos() {
           </section>
         )}
       </main>
-
       {/* MODAL DE BAJA */}
       {/* El modal solo se muestra si hay un alumno elegido (alumnoBaja) */}
       {alumnoBaja && (
@@ -719,17 +659,23 @@ function AltaBajaAlumnos() {
           >
             {/* Ícono de advertencia */}
             <div className="modal-icono">!</div>
-
             <h2>Dar de baja alumno</h2>
-
-            <p>
-              Alumno: <strong>{alumnoBaja.nombre}</strong>
-            </p>
-
+            <div className="datos-alumno-baja">
+              <h3>Datos personales del alumno</h3>
+              <p><strong>Nombre:</strong> {alumnoBaja.nombre || "No registrado"}</p>
+              <p><strong>Apellido:</strong> {alumnoBaja.apellido || "No registrado"}</p>
+              <p><strong>DNI:</strong> {alumnoBaja.dni || "No registrado"}</p>
+              <p><strong>Legajo:</strong> {alumnoBaja.legajo || "No registrado"}</p>
+              <p><strong>Fecha de nacimiento:</strong> {alumnoBaja.nacimiento || "No registrado"}</p>
+              <p><strong>Curso:</strong> {alumnoBaja.curso || "No registrado"}</p>
+              <h3>Datos del tutor</h3>
+              <p><strong>Nombre:</strong> {alumnoBaja.tutorNombre || "No registrado"}</p>
+              <p><strong>Correo:</strong> {alumnoBaja.tutorEmail || "No registrado"}</p>
+              <p><strong>Teléfono:</strong> {alumnoBaja.tutorTelefono || "No registrado"}</p>
+            </div>
             {/* Tipo de baja: temporal (queda inactivo) o definitiva (se borra el documento) */}
             <div className="campo">
               <label>¿Qué acción querés realizar?</label>
-
               <label>
                 <input
                   type="radio"
@@ -743,7 +689,6 @@ function AltaBajaAlumnos() {
                 />
                 Dar de baja temporalmente
               </label>
-
               <label>
                 <input
                   type="radio"
@@ -758,13 +703,11 @@ function AltaBajaAlumnos() {
                 Eliminar definitivamente
               </label>
             </div>
-
             <p>
               {tipoBaja === "temporal"
                 ? "El alumno conservará sus datos, pero quedará inactivo."
                 : "Se eliminará el documento del alumno de Firebase. Las comunicaciones guardadas en otras colecciones no se borrarán automáticamente."}
             </p>
-
             {/* Motivo de la baja: sin elegirlo, el botón rojo queda deshabilitado */}
             <div className="campo">
               <label htmlFor="motivo">Motivo de la baja</label>
@@ -781,7 +724,6 @@ function AltaBajaAlumnos() {
                 <option value="otro">Otro</option>
               </select>
             </div>
-
             {/* Segundo aviso, solo para la eliminación definitiva */}
             {confirmacionDefinitiva &&
               tipoBaja === "definitiva" && (
@@ -790,10 +732,8 @@ function AltaBajaAlumnos() {
                   alumno? Presioná nuevamente el botón para confirmar.
                 </p>
               )}
-
             {/* Error de Firebase dentro del modal */}
             {error && <p role="alert">{error}</p>}
-
             {/* El texto del botón rojo cambia según el paso: Confirmar baja, Continuar o Sí, eliminar definitivamente */}
             <div className="botones">
               <button
@@ -804,7 +744,6 @@ function AltaBajaAlumnos() {
               >
                 Cancelar
               </button>
-
               <button
                 type="button"
                 className="boton-peligro"
@@ -826,5 +765,4 @@ function AltaBajaAlumnos() {
     </div>
   );
 }
-
 export default AltaBajaAlumnos;
