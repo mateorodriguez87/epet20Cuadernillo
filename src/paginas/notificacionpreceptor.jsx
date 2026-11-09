@@ -7,23 +7,51 @@ import { NavLink, useNavigate } from "react-router-dom";
 // Permite detectar y cerrar la sesión de Firebase
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
+// Funciones de Firestore para consultar y guardar información
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  query,
+  where,
+  addDoc,
+  serverTimestamp,
+  Timestamp,
+} from "firebase/firestore";
+
 // Estilos de esta pantalla
 import "../estilos/notificacionpreceptor.css";
 
 // Conexión con Firebase
-import { auth } from "../firebase";
+import { db, auth } from "../firebase";
 
-// Pantalla para crear una notificación y enviarla al tutor de un alumno. Por ahora no guarda ni envía nada
+// Pantalla para crear una notificación y enviarla al tutor de un alumno
 function NotificacionPreceptor() {
-
-  // Datos de la pantalla: por ahora vacíos, se completan con la base de datos
-  // Solo tiene la lista de alumnos (cada uno con id, nombre y tutor)
-  const datos = {
-    alumnos: [],
-  };
 
   // Permite navegar entre las páginas sin recargar todo el sitio
   const navigate = useNavigate();
+
+  // Datos de los alumnos que se obtienen desde Firebase
+  const [alumnos, setAlumnos] = useState([]);
+
+  // Tutores relacionados con el alumno seleccionado
+  const [tutores, setTutores] = useState([]);
+
+  // Datos del preceptor que inició sesión
+  const [preceptor, setPreceptor] = useState(null);
+
+  // Indica si se están cargando los alumnos
+  const [cargandoAlumnos, setCargandoAlumnos] = useState(true);
+
+  // Indica si se están buscando los tutores
+  const [cargandoTutores, setCargandoTutores] = useState(false);
+
+  // Indica si se está guardando una notificación
+  const [enviando, setEnviando] = useState(false);
+
+  // Mensaje de error o información
+  const [error, setError] = useState("");
 
   // Indica si hay una sesión iniciada
   const [sesionIniciada, setSesionIniciada] = useState(false);
@@ -35,22 +63,101 @@ function NotificacionPreceptor() {
   const [fecha, setFecha] = useState(new Date());
 
   // Lo que se completa en el formulario:
-  // alumnoId (el alumno elegido), asunto, mensaje, fechaEnvio y prioridad ("normal" o "importante")
+  // alumnoId (el alumno elegido), tutorId, asunto, mensaje, fechaEnvio y prioridad
   const [alumnoId, setAlumnoId] = useState("");
+  const [tutorId, setTutorId] = useState("");
   const [asunto, setAsunto] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [fechaEnvio, setFechaEnvio] = useState("");
   const [prioridad, setPrioridad] = useState("normal");
 
-  // Comprueba si hay una sesión activa en Firebase
+  // Comprueba si hay una sesión activa en Firebase y carga los alumnos del preceptor
   useEffect(() => {
-    const cancelarSuscripcion = onAuthStateChanged(auth, (usuario) => {
+    let activo = true;
+
+    const cancelarSuscripcion = onAuthStateChanged(auth, async (usuario) => {
       setSesionIniciada(!!usuario);
-      setVerificandoSesion(false);
+
+      if (!usuario) {
+        setPreceptor(null);
+        setAlumnos([]);
+        setCargandoAlumnos(false);
+        setVerificandoSesion(false);
+        return;
+      }
+
+      try {
+        setCargandoAlumnos(true);
+        setError("");
+
+        // Busca los datos del preceptor en la colección usuarios
+        const referenciaPreceptor = doc(db, "usuarios", usuario.uid);
+        const documentoPreceptor = await getDoc(referenciaPreceptor);
+
+        if (!documentoPreceptor.exists()) {
+          throw new Error("No se encontraron los datos del usuario.");
+        }
+
+        const datosPreceptor = {
+          id: documentoPreceptor.id,
+          ...documentoPreceptor.data(),
+        };
+
+        if (activo) {
+          setPreceptor(datosPreceptor);
+        }
+
+        // Obtiene los cursos asignados al preceptor
+        const cursosIds = datosPreceptor.cursosIds || [];
+
+        // Si el preceptor todavía no tiene cursos asignados, no hay alumnos para mostrar
+        if (cursosIds.length === 0) {
+          if (activo) {
+            setAlumnos([]);
+          }
+
+          return;
+        }
+
+        // Busca todos los alumnos registrados en Firestore
+        const consultaAlumnos = await getDocs(
+          collection(db, "Alumnos")
+        );
+
+        // Muestra solamente los alumnos que pertenecen a los cursos del preceptor
+        const alumnosDelPreceptor = consultaAlumnos.docs
+          .map((documento) => ({
+            id: documento.id,
+            ...documento.data(),
+          }))
+          .filter((alumno) =>
+            cursosIds.includes(alumno.cursoId)
+          );
+
+        if (activo) {
+          setAlumnos(alumnosDelPreceptor);
+        }
+
+      } catch (error) {
+        console.error("Error al cargar los alumnos:", error);
+
+        if (activo) {
+          setError("No se pudieron cargar los alumnos. Revisá la conexión con Firebase.");
+        }
+
+      } finally {
+        if (activo) {
+          setCargandoAlumnos(false);
+          setVerificandoSesion(false);
+        }
+      }
     });
 
     // Al salir de la pantalla se deja de escuchar el estado de la sesión
-    return () => cancelarSuscripcion();
+    return () => {
+      activo = false;
+      cancelarSuscripcion();
+    };
   }, []);
 
   // Cada minuto se vuelve a leer la fecha, para que el encabezado no quede desactualizado
@@ -72,39 +179,167 @@ function NotificacionPreceptor() {
     year: "numeric",
   });
 
-  // Busca el alumno elegido en el select (se compara como texto porque el value del select siempre es string)
-  const alumnoSeleccionado = datos.alumnos.find(
+  // Busca el alumno elegido en la lista obtenida desde Firebase
+  const alumnoSeleccionado = alumnos.find(
     (alumno) => String(alumno.id) === String(alumnoId)
   );
 
-  // Es true cuando hay alumno, asunto y mensaje (la fecha y la prioridad no son obligatorias)
+  // Busca el tutor elegido entre los tutores relacionados con el alumno
+  const tutorSeleccionado = tutores.find(
+    (tutor) => String(tutor.id) === String(tutorId)
+  );
+
+  // Cuando se selecciona un alumno, busca qué tutor tiene asignado
+  useEffect(() => {
+    let activo = true;
+
+    async function cargarTutores() {
+      if (!alumnoId) {
+        setTutores([]);
+        setTutorId("");
+        return;
+      }
+
+      try {
+        setCargandoTutores(true);
+        setError("");
+
+        // Busca los usuarios que tengan el rol tutor y cuyo arreglo hijos incluya al alumno seleccionado
+        const consultaTutores = query(
+          collection(db, "usuarios"),
+          where("rol", "==", "tutor"),
+          where("hijos", "array-contains", alumnoId)
+        );
+
+        const resultadoTutores = await getDocs(consultaTutores);
+
+        const tutoresEncontrados = resultadoTutores.docs.map(
+          (documento) => ({
+            id: documento.id,
+            ...documento.data(),
+          })
+        );
+
+        if (activo) {
+          setTutores(tutoresEncontrados);
+
+          // Si hay un solo tutor, queda seleccionado automáticamente
+          if (tutoresEncontrados.length === 1) {
+            setTutorId(tutoresEncontrados[0].id);
+          } else {
+            setTutorId("");
+          }
+
+          // Si el alumno no tiene tutor asignado, muestra un aviso
+          if (tutoresEncontrados.length === 0) {
+            setError("Este alumno todavía no tiene un tutor asignado.");
+          }
+        }
+
+      } catch (error) {
+        console.error("Error al buscar tutores:", error);
+
+        if (activo) {
+          setTutores([]);
+          setTutorId("");
+          setError("No se pudo encontrar el tutor del alumno.");
+        }
+
+      } finally {
+        if (activo) {
+          setCargandoTutores(false);
+        }
+      }
+    }
+
+    cargarTutores();
+
+    return () => {
+      activo = false;
+    };
+  }, [alumnoId]);
+
+  // Es true cuando hay alumno, tutor, asunto y mensaje
   // Habilita el botón Enviar y cambia el estado del resumen
   const listoParaEnviar =
     alumnoSeleccionado &&
+    tutorSeleccionado &&
     asunto.trim() !== "" &&
-    mensaje.trim() !== "";
+    mensaje.trim() !== "" &&
+    !enviando;
 
   // Deja el formulario en blanco (es lo que hace el botón Cancelar)
   function limpiarFormulario() {
     setAlumnoId("");
+    setTutorId("");
+    setTutores([]);
     setAsunto("");
     setMensaje("");
     setFechaEnvio("");
     setPrioridad("normal");
+    setError("");
   }
 
   // Se ejecuta al enviar el formulario
-  function enviar(e) {
+  async function enviar(e) {
     // Evita que el navegador recargue la página al enviar
     e.preventDefault();
 
     // Si falta algún dato obligatorio, no hace nada
     if (!listoParaEnviar) return;
 
-    // Acá se conecta con la base de datos.
-    // La notificación todavía no se guarda ni se envía.
-    // Por ahora solo muestra este aviso: no guarda nada
-    alert("Próximamente podrás enviar la notificación.");
+    // Comprueba que exista una sesión activa
+    const usuarioActual = auth.currentUser;
+
+    if (!usuarioActual) {
+      setError("Tu sesión expiró. Iniciá sesión nuevamente.");
+      return;
+    }
+
+    try {
+      setEnviando(true);
+      setError("");
+
+      // Prepara la fecha de la notificación
+      const fechaNotificacion = fechaEnvio
+        ? Timestamp.fromDate(new Date(`${fechaEnvio}T12:00:00`))
+        : serverTimestamp();
+
+      // Crea el documento de la notificación en Firestore
+      await addDoc(collection(db, "Notificaciones"), {
+        alumnoId: alumnoSeleccionado.id,
+        alumnoNombre: alumnoSeleccionado.nombre,
+
+        tutorId: tutorSeleccionado.id,
+        tutorNombre: tutorSeleccionado.nombre || "",
+
+        preceptorId: usuarioActual.uid,
+        preceptorNombre: preceptor?.nombre || "",
+
+        asunto: asunto.trim(),
+        mensaje: mensaje.trim(),
+        prioridad: prioridad,
+
+        fechaEnvio: fechaNotificacion,
+        creadoEn: serverTimestamp(),
+
+        leida: false,
+      });
+
+      // Informa que la notificación se guardó correctamente
+      alert("¡La notificación se guardó correctamente!");
+
+      // Limpia el formulario después de enviar
+      limpiarFormulario();
+
+    } catch (error) {
+      console.error("Error al guardar la notificación:", error);
+
+      setError("No se pudo guardar la notificación. Revisá la conexión con Firebase.");
+
+    } finally {
+      setEnviando(false);
+    }
   }
 
   // Lleva a /login si no hay una sesión iniciada
@@ -252,7 +487,7 @@ function NotificacionPreceptor() {
             className="tarjeta formulario"
             onSubmit={enviar}
           >
-            {/* Alumno: las opciones salen de datos.alumnos (hoy vacía) */}
+            {/* Alumno: las opciones salen de la colección Alumnos de Firebase */}
             <div className="campo">
               <label htmlFor="alumno">Alumno</label>
 
@@ -262,12 +497,17 @@ function NotificacionPreceptor() {
                 value={alumnoId}
                 onChange={(e) => setAlumnoId(e.target.value)}
                 required
+                disabled={cargandoAlumnos || alumnos.length === 0}
               >
-                <option value="">Seleccionar alumno</option>
+                <option value="">
+                  {cargandoAlumnos
+                    ? "Cargando alumnos..."
+                    : "Seleccionar alumno"}
+                </option>
 
-                {datos.alumnos.map((alumno, index) => (
+                {alumnos.map((alumno) => (
                   <option
-                    key={alumno.id || index}
+                    key={alumno.id}
                     value={alumno.id}
                   >
                     {alumno.nombre}
@@ -276,11 +516,40 @@ function NotificacionPreceptor() {
               </select>
 
               {/* Aviso que aparece si todavía no hay alumnos cargados */}
-              {datos.alumnos.length === 0 && (
+              {!cargandoAlumnos && alumnos.length === 0 && (
                 <small className="campo-ayuda">
-                  No hay alumnos disponibles para seleccionar.
+                  No hay alumnos disponibles en los cursos asignados.
                 </small>
               )}
+            </div>
+
+            {/* Tutor: se obtiene desde usuarios buscando el ID del alumno en el arreglo hijos */}
+            <div className="campo">
+              <label htmlFor="tutor">Tutor</label>
+
+              <select
+                id="tutor"
+                className="entrada"
+                value={tutorId}
+                onChange={(e) => setTutorId(e.target.value)}
+                disabled={!alumnoId || cargandoTutores || tutores.length === 0}
+                required
+              >
+                <option value="">
+                  {cargandoTutores
+                    ? "Buscando tutor..."
+                    : "Seleccionar tutor"}
+                </option>
+
+                {tutores.map((tutor) => (
+                  <option
+                    key={tutor.id}
+                    value={tutor.id}
+                  >
+                    {tutor.nombre || tutor.usuario || "Tutor"}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Asunto */}
@@ -369,7 +638,7 @@ function NotificacionPreceptor() {
                 className="boton-primario"
                 disabled={!listoParaEnviar}
               >
-                ➤ Enviar
+                {enviando ? "Enviando..." : "➤ Enviar"}
               </button>
             </div>
           </form>
@@ -395,14 +664,16 @@ function NotificacionPreceptor() {
               </div>
             </div>
 
-            {/* Tutor: sale del alumno elegido (campo tutor). Hoy siempre muestra "—", porque no hay alumnos */}
+            {/* Tutor: sale del usuario relacionado con el alumno */}
             <div className="resumen-item">
               <div className="icono-card azul">♟</div>
 
               <div>
                 <span>Tutor:</span>
                 <strong>
-                  {alumnoSeleccionado?.tutor || "—"}
+                  {tutorSeleccionado
+                    ? tutorSeleccionado.nombre || tutorSeleccionado.usuario
+                    : "—"}
                 </strong>
               </div>
             </div>
@@ -430,10 +701,17 @@ function NotificacionPreceptor() {
             <div className="aviso">
               <span className="aviso-icono">i</span>
               <p>
-                Al enviar, la notificación podrá registrarse
-                y enviarse al tutor cuando se conecte el sistema.
+                Al enviar, la notificación se guardará en el sistema
+                y quedará asociada al tutor seleccionado.
               </p>
             </div>
+
+            {/* Mensajes de error de Firebase */}
+            {error && (
+              <small className="campo-ayuda">
+                {error}
+              </small>
+            )}
           </aside>
         </section>
       </main>
