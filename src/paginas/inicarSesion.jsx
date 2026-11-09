@@ -16,7 +16,8 @@ import { doc, getDoc } from "firebase/firestore";
 
 // Conexión con Firebase.
 import { auth, db } from "../firebase";
-
+// Icono proveniente de la Biblioteca Lucide-React
+import { AtSign, UserLock, KeyRound  } from 'lucide-react';
 // Estilos de la pantalla de inicio de sesión.
 import "../estilos/iniciarSesion.css";
 
@@ -195,7 +196,9 @@ function Login() {
 
             <div className="input-container">
 
-              <span className="icon">♙</span>
+              <span className="icon">
+                <AtSign size={15}/>
+              </span>
 
               <input
                 type="email"
@@ -219,7 +222,9 @@ function Login() {
 
             <div className="input-container">
 
-              <span className="icon">♙</span>
+              <span className="icon">
+                <UserLock size={15}/>
+              </span>
 
               <input
                 type="password"
@@ -247,7 +252,6 @@ function Login() {
             className="btn-ingresar"
             disabled={cargando}
           >
-            <span>♙</span>
             {cargando ? "Ingresando..." : "Ingresar"}
           </button>
 
@@ -262,7 +266,8 @@ function Login() {
 
         {/* RECUPERAR CONTRASEÑA */}
         <Link to="/login" className="recuperar">
-          ♧ ¿Olvidaste tu contraseña?
+          <KeyRound size={15} />
+           ¿Olvidaste tu contraseña?
         </Link>
 
         {/* IR AL REGISTRO */}
