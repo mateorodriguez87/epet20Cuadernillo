@@ -52,7 +52,15 @@ function App() {
                  <Route path="/altabajacursos" element={<AltaBajaCurso />} />
                  <Route path="/ayuda" element={<Ayuda/>}/>
                  <Route path="/administrador" element={<Administrador/>}/>
-
+                   {/* Ruta protegida */}
+  <Route
+    path="/admin"
+    element={
+      <RutaProtegida>
+        <Admin />
+      </RutaProtegida>
+    }
+  />
       </Routes>
     </BrowserRouter>
   );
