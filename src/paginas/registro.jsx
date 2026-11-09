@@ -21,7 +21,8 @@ import {
 
 // Importamos la conexión con Firebase.
 import { auth, db } from "../firebase";
-
+// Icono proveniente de la Biblioteca Lucide-React
+import { User, UserRoundPen, LockOpen, LockKeyhole} from 'lucide-react';
 // Importamos los estilos de la página de registro.
 import "../estilos/registro.css";
 
@@ -235,8 +236,10 @@ function Registro() {
             </label>
 
             <div className="registro-input-container">
+                <UserRoundPen size={18}/>
+              <span className="registro-icon">
 
-              <span className="registro-icon">♙</span>
+              </span>
 
               <input
                 type="text"
@@ -259,7 +262,9 @@ function Registro() {
 
             <div className="registro-input-container">
 
-              <span className="registro-icon">♙</span>
+              <span className="registro-icon">
+                <User size={18}/>
+              </span>
 
               <input
                 type="text"
@@ -305,7 +310,9 @@ function Registro() {
 
             <div className="registro-input-container">
 
-              <span className="registro-icon">♙</span>
+              <span className="registro-icon">
+                <LockOpen size={18}/>
+                </span>
 
               <input
                 type="password"
@@ -328,7 +335,9 @@ function Registro() {
 
             <div className="registro-input-container">
 
-              <span className="registro-icon">♙</span>
+              <span className="registro-icon">
+                <LockKeyhole size={18}/>
+                </span>
 
               <input
                 type="password"
