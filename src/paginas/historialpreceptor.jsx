@@ -18,6 +18,8 @@ import {
 
 // Conexión con Firebase
 import { db, auth } from "../firebase";
+// Icono proveniente de la Biblioteca Lucide-React
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock} from 'lucide-react';
 
 // Estilos de esta pantalla
 import "../estilos/historialpreceptor.css";
@@ -424,7 +426,7 @@ Estado: ${comunicacion.leida ? "Leída" : "Pendiente de lectura"}
               `historial-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="historial-icono">⌂</span>
+           <House className="menu-icon" size={20} />
             <span>Inicio</span>
           </NavLink>
 
@@ -434,7 +436,7 @@ Estado: ${comunicacion.leida ? "Leída" : "Pendiente de lectura"}
               `historial-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="historial-icono">▤</span>
+            <Presentation className="menu-icon" size={20}/>
             <span>Cursos</span>
           </NavLink>
 
@@ -444,7 +446,7 @@ Estado: ${comunicacion.leida ? "Leída" : "Pendiente de lectura"}
               `historial-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="historial-icono">♙</span>
+            <UserRoundGroup className="menu-icon" size={20}/>
             <span>Alumnos</span>
           </NavLink>
 
@@ -454,8 +456,8 @@ Estado: ${comunicacion.leida ? "Leída" : "Pendiente de lectura"}
               `historial-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="historial-icono">♧</span>
-            <span>Notificaciones</span>
+            <Bell className="menu-icon" size={20}/>
+           <span>Notificaciones</span>
           </NavLink>
 
           <NavLink
@@ -465,7 +467,7 @@ Estado: ${comunicacion.leida ? "Leída" : "Pendiente de lectura"}
               `historial-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="historial-icono">▤</span>
+            <RotateCcwClock className="menu-icon" size={20}/>
             <span>Historial</span>
           </NavLink>
         </nav>
