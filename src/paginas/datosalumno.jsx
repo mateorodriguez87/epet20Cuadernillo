@@ -322,7 +322,7 @@ function DatosAlumno() {
               className="datos-alumno-login"
               onClick={cerrarSesion}
             >
-              Iniciar sesión ↗
+              Cerrar sesión ↗
             </button>
           </div>
         </header>
