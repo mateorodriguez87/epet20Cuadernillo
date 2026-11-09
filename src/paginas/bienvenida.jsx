@@ -28,7 +28,7 @@ function Bienvenida() {
         {/* "AYUDA" a la derecha del header (por ahora es solo visual, no hace nada al tocarlo) */}
         <div className="ayuda">
           <span className="signo">?</span>
-          <span>AYUDA</span>
+          <Link to="/ayuda">AYUDA</Link>
         </div>
       </header>
 
