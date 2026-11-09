@@ -1,20 +1,39 @@
 // Hooks de React: useState para los datos de la pantalla y useEffect para el temporizador de la fecha
 import { useEffect, useState } from "react";
-// NavLink arma los links del menú y marca el activo; Link es un enlace común (el de cerrar sesión)
-import { NavLink, Link } from "react-router-dom";
+
+// NavLink arma los links del menú y marca el activo
+import { NavLink, useNavigate } from "react-router-dom";
+
+// Permite detectar y cerrar la sesión de Firebase
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
 // Estilos de esta pantalla
 import "../estilos/notificacionpreceptor.css";
 
+// Conexión con Firebase
+import { auth } from "../firebase";
+
 // Pantalla para crear una notificación y enviarla al tutor de un alumno. Por ahora no guarda ni envía nada
 function NotificacionPreceptor() {
+
   // Datos de la pantalla: por ahora vacíos, se completan con la base de datos
   // Solo tiene la lista de alumnos (cada uno con id, nombre y tutor)
   const datos = {
     alumnos: [],
   };
 
+  // Permite navegar entre las páginas sin recargar todo el sitio
+  const navigate = useNavigate();
+
+  // Indica si hay una sesión iniciada
+  const [sesionIniciada, setSesionIniciada] = useState(false);
+
+  // Indica si Firebase todavía está comprobando la sesión
+  const [verificandoSesion, setVerificandoSesion] = useState(true);
+
   // fecha: la de hoy, para el encabezado
   const [fecha, setFecha] = useState(new Date());
+
   // Lo que se completa en el formulario:
   // alumnoId (el alumno elegido), asunto, mensaje, fechaEnvio y prioridad ("normal" o "importante")
   const [alumnoId, setAlumnoId] = useState("");
@@ -22,6 +41,17 @@ function NotificacionPreceptor() {
   const [mensaje, setMensaje] = useState("");
   const [fechaEnvio, setFechaEnvio] = useState("");
   const [prioridad, setPrioridad] = useState("normal");
+
+  // Comprueba si hay una sesión activa en Firebase
+  useEffect(() => {
+    const cancelarSuscripcion = onAuthStateChanged(auth, (usuario) => {
+      setSesionIniciada(!!usuario);
+      setVerificandoSesion(false);
+    });
+
+    // Al salir de la pantalla se deja de escuchar el estado de la sesión
+    return () => cancelarSuscripcion();
+  }, []);
 
   // Cada minuto se vuelve a leer la fecha, para que el encabezado no quede desactualizado
   useEffect(() => {
@@ -77,9 +107,20 @@ function NotificacionPreceptor() {
     alert("Próximamente podrás enviar la notificación.");
   }
 
-  // Lleva a /login recargando toda la página (no usa el router) y no cierra ninguna sesión
+  // Lleva a /login si no hay una sesión iniciada
   function iniciarSesion() {
-    window.location.href = "/login";
+    navigate("/login");
+  }
+
+  // Cierra la sesión real de Firebase y lleva a /login
+  async function cerrarSesion() {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+    }
   }
 
   // Desde acá empieza lo que se dibuja en pantalla
@@ -148,11 +189,22 @@ function NotificacionPreceptor() {
           </NavLink>
         </nav>
 
-        {/* Cerrar sesión: por ahora solo lleva a /login */}
-        <Link to="/login" className="cerrar-sesion">
+        {/* Cerrar sesión: ahora cierra la sesión real de Firebase */}
+        <button
+          type="button"
+          className="cerrar-sesion"
+          onClick={sesionIniciada ? cerrarSesion : iniciarSesion}
+          disabled={verificandoSesion}
+        >
           <span className="logout-icon">⇥</span>
-          <span>Cerrar sesión</span>
-        </Link>
+          <span>
+            {verificandoSesion
+              ? "Comprobando..."
+              : sesionIniciada
+              ? "Cerrar sesión"
+              : "Iniciar sesión"}
+          </span>
+        </button>
       </aside>
 
       {/* CONTENIDO PRINCIPAL */}
@@ -170,13 +222,20 @@ function NotificacionPreceptor() {
               <span>{fechaFormateada}</span>
             </div>
 
-            {/* Botón "Iniciar sesión": ejecuta iniciarSesion (lleva a /login) */}
+            {/* El botón cambia según el estado de la sesión */}
             <button
               type="button"
               className="boton-login"
-              onClick={iniciarSesion}
+              onClick={sesionIniciada ? cerrarSesion : iniciarSesion}
+              disabled={verificandoSesion}
             >
-              Iniciar sesión <span>↗</span>
+              {verificandoSesion
+                ? "Comprobando..."
+                : sesionIniciada
+                ? "Cerrar sesión"
+                : "Iniciar sesión"}
+
+              <span>↗</span>
             </button>
           </div>
         </header>
