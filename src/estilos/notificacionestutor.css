@@ -1,13 +1,14 @@
 /* =====================================================================
-   NOTIFICACIONES RECIBIDAS (TUTOR) 
-    barra lateral, encabezado,
+   NOTIFICACIONES RECIBIDAS (TUTOR)
+   barra lateral, encabezado,
    introducción con el contador, tarjeta con el estado vacío, aviso y pie.
    Va de arriba para abajo en ese mismo orden.
    ===================================================================== */
 
 /* ===== ESTILOS GENERALES ===== */
 
-/* El <div className="recibidas-pagina"> que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Acá también se define el fondo, el color de texto y la tipografía de toda la pantalla */
+/* El div className="recibidas-pagina" que envuelve todo: sidebar a la izquierda y contenido a la derecha, en fila (display: flex). Acá también se define el fondo, el color de texto y la tipografía de toda la pantalla */
+
 .recibidas-pagina {
   display: flex;
   width: 100%;
@@ -18,13 +19,15 @@
 }
 
 /* border-box para todo lo que está adentro: el padding y el borde cuentan dentro del ancho. Está limitado a esta pantalla (no es un reset global) */
+
 .recibidas-pagina * {
   box-sizing: border-box;
 }
 
 /* ===== PANEL LATERAL ===== */
 
-/* El <aside> de la izquierda: columna azul de ancho fijo (220px). El min-height la estira hasta abajo */
+/* El aside de la izquierda: columna azul de ancho fijo (220px). El min-height la estira hasta abajo */
+
 .recibidas-sidebar {
   display: flex;
   flex-direction: column;
@@ -38,6 +41,7 @@
 }
 
 /* Logo: "CUADERNO DE COMUNICACIONES" y abajo "DIGITAL" */
+
 .recibidas-logo {
   padding: 0 10px;
 }
@@ -51,6 +55,7 @@
 }
 
 /* "DIGITAL" va en celeste, en una línea aparte y con las letras un poco separadas */
+
 .recibidas-logo span {
   display: block;
   margin-top: 3px;
@@ -63,6 +68,7 @@
 /* ===== MENÚ LATERAL ===== */
 
 /* Los links del menú del tutor, uno abajo del otro */
+
 .recibidas-menu {
   display: flex;
   flex-direction: column;
@@ -70,6 +76,7 @@
 }
 
 /* Cada link (los NavLink del JSX): ícono + texto en fila, con esquinas redondeadas y sin subrayado */
+
 .recibidas-menu-item {
   display: flex;
   align-items: center;
@@ -85,17 +92,20 @@
 }
 
 /* Al pasar el mouse se aclara un poquito */
+
 .recibidas-menu-item:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
 /* NavLink le pone "activo" a la opción que coincide con la ruta actual: fondo celeste */
+
 .recibidas-menu-item.activo {
   background: #7099cc;
   color: white;
 }
 
 /* Ícono de cada opción, con ancho fijo para que los textos queden alineados entre sí */
+
 .recibidas-icono {
   display: inline-flex;
   align-items: center;
@@ -106,7 +116,8 @@
   line-height: 1;
 }
 
-/* El <Link> de abajo de la barra: el margin-top: auto lo manda al fondo.No tiene text-decoration: none ni hay una regla global para los links, así que puede verse subrayado */
+/* El botón de abajo de la barra: el margin-top: auto lo manda al fondo. */
+
 .recibidas-cerrar {
   display: flex;
   align-items: center;
@@ -120,6 +131,7 @@
   color: white;
   font-size: 13px;
   text-align: left;
+  cursor: pointer;
 }
 
 .recibidas-cerrar:hover {
@@ -128,7 +140,8 @@
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 
-/* El <main>: ocupa todo el ancho que queda (flex: 1). El min-width: 0 evita que se desborde */
+/* El main: ocupa todo el ancho que queda (flex: 1). El min-width: 0 evita que se desborde */
+
 .recibidas-contenido {
   flex: 1;
   min-width: 0;
@@ -138,6 +151,7 @@
 /* ===== ENCABEZADO Y FECHA ===== */
 
 /* Encabezado blanco con una rayita abajo: título a la izquierda y fecha a la derecha */
+
 .recibidas-header {
   display: flex;
   align-items: center;
@@ -150,6 +164,7 @@
 }
 
 /* Título "Notificaciones recibidas" */
+
 .recibidas-titulo h1 {
   margin: 0;
   color: #303d91;
@@ -158,6 +173,7 @@
 }
 
 /* El "Inicio > Notificaciones recibidas" de abajo del título */
+
 .recibidas-titulo p {
   margin: 7px 0 0;
   color: #5078b8;
@@ -165,6 +181,7 @@
 }
 
 /* Fecha de hoy con su ícono de calendario */
+
 .recibidas-fecha {
   display: flex;
   align-items: center;
@@ -172,12 +189,14 @@
   color: #535d71;
 }
 
-/* El ícono de calendario ▦ */
+/* El ícono de calendario */
+
 .recibidas-fecha > span {
   font-size: 21px;
 }
 
-/* La fecha: text-transform: capitalize pone en mayúscula la primera letra de cada palabra ("viernes" se ve "Viernes") */
+/* La fecha: text-transform: capitalize pone en mayúscula la primera letra */
+
 .recibidas-fecha p {
   margin: 0;
   font-size: 12px;
@@ -186,7 +205,8 @@
 
 /* ===== INTRODUCCIÓN Y CONTADOR ===== */
 
-/* La <section> de arriba de la tarjeta: el título y la frase a la izquierda y el contador a la derecha */
+/* La section de arriba de la tarjeta: el título y la frase a la izquierda y el contador a la derecha */
+
 .recibidas-introduccion {
   display: flex;
   align-items: center;
@@ -196,6 +216,7 @@
 }
 
 /* Título "Tus comunicaciones" */
+
 .recibidas-introduccion h2 {
   margin: 0 0 6px;
   color: #25314a;
@@ -203,6 +224,7 @@
 }
 
 /* La frase "Consultá las comunicaciones enviadas por la escuela" */
+
 .recibidas-introduccion p {
   margin: 0;
   color: #7b8496;
@@ -210,7 +232,8 @@
   line-height: 1.6;
 }
 
-/* Caja blanca del contador de sin leer: el número en un círculo y el texto al lado */
+/* Caja blanca del contador de sin leer */
+
 .recibidas-contador {
   display: flex;
   align-items: center;
@@ -221,7 +244,8 @@
   background: white;
 }
 
-/* El círculo con el número (hoy es un 0 escrito a mano en el JSX) */
+/* El círculo con el número */
+
 .recibidas-contador > span {
   display: grid;
   place-items: center;
@@ -235,14 +259,47 @@
 }
 
 /* El texto "Notificaciones sin leer" */
+
 .recibidas-contador p {
   color: #535d71;
   font-size: 12px;
 }
 
-/* ===== TARJETA VACÍA ===== */
+/* ===== FILTRO DE ALUMNOS ===== */
 
-/* La tarjeta blanca grande que contiene el mensaje de vacío y el aviso. El overflow: hidden recorta lo que sobre en las esquinas redondeadas */
+.recibidas-filtro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.recibidas-filtro label {
+  color: #535d71;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.recibidas-filtro select {
+  min-width: 180px;
+  padding: 9px 12px;
+  border: 1px solid #dce2ed;
+  border-radius: 8px;
+  background: white;
+  color: #25314a;
+  font-size: 13px;
+  outline: none;
+}
+
+.recibidas-filtro select:focus {
+  border-color: #7099cc;
+  box-shadow: 0 0 0 3px rgba(112, 153, 204, 0.15);
+}
+
+/* ===== TARJETA DE NOTIFICACIONES ===== */
+
+/* Tarjeta blanca grande que contiene las notificaciones o el mensaje de vacío */
+
 .recibidas-lista {
   overflow: hidden;
   border: 1px solid #e5e9f1;
@@ -251,7 +308,10 @@
   box-shadow: 0 3px 12px rgba(28, 42, 80, 0.04);
 }
 
+/* ===== ESTADO VACÍO ===== */
+
 /* Mensaje de "No recibiste notificaciones": todo centrado dentro de la tarjeta */
+
 .recibidas-vacio {
   display: flex;
   flex-direction: column;
@@ -262,7 +322,8 @@
   text-align: center;
 }
 
-/* Círculo con el ícono ♧ */
+/* Círculo con el ícono */
+
 .recibidas-vacio-icono {
   display: grid;
   place-items: center;
@@ -282,6 +343,7 @@
 }
 
 /* Texto de apoyo con un ancho máximo, para que no quede demasiado estirado */
+
 .recibidas-vacio p {
   max-width: 420px;
   margin: 0;
@@ -290,9 +352,143 @@
   line-height: 1.7;
 }
 
+/* ===== TARJETAS DE NOTIFICACIONES RECIBIDAS ===== */
+
+.recibidas-notificacion {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e9edf4;
+  transition: background 0.2s;
+}
+
+.recibidas-notificacion:last-child {
+  border-bottom: none;
+}
+
+.recibidas-notificacion:hover {
+  background: #fafbff;
+}
+
+.recibidas-notificacion-pendiente {
+  border-left: 4px solid #7099cc;
+  background: #f8faff;
+}
+
+.recibidas-notificacion-leida {
+  border-left: 4px solid transparent;
+  background: white;
+}
+
+/* Encabezado de cada notificación */
+
+.recibidas-notificacion-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Ícono de la notificación */
+
+.recibidas-notificacion-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #edf2ff;
+  color: #304795;
+  font-size: 20px;
+}
+
+/* Información principal */
+
+.recibidas-notificacion-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.recibidas-notificacion-info h3 {
+  margin: 0 0 5px;
+  color: #25314a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.recibidas-notificacion-info p {
+  margin: 0;
+  color: #7b8496;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Estado de lectura */
+
+.recibidas-notificacion-estado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #535d71;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.recibidas-notificacion-pendiente .recibidas-notificacion-estado {
+  color: #304795;
+  font-weight: 700;
+}
+
+.recibidas-notificacion-leida .recibidas-notificacion-estado {
+  color: #7b8496;
+}
+
+/* Botón para abrir la notificación */
+
+.recibidas-notificacion-boton {
+  padding: 8px 14px;
+  border: 1px solid #7099cc;
+  border-radius: 7px;
+  background: white;
+  color: #304795;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.recibidas-notificacion-boton:hover {
+  background: #304795;
+  color: white;
+}
+
+.recibidas-notificacion-boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Detalle que aparece al abrir una notificación */
+
+.recibidas-notificacion-detalle {
+  margin: 16px 0 0 56px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f5f7fc;
+  color: #535d71;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.recibidas-notificacion-detalle p {
+  margin: 0 0 8px;
+}
+
+.recibidas-notificacion-detalle p:last-child {
+  margin-bottom: 0;
+}
+
 /* ===== AVISO INFERIOR ===== */
 
-/* Caja celeste informativa de abajo de la tarjeta: ícono "i" + texto. El margin la separa de los bordes de la tarjeta */
+/* Caja celeste informativa de abajo de la tarjeta */
+
 .recibidas-aviso {
   display: flex;
   align-items: flex-start;
@@ -304,7 +500,8 @@
   color: #244a9c;
 }
 
-/* El circulito azul con la "i" (el flex-shrink: 0 evita que se achique) */
+/* El circulito azul con la "i" */
+
 .recibidas-aviso > span {
   display: grid;
   place-items: center;
@@ -318,16 +515,34 @@
   font-weight: 700;
 }
 
-/* El texto del aviso ("Importante: revisá esta sección...") */
+/* El texto del aviso */
+
 .recibidas-aviso p {
   margin: 0;
   font-size: 11px;
   line-height: 1.6;
 }
 
+/* ===== MENSAJES DE AVISO Y ERROR ===== */
+
+.recibidas-error {
+  margin: 15px 0;
+  padding: 12px 15px;
+  border: 1px solid #f1caca;
+  border-radius: 8px;
+  background: #fff1f1;
+  color: #a83232;
+  font-size: 13px;
+}
+
+.recibidas-aviso:not(.recibidas-lista .recibidas-aviso) {
+  margin-top: 12px;
+}
+
 /* ===== PIE DE PÁGINA ===== */
 
 /* Pie de la pantalla: texto chico, gris y centrado */
+
 .recibidas-footer {
   padding: 20px 5px 0;
   color: #8b93a3;
@@ -337,7 +552,8 @@
 
 /* ===== TABLETS ===== */
 
-/* Pantallas chicas (el título dice "Tablets", pero 760px ya es tablet chica o celular): barra lateral más angosta con letras más chicas, encabezado en columna y la introducción apilada */
+/* Pantallas chicas: barra lateral más angosta con letras más chicas, encabezado en columna y la introducción apilada */
+
 @media (max-width: 760px) {
   .recibidas-sidebar {
     width: 165px;
@@ -381,6 +597,7 @@
   }
 
   /* El título y la fecha uno debajo del otro */
+
   .recibidas-header {
     align-items: flex-start;
     flex-direction: column;
@@ -392,6 +609,7 @@
   }
 
   /* La introducción y el contador pasan uno debajo del otro */
+
   .recibidas-introduccion {
     align-items: flex-start;
     flex-direction: column;
@@ -400,11 +618,20 @@
   .recibidas-vacio {
     min-height: 280px;
   }
+
+  .recibidas-notificacion-cabecera {
+    flex-wrap: wrap;
+  }
+
+  .recibidas-notificacion-detalle {
+    margin-left: 0;
+  }
 }
 
 /* ===== CELULARES PEQUEÑOS ===== */
 
 /* Celulares chicos: la barra lateral queda de 64px, solo con íconos */
+
 @media (max-width: 420px) {
   .recibidas-sidebar {
     width: 64px;
@@ -412,7 +639,8 @@
     padding: 15px 6px;
   }
 
-  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono (es el primer <span> y el texto es el último) */
+  /* Se ocultan el logo y el texto de cada opción: queda solo el ícono */
+
   .recibidas-logo h2,
   .recibidas-logo span,
   .recibidas-menu-item > span:last-child,
@@ -435,6 +663,7 @@
   }
 
   /* El contador ocupa todo el ancho */
+
   .recibidas-contador {
     width: 100%;
   }
@@ -445,5 +674,26 @@
 
   .recibidas-vacio p {
     font-size: 13px;
+  }
+
+  .recibidas-filtro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .recibidas-filtro select {
+    width: 100%;
+  }
+
+  .recibidas-notificacion-cabecera {
+    align-items: flex-start;
+  }
+
+  .recibidas-notificacion-estado {
+    width: 100%;
+  }
+
+  .recibidas-notificacion-boton {
+    width: 100%;
   }
 }
