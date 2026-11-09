@@ -20,7 +20,7 @@ import {
 
 // Conexión con Firebase
 import { auth, db } from "../firebase";
-
+import { House,  BellRing, FileUser , BellOff, Siren, Pencil, Clipboard, Megaphone} from 'lucide-react';
 // Estilos de esta pantalla
 import "../estilos/iniciotutor.css";
 
@@ -368,7 +368,7 @@ function InicioTutor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">⌂</span>
+             <House className="menu-icon" size={20} />
             <span>Inicio</span>
           </NavLink>
 
@@ -378,7 +378,7 @@ function InicioTutor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♧</span>
+            <BellRing className="menu-icon" size={20}/>
             <span>Notificaciones recibidas</span>
           </NavLink>
 
@@ -388,7 +388,7 @@ function InicioTutor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+            <FileUser className="recibidas-icono" size={20}/>
             <span>Datos del alumno</span>
           </NavLink>
         </nav>
@@ -501,7 +501,7 @@ function InicioTutor() {
           <div className="tarjeta sin-leer">
 
             <div className="icono-card rojo">
-              ♧
+              <Siren size={30}/>
             </div>
 
             <div className="info-card">
@@ -608,7 +608,7 @@ function InicioTutor() {
             <div className="dato">
 
               <div className="icono-card azul">
-                ♙
+                <Pencil size={20}/>
               </div>
 
               <div>
@@ -640,7 +640,7 @@ function InicioTutor() {
             <div className="dato">
 
               <div className="icono-card azul">
-                ▤
+                <Clipboard size={20}/>
               </div>
 
               <div>
@@ -660,7 +660,7 @@ function InicioTutor() {
             <div className="dato">
 
               <div className="icono-card azul">
-                ♙
+                <Megaphone size={20}/>
               </div>
 
               <div>
