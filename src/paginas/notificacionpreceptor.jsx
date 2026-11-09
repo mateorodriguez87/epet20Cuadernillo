@@ -20,7 +20,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 // Icono proveniente de la Biblioteca Lucide-React
-import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock} from 'lucide-react';
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock, UserRoundCheck, UserRound} from 'lucide-react';
 // Estilos de esta pantalla
 import "../estilos/notificacionpreceptor.css";
 
@@ -653,7 +653,9 @@ function NotificacionPreceptor() {
 
             {/* Alumno seleccionado (o "—" si no hay ninguno) */}
             <div className="resumen-item">
-              <div className="icono-card azul">♙</div>
+              <div className="icono-card azul">
+                <UserRoundCheck size={18} />
+              </div>
 
               <div>
                 <span>Alumno seleccionado:</span>
@@ -667,7 +669,9 @@ function NotificacionPreceptor() {
 
             {/* Tutor: sale del usuario relacionado con el alumno */}
             <div className="resumen-item">
-              <div className="icono-card azul">♟</div>
+              <div className="icono-card azul">
+                <UserRound size={18}/>
+              </div>
 
               <div>
                 <span>Tutor:</span>
