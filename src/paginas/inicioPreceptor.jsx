@@ -9,7 +9,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 // auth: la autenticación de Firebase / db: la base de datos
 import { auth, db } from "../firebase";
 // Icono proveniente de la Biblioteca Lucide-React
-import { House} from 'lucide-react';
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock} from 'lucide-react';
 // Estilos de esta pantalla
 import "../estilos/inicioPreceptor.css";
 
@@ -120,7 +120,7 @@ function InicioPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+            <Presentation className="menu-icon" size={20}/>
             <span>Cursos</span>
           </NavLink>
 
@@ -130,7 +130,7 @@ function InicioPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♙</span>
+            <UserRoundGroup className="menu-icon" size={20}/>
             <span>Alumnos</span>
           </NavLink>
 
@@ -140,8 +140,8 @@ function InicioPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">♧</span>
-            <span>Notificaciones</span>
+           <Bell className="menu-icon" size={20}/>
+           <span>Notificaciones</span>
           </NavLink>
 
           <NavLink
@@ -150,7 +150,7 @@ function InicioPreceptor() {
               `menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="menu-icon">▤</span>
+           <RotateCcwClock className="menu-icon" size={20}/>
             <span>Historial</span>
           </NavLink>
         </nav>
