@@ -458,15 +458,6 @@ function AlumnosPreceptor() {
           >
             + Agregar alumno
           </button>
-
-          {/* Lleva a la pantalla de alta y baja de alumnos */}
-          <button
-            type="button"
-            className="boton-dar-baja"
-            onClick={() => navigate("/altabajaalumnos")}
-          >
-            − Dar de baja alumno
-          </button>
         </section>
 
         {/* TARJETAS SUPERIORES */}
