@@ -21,7 +21,7 @@ import {
 
 // Conexión con Firebase
 import { auth, db } from "../firebase";
-
+import { House,  BellRing, FileUser , BellOff} from 'lucide-react';
 // Estilos de esta pantalla
 import "../estilos/notificacionestutor.css";
 
@@ -307,7 +307,7 @@ function NotificacionesRecibidasTutor() {
               `recibidas-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="recibidas-icono">⌂</span>
+            <House className="menu-icon" size={20} />
             <span>Inicio</span>
           </NavLink>
 
@@ -317,7 +317,7 @@ function NotificacionesRecibidasTutor() {
               `recibidas-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="recibidas-icono">♧</span>
+            <BellRing className="menu-icon" size={20}/>
             <span>Notificaciones recibidas</span>
           </NavLink>
 
@@ -327,7 +327,7 @@ function NotificacionesRecibidasTutor() {
               `recibidas-menu-item ${isActive ? "activo" : ""}`
             }
           >
-            <span className="recibidas-icono">▤</span>
+            <FileUser className="recibidas-icono" size={20}/>
             <span>Datos del alumno</span>
           </NavLink>
         </nav>
@@ -419,7 +419,9 @@ function NotificacionesRecibidasTutor() {
             <>
               {/* Mensaje de "No recibiste notificaciones" cuando la lista está vacía */}
               <div className="recibidas-vacio">
-                <div className="recibidas-vacio-icono">♧</div>
+                <div className="recibidas-vacio-icono">
+                  <BellOff size={25}/>
+                  </div>
 
                 <h2>No recibiste notificaciones</h2>
 
