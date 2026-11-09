@@ -160,7 +160,7 @@ function InicioPreceptor() {
           <div>
             {/* Saludo: el ", nombre" solo se agrega si hay un usuario con la sesión iniciada */}
             <h1>
-              ¡Bienvenida{nombre ? `, ${nombre}` : ""}!
+              ¡Bienvenido/a {nombre ? `, ${nombre}` : ""}!
             </h1>
 
             <p className="fecha-actual">{fechaFormateada}</p>
