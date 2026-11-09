@@ -1,43 +1,89 @@
-// Se importa useState, pero esta pantalla todavía no lo usa (los datos salen de un objeto fijo)
-import { useState } from "react";
+
+// Hooks de React: useState para los datos de la pantalla y useEffect para cargar la información
+import { useEffect, useState } from "react";
+
 // NavLink arma los links del menú y marca el activo; Link es un enlace común
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+
+// Permite detectar y cerrar la sesión de Firebase
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
+// Funciones de Firestore para consultar los datos
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+} from "firebase/firestore";
+
+// Conexión con Firebase
+import { auth, db } from "../firebase";
+
 // Estilos de esta pantalla
 import "../estilos/iniciotutor.css";
 
 // Pantalla de inicio del tutor: saludo, tarjeta del alumno, últimas notificaciones, datos del alumno y un mensaje final
 function InicioTutor() {
-  // Datos de la pantalla: por ahora vacíos, se completan con la base de datos
-  // Tiene el nombre del tutor, la fecha, los datos del alumno y la lista de notificaciones
-  const datos = {
-    nombre: "",
-    fecha: "",
-    alumno: {
-      nombre: "",
-      curso: "",
-      legajo: "",
-      preceptor: "",
-      foto: ""
-    },
-    notificaciones: []
-  };
 
-  /* Estilo visual de cada tipo de notificación */
+  // Datos de la pantalla: se completan con la información obtenida desde Firebase
+  const [nombreTutor, setNombreTutor] = useState("");
+  const [fecha, setFecha] = useState(new Date());
+
+  // Lista de alumnos relacionados con el tutor
+  const [alumnos, setAlumnos] = useState([]);
+
+  // Alumno seleccionado por el tutor
+  const [alumnoId, setAlumnoId] = useState("");
+
+  // Datos del alumno seleccionado
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
+
+  // Lista de notificaciones recibidas por el tutor
+  const [notificaciones, setNotificaciones] = useState([]);
+
+  // Datos del preceptor relacionado con el alumno
+  const [nombrePreceptor, setNombrePreceptor] = useState("");
+
+  // Controla el estado de la sesión
+  const [sesionIniciada, setSesionIniciada] = useState(false);
+  const [verificandoSesion, setVerificandoSesion] = useState(true);
+
+  // Indica si se están cargando los datos
+  const [cargando, setCargando] = useState(true);
+
+  // Mensajes de error
+  const [error, setError] = useState("");
+
+  // Permite navegar entre las páginas sin recargar todo el sitio
+  const navigate = useNavigate();
+
+  // Estilo visual de cada tipo de notificación
   const tipos = {
     // En cada tipo, el "color" es el nombre de la clase CSS (rojo, naranja, azul o verde)
     inasistencia: { icono: "!", color: "rojo" },
     conducta: { icono: "▤", color: "naranja" },
     nota: { icono: "✎", color: "azul" },
-    aviso: { icono: "♧", color: "verde" }
+    aviso: { icono: "♧", color: "verde" },
+    normal: { icono: "♧", color: "verde" },
+    importante: { icono: "!", color: "rojo" },
   };
 
   // Cantidad de notificaciones sin leer: las que no tienen leida en true
-  const sinLeer = datos.notificaciones.filter(
+  const sinLeer = notificaciones.filter(
     (n) => !n.leida
   ).length;
 
   // Solo las 4 primeras notificaciones, para la tarjeta de "Últimas notificaciones"
-  const ultimas = datos.notificaciones.slice(0, 4);
+  const ultimas = [...notificaciones]
+    .sort((a, b) => {
+      const fechaA = convertirFecha(a.creadoEn || a.fechaEnvio);
+      const fechaB = convertirFecha(b.creadoEn || b.fechaEnvio);
+
+      return (fechaB?.getTime() || 0) - (fechaA?.getTime() || 0);
+    })
+    .slice(0, 4);
 
   // Saca las iniciales del alumno, para mostrarlas cuando no tiene foto
   const iniciales = (nombre = "") =>
@@ -45,9 +91,260 @@ function InicioTutor() {
       .split(" ")
       .filter(Boolean)
       .map((p) => p[0])
-      .join("")
       // Se queda con las dos primeras letras (ejemplo: "Tomás Rojas" queda "TR")
+      .join("")
       .slice(0, 2);
+
+  // Convierte fechas de Firestore en objetos Date
+  function convertirFecha(valor) {
+    if (!valor) return null;
+
+    if (typeof valor.toDate === "function") {
+      return valor.toDate();
+    }
+
+    const fechaConvertida = new Date(valor);
+
+    return Number.isNaN(fechaConvertida.getTime())
+      ? null
+      : fechaConvertida;
+  }
+
+  // Convierte la fecha a un formato legible
+  function formatearFecha(valor) {
+    const fechaConvertida = convertirFecha(valor);
+
+    if (!fechaConvertida) return "Sin fecha";
+
+    return fechaConvertida.toLocaleDateString("es-AR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  // Cada minuto se actualiza la fecha del encabezado
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setFecha(new Date());
+    }, 60000);
+
+    return () => clearInterval(intervalo);
+  }, []);
+
+  // Fecha lista para mostrar, en español de Argentina
+  const fechaFormateada = fecha.toLocaleDateString("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  // Carga los datos del tutor, sus alumnos y sus notificaciones
+  useEffect(() => {
+    let activo = true;
+
+    const cancelarSuscripcion = onAuthStateChanged(auth, async (usuario) => {
+      setSesionIniciada(!!usuario);
+
+      if (!usuario) {
+        setNombreTutor("");
+        setAlumnos([]);
+        setAlumnoId("");
+        setAlumnoSeleccionado(null);
+        setNotificaciones([]);
+        setCargando(false);
+        setVerificandoSesion(false);
+        return;
+      }
+
+      try {
+        setCargando(true);
+        setError("");
+
+        // Busca los datos del tutor en la colección usuarios
+        const referenciaTutor = doc(db, "usuarios", usuario.uid);
+        const documentoTutor = await getDoc(referenciaTutor);
+
+        if (!documentoTutor.exists()) {
+          throw new Error("No se encontraron los datos del tutor.");
+        }
+
+        const datosTutor = documentoTutor.data();
+
+        if (datosTutor.rol !== "tutor") {
+          throw new Error("La cuenta no tiene asignado el rol de tutor.");
+        }
+
+        if (activo) {
+          setNombreTutor(datosTutor.nombre || datosTutor.usuario || "");
+        }
+
+        // Obtiene los IDs de los alumnos asociados al tutor
+        const hijosIds = Array.isArray(datosTutor.hijos)
+          ? datosTutor.hijos
+          : [];
+
+        // Busca los alumnos en la colección Alumnos
+        const resultadoAlumnos = await getDocs(
+          collection(db, "Alumnos")
+        );
+
+        const alumnosObtenidos = resultadoAlumnos.docs
+          .map((documento) => ({
+            id: documento.id,
+            ...documento.data(),
+          }))
+          .filter((alumno) => hijosIds.includes(alumno.id));
+
+        // Obtiene las notificaciones dirigidas a este tutor
+        const consultaNotificaciones = query(
+          collection(db, "Notificaciones"),
+          where("tutorId", "==", usuario.uid)
+        );
+
+        const resultadoNotificaciones = await getDocs(
+          consultaNotificaciones
+        );
+
+        const notificacionesObtenidas = resultadoNotificaciones.docs.map(
+          (documento) => ({
+            id: documento.id,
+            ...documento.data(),
+          })
+        );
+
+        if (activo) {
+          setAlumnos(alumnosObtenidos);
+          setNotificaciones(notificacionesObtenidas);
+
+          // Si el tutor tiene un solo hijo, se selecciona automáticamente
+          if (alumnosObtenidos.length === 1) {
+            setAlumnoId(alumnosObtenidos[0].id);
+          } else if (alumnosObtenidos.length > 1) {
+            setAlumnoId((idActual) =>
+              alumnosObtenidos.some((alumno) => alumno.id === idActual)
+                ? idActual
+                : alumnosObtenidos[0].id
+            );
+          } else {
+            setAlumnoId("");
+          }
+        }
+
+      } catch (error) {
+        console.error("Error al cargar el inicio del tutor:", error);
+
+        if (activo) {
+          setError(
+            "No se pudieron cargar los datos. Revisá la conexión con Firebase."
+          );
+        }
+
+      } finally {
+        if (activo) {
+          setCargando(false);
+          setVerificandoSesion(false);
+        }
+      }
+    });
+
+    // Al salir de la pantalla se deja de escuchar el estado de la sesión
+    return () => {
+      activo = false;
+      cancelarSuscripcion();
+    };
+  }, []);
+
+  // Actualiza los datos del alumno cuando cambia la selección
+  useEffect(() => {
+    let activo = true;
+
+    async function cargarAlumno() {
+      const alumno = alumnos.find((item) => item.id === alumnoId);
+
+      if (!alumno) {
+        setAlumnoSeleccionado(null);
+        setNombrePreceptor("");
+        return;
+      }
+
+      setAlumnoSeleccionado(alumno);
+
+      try {
+        // Busca el curso al que pertenece el alumno
+        let cursoNombre = alumno.curso || "";
+
+        if (alumno.cursoId) {
+          const referenciaCurso = doc(db, "Cursos", alumno.cursoId);
+          const documentoCurso = await getDoc(referenciaCurso);
+
+          if (documentoCurso.exists()) {
+            const datosCurso = documentoCurso.data();
+
+            cursoNombre = `${datosCurso.curso || ""} ${datosCurso.division || ""}`.trim();
+          }
+        }
+
+        // Busca el preceptor asignado al curso del alumno
+        let preceptorNombre = alumno.preceptor || "";
+
+        if (!preceptorNombre && alumno.cursoId) {
+          const consultaPreceptores = query(
+            collection(db, "usuarios"),
+            where("rol", "==", "preceptor"),
+            where("cursosIds", "array-contains", alumno.cursoId)
+          );
+
+          const resultadoPreceptores = await getDocs(consultaPreceptores);
+
+          if (!resultadoPreceptores.empty) {
+            const datosPreceptor = resultadoPreceptores.docs[0].data();
+
+            preceptorNombre = datosPreceptor.nombre || "";
+          }
+        }
+
+        if (activo) {
+          setAlumnoSeleccionado({
+            ...alumno,
+            curso: cursoNombre,
+          });
+
+          setNombrePreceptor(preceptorNombre);
+        }
+
+      } catch (error) {
+        console.error("Error al cargar los datos del alumno:", error);
+
+        if (activo) {
+          setNombrePreceptor(alumno.preceptor || "");
+        }
+      }
+    }
+
+    cargarAlumno();
+
+    return () => {
+      activo = false;
+    };
+  }, [alumnoId, alumnos]);
+
+  // Lleva a /login si no hay una sesión iniciada
+  function iniciarSesion() {
+    navigate("/login");
+  }
+
+  // Cierra la sesión real de Firebase y lleva a /login
+  async function cerrarSesion() {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+    }
+  }
 
   // Desde acá empieza lo que se dibuja en pantalla
   return (
@@ -96,11 +393,22 @@ function InicioTutor() {
           </NavLink>
         </nav>
 
-        {/* Cerrar sesión: por ahora solo lleva a /login */}
-        <Link to="/login" className="cerrar-sesion">
+        {/* Cerrar sesión: ahora cierra la sesión real de Firebase */}
+        <button
+          type="button"
+          className="cerrar-sesion"
+          onClick={sesionIniciada ? cerrarSesion : iniciarSesion}
+          disabled={verificandoSesion}
+        >
           <span className="logout-icon">⇥</span>
-          <span>Cerrar Sesion</span>
-        </Link>
+          <span>
+            {verificandoSesion
+              ? "Comprobando..."
+              : sesionIniciada
+              ? "Cerrar sesión"
+              : "Iniciar sesión"}
+          </span>
+        </button>
 
       </aside>
 
@@ -108,39 +416,83 @@ function InicioTutor() {
       <main className="contenido">
 
         {/* ENCABEZADO */}
-        {/* Saludo (el ", nombre" solo se agrega si hay uno; el texto "Bienvenida" es fijo) y la fecha */}
+        {/* Saludo y fecha */}
         <header className="encabezado">
           <h1>
-            Bienvenida{datos.nombre ? `, ${datos.nombre}` : ""}
+            Bienvenida{nombreTutor ? `, ${nombreTutor}` : ""}
           </h1>
 
-          <p>{datos.fecha || ""}</p>
+          <p>{fechaFormateada}</p>
         </header>
+
+        {/* Mensajes de carga o error */}
+        {cargando && (
+          <p>Cargando información...</p>
+        )}
+
+        {error && (
+          <p className="campo-ayuda">{error}</p>
+        )}
 
         {/* TARJETA DEL ALUMNO */}
         <section className="tarjeta-alumno">
+
+          {/* Selector para tutores que tienen más de un hijo */}
+          {alumnos.length > 1 && (
+            <div className="campo">
+              <label htmlFor="seleccionar-hijo">
+                Seleccionar alumno
+              </label>
+
+              <select
+                id="seleccionar-hijo"
+                className="entrada"
+                value={alumnoId}
+                onChange={(e) => setAlumnoId(e.target.value)}
+              >
+                {alumnos.map((alumno) => (
+                  <option key={alumno.id} value={alumno.id}>
+                    {alumno.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Foto (o iniciales) y datos básicos del alumno */}
           <div className="alumno-info">
 
             <div className="foto-alumno">
               {/* Si el alumno tiene foto la muestra; si no, sus iniciales */}
-              {datos.alumno.foto ? (
+              {alumnoSeleccionado?.foto ? (
                 <img
-                  src={datos.alumno.foto}
-                  alt={datos.alumno.nombre}
+                  src={alumnoSeleccionado.foto}
+                  alt={alumnoSeleccionado.nombre}
                 />
               ) : (
-                iniciales(datos.alumno.nombre)
+                iniciales(alumnoSeleccionado?.nombre || "")
               )}
             </div>
 
             {/* Los "—" aparecen mientras todavía no hay datos cargados */}
             <div className="alumno-datos">
               <span>Alumno</span>
-              <strong>{datos.alumno.nombre || "—"}</strong>
-              <p>{datos.alumno.curso}</p>
-              <p>Legajo: {datos.alumno.legajo || "—"}</p>
+
+              <strong>
+                {alumnoSeleccionado?.nombre || "—"}
+              </strong>
+
+              <p>
+                {alumnoSeleccionado?.curso || "—"}
+              </p>
+
+              <p>
+                Legajo: {
+                  alumnoSeleccionado?.legajo ||
+                  alumnoSeleccionado?.dni ||
+                  "—"
+                }
+              </p>
             </div>
 
           </div>
@@ -157,7 +509,7 @@ function InicioTutor() {
 
               <strong className="numero-rojo">
                 {/* Si no hay notificaciones, muestra "—" en vez de 0 */}
-                {datos.notificaciones.length > 0 ? sinLeer : "—"}
+                {notificaciones.length > 0 ? sinLeer : "—"}
               </strong>
 
               <Link to="/notificacionesrecibidas">
@@ -192,9 +544,10 @@ function InicioTutor() {
             ) : (
               // Una fila por cada una de las últimas notificaciones
               ultimas.map((notificacion, index) => {
-                // El tipo de la notificación (inasistencia, conducta, nota o aviso) define el ícono y el color; si el tipo no existe, usa el de aviso
+                // El tipo de la notificación define el ícono y el color
                 const tipo =
-                  tipos[notificacion.tipo] || tipos.aviso;
+                  tipos[notificacion.tipo || notificacion.prioridad] ||
+                  tipos.aviso;
 
                 return (
                   <div
@@ -206,13 +559,19 @@ function InicioTutor() {
                     </div>
 
                     <div className="notificacion-texto">
-                      <strong>{notificacion.titulo}</strong>
+                      <strong>
+                        {notificacion.asunto || notificacion.titulo || "Notificación"}
+                      </strong>
 
-                      <span>{notificacion.descripcion}</span>
+                      <span>
+                        {notificacion.mensaje || notificacion.descripcion || ""}
+                      </span>
                     </div>
 
                     <div className="notificacion-fecha">
-                      {notificacion.fecha}
+                      {formatearFecha(
+                        notificacion.fechaEnvio || notificacion.creadoEn
+                      )}
                     </div>
 
                     {/* El puntito y la flecha de abajo solo aparecen si la notificación no está leída */}
@@ -254,7 +613,9 @@ function InicioTutor() {
 
               <div>
                 <span>Nombre completo</span>
-                <strong>{datos.alumno.nombre || "—"}</strong>
+                <strong>
+                  {alumnoSeleccionado?.nombre || "—"}
+                </strong>
               </div>
 
             </div>
@@ -268,7 +629,9 @@ function InicioTutor() {
 
               <div>
                 <span>Curso</span>
-                <strong>{datos.alumno.curso || "—"}</strong>
+                <strong>
+                  {alumnoSeleccionado?.curso || "—"}
+                </strong>
               </div>
 
             </div>
@@ -282,7 +645,13 @@ function InicioTutor() {
 
               <div>
                 <span>Legajo</span>
-                <strong>{datos.alumno.legajo || "—"}</strong>
+                <strong>
+                  {
+                    alumnoSeleccionado?.legajo ||
+                    alumnoSeleccionado?.dni ||
+                    "—"
+                  }
+                </strong>
               </div>
 
             </div>
@@ -296,7 +665,9 @@ function InicioTutor() {
 
               <div>
                 <span>Preceptor</span>
-                <strong>{datos.alumno.preceptor || "—"}</strong>
+                <strong>
+                  {nombrePreceptor || "—"}
+                </strong>
               </div>
 
             </div>
