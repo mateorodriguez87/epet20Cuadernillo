@@ -19,8 +19,19 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-// Icono proveniente de la Biblioteca Lucide-React
-import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock, UserRoundCheck, UserRound} from 'lucide-react';
+// Iconos provenientes de la Biblioteca Lucide-React
+// CircleCheck y CircleAlert se usan en la ventana de aviso (éxito y error)
+import {
+  House,
+  Presentation,
+  UserRoundGroup,
+  Bell,
+  RotateCcwClock,
+  UserRoundCheck,
+  UserRound,
+  CircleCheck,
+  CircleAlert,
+} from "lucide-react";
 // Estilos de esta pantalla
 import "../estilos/notificacionpreceptor.css";
 
@@ -53,6 +64,11 @@ function NotificacionPreceptor() {
 
   // Mensaje de error o información
   const [error, setError] = useState("");
+
+  // Ventana de aviso (reemplaza al alert del navegador)
+  // null = cerrada. Si tiene datos, se muestra con:
+  // tipo ("exito" o "error"), titulo y texto
+  const [aviso, setAviso] = useState(null);
 
   // Indica si hay una sesión iniciada
   const [sesionIniciada, setSesionIniciada] = useState(false);
@@ -171,6 +187,20 @@ function NotificacionPreceptor() {
     // Al salir de la pantalla se frena el temporizador
     return () => clearInterval(intervalo);
   }, []);
+
+  // Mientras la ventana de aviso está abierta, la tecla Escape también la cierra
+  useEffect(() => {
+    if (!aviso) return;
+
+    function alApretarTecla(e) {
+      if (e.key === "Escape") setAviso(null);
+    }
+
+    window.addEventListener("keydown", alApretarTecla);
+
+    // Al cerrarse la ventana se deja de escuchar el teclado
+    return () => window.removeEventListener("keydown", alApretarTecla);
+  }, [aviso]);
 
   // Fecha lista para mostrar, en español de Argentina (día de la semana, día, mes y año)
   const fechaFormateada = fecha.toLocaleDateString("es-AR", {
@@ -327,8 +357,15 @@ function NotificacionPreceptor() {
         leida: false,
       });
 
-      // Informa que la notificación se guardó correctamente
-      alert("¡La notificación se guardó correctamente!");
+      // Muestra la ventana de éxito indicando para quién fue la notificación
+      // (se arma el texto ANTES de limpiar el formulario, porque limpiarlo borra al alumno y al tutor elegidos)
+      setAviso({
+        tipo: "exito",
+        titulo: "¡Notificación enviada!",
+        texto: `Se guardó la notificación para ${
+          tutorSeleccionado.nombre || tutorSeleccionado.usuario || "el tutor"
+        }, tutor de ${alumnoSeleccionado.nombre}.`,
+      });
 
       // Limpia el formulario después de enviar
       limpiarFormulario();
@@ -355,7 +392,13 @@ function NotificacionPreceptor() {
       navigate("/login");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
-      alert("No se pudo cerrar la sesión. Intentá nuevamente.");
+
+      // Si falla, se avisa con la misma ventana pero en versión de error
+      setAviso({
+        tipo: "error",
+        titulo: "No se pudo cerrar la sesión",
+        texto: "Ocurrió un problema al cerrar tu sesión. Intentá nuevamente.",
+      });
     }
   }
 
@@ -411,7 +454,7 @@ function NotificacionPreceptor() {
             }
           >
             <Bell className="menu-icon" size={20}/>
-           <span>Notificaciones</span>
+            <span>Notificaciones</span>
           </NavLink>
 
           <NavLink
@@ -720,6 +763,44 @@ function NotificacionPreceptor() {
           </aside>
         </section>
       </main>
+
+      {/* VENTANA DE AVISO (éxito o error) */}
+      {/* Reemplaza al alert del navegador. Solo se dibuja cuando aviso tiene datos */}
+      {aviso && (
+        // Tocar el fondo oscuro cierra la ventana
+        <div className="dialogo-fondo" onClick={() => setAviso(null)}>
+          {/* stopPropagation evita que un clic dentro de la ventana la cierre */}
+          {/* role="alertdialog" y aria-modal ayudan a los lectores de pantalla */}
+          <div
+            className="dialogo"
+            role="alertdialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Círculo con ícono: verde con tilde si salió bien, rojo con signo si hubo un problema */}
+            <div className={`dialogo-icono ${aviso.tipo}`}>
+              {aviso.tipo === "exito" ? (
+                <CircleCheck size={40} />
+              ) : (
+                <CircleAlert size={40} />
+              )}
+            </div>
+
+            <h2>{aviso.titulo}</h2>
+            <p>{aviso.texto}</p>
+
+            {/* autoFocus deja el botón listo para cerrar con Enter */}
+            <button
+              type="button"
+              className="dialogo-boton"
+              onClick={() => setAviso(null)}
+              autoFocus
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
