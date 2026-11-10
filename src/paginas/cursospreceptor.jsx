@@ -22,7 +22,7 @@ import {
 // Conexión a la base de datos y a la autenticación de Firebase
 import { db, auth } from "../firebase";
 // Icono proveniente de la Biblioteca Lucide-React
-import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock} from 'lucide-react';
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock, BookOpen} from 'lucide-react';
 // Estilos de la pantalla y de sus ventanas
 import "../estilos/cursospreceptor.css";
 import "../estilos/modalcursospreceptor.css";
@@ -467,7 +467,9 @@ function CursosPreceptor() {
 
           <div className="cursos-titulo">
             <h1>
-              <span className="titulo-icono">▤</span>
+              <span className="titulo-icono">
+              <Presentation size={24}/>
+              </span>
               Cursos
             </h1>
 
@@ -572,7 +574,9 @@ function CursosPreceptor() {
 
             <div className="cursos-vacio">
 
-              <div className="cursos-vacio-icono">▤</div>
+              <div className="cursos-vacio-icono">
+                <BookOpen size={35}/>
+                </div>
 
               <h2>
 
