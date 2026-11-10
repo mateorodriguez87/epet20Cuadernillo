@@ -33,6 +33,7 @@ function App() {
           <Route path="/bienvenida" element={<Bienvenida />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
+          <Route path="/ayuda" element={<Ayuda />} />
 
           {/* RUTAS DEL PRECEPTOR */}
           <Route
@@ -144,17 +145,6 @@ function App() {
               </RutaProtegida>
             }
           />
-
-          {/* AYUDA: pendiente de definir permisos */}
-          <Route
-            path="/ayuda"
-            element={
-              <RutaProtegida>
-                <Ayuda />
-              </RutaProtegida>
-            }
-          />
-
         </Routes>
       </AuthProvider>
     </BrowserRouter>
