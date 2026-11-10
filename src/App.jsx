@@ -21,6 +21,8 @@ import Ayuda  from "./paginas/ayuda.jsx";
 import Administrador from "./paginas/administrador.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+ 
+
 
 function App() {
   return (
@@ -52,15 +54,7 @@ function App() {
                  <Route path="/altabajacursos" element={<AltaBajaCurso />} />
                  <Route path="/ayuda" element={<Ayuda/>}/>
                  <Route path="/administrador" element={<Administrador/>}/>
-                   {/* Ruta protegida */}
-  <Route
-    path="/admin"
-    element={
-      <RutaProtegida>
-        <Admin />
-      </RutaProtegida>
-    }
-  />
+                  
       </Routes>
     </BrowserRouter>
   );
