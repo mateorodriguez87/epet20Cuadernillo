@@ -9,7 +9,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 // auth: la autenticación de Firebase / db: la base de datos
 import { auth, db } from "../firebase";
 // Icono proveniente de la Biblioteca Lucide-React
-import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock} from 'lucide-react';
+import { House, Presentation, UserRoundGroup, Bell, RotateCcwClock, FileText} from 'lucide-react';
 // Estilos de esta pantalla
 import "../estilos/inicioPreceptor.css";
 
@@ -226,7 +226,9 @@ function InicioPreceptor() {
 
           {/* Comunicaciones enviadas: hoy muestra "—" porque no se cargan. El texto dice "este mes", pero no hay ningún filtro por mes */}
           <article className="tarjeta estadistica">
-            <div className="icono-card violeta">▤</div>
+            <div className="icono-card violeta">
+              <RotateCcwClock size={20}/>
+              </div>
 
             <div className="info-card">
               <span>Comunicaciones enviadas (este mes)</span>
@@ -322,7 +324,9 @@ function InicioPreceptor() {
               to="/historialpreceptor"
               className="accion"
             >
-              <div className="accion-icon violeta">▤</div>
+              <div className="accion-icon violeta">
+                <FileText size={20}/>
+                </div>
 
               <div className="accion-texto">
                 <strong>Ver historial</strong>
